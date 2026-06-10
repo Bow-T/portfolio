@@ -231,6 +231,15 @@
     background:radial-gradient(130% 100% at 50% 120%,var(--chip),transparent),var(--bg2);}
   #pcanvas{display:block;width:100%;height:clamp(240px,40vw,420px);touch-action:none;cursor:crosshair;}
   .pc-hint{font-size:12.5px;color:var(--soft);margin-top:10px;text-align:center;}
+  /* ===== project card app icons ===== */
+  .pcard .ptop{display:flex;align-items:center;gap:12px;justify-content:flex-start;}
+  .pcard .pic{width:54px;height:54px;border-radius:13px;overflow:hidden;flex:0 0 auto;border:1px solid var(--cardb);
+    box-shadow:0 5px 14px rgba(0,0,0,.4);background:var(--grad);}
+  .pcard .pic img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pcard .picfb{width:100%;height:100%;display:grid;place-items:center;font-weight:800;font-size:24px;color:#0a2009;}
+  .pcard .phead{min-width:0;}
+  .pcard .phead h3{font-size:18px;line-height:1.12;}
+  .pcard .phead .cat{display:block;margin-top:3px;font-size:10.5px;}
 </style>
 </head>
 <body>
@@ -242,11 +251,11 @@
     <a href="#top" class="brand"><span class="dot"></span>Bow</a>
     <div class="navlinks">
       <a class="lnk" href="#about">About</a>
+      <a class="lnk" href="#play">Play</a>
       <a class="lnk" href="#skills">Skills</a>
       <a class="lnk" href="#work">Work</a>
       <a class="lnk" href="#experience">Experience</a>
       <a class="lnk" href="#activity">Activity</a>
-      <a class="lnk" href="#play">Play</a>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
       <a href="#contact" class="btn">Say hi</a>
     </div>
@@ -278,6 +287,16 @@
     </div>
   </div>
 </header>
+
+<section id="play">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// playground</div>
+    <h2 class="sec">Made of little things ✨</h2>
+    <p class="sec-sub">Like apps, this whole thing is built from thousands of tiny pieces. Run your cursor across it — the particles scatter, then find their way home.</p>
+    <div class="pcanvas-wrap"><canvas id="pcanvas"></canvas></div>
+    <div class="pc-hint">move your cursor (or finger) through the letters</div>
+  </div>
+</section>
 
 <section id="about">
   <div class="wrap reveal">
@@ -341,16 +360,6 @@
       <h4>+ more apps I've built</h4>
       <div class="morewrap" id="more"></div>
     </div>
-  </div>
-</section>
-
-<section id="play">
-  <div class="wrap reveal">
-    <div class="eyebrow gtext">// playground</div>
-    <h2 class="sec">Made of little things ✨</h2>
-    <p class="sec-sub">Like apps, this whole thing is built from thousands of tiny pieces. Run your cursor across it — the particles scatter, then find their way home.</p>
-    <div class="pcanvas-wrap"><canvas id="pcanvas"></canvas></div>
-    <div class="pc-hint">move your cursor (or finger) through the letters</div>
   </div>
 </section>
 
@@ -483,13 +492,14 @@ const MORE=[
 const CATS=["All","Mobility","Safety","Health & AI","Sports","Social","Marketplace","Lifestyle"];
 
 const grid=document.getElementById('grid');
+const IMG={"Ynstant": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1b/cf/d6/1bcfd60b-4f0d-48d4-5b8b-72eb5bd70ccf/AppIcon-prod-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Carter": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/76/c1/7b/76c17b0d-1a78-d39a-ae43-b36b30703467/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/512x512bb.jpg", "ProtectU": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8c/a5/36/8ca5365a-fc98-3726-14f4-e312b27863f1/AppIcon-production-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Nila Sphere": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4b/2a/6b/4b2a6b64-150e-acef-8af6-fe486a185c7c/AppIcon-production-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Spaurt": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/25/ff/33/25ff339a-79ef-dbee-5fb3-41e51d2f05c5/AppIcon-production-0-0-1x_U007emarketing-0-11-0-0-85-220.png/512x512bb.jpg", "Octopush": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/39/4f/1e/394f1ec9-fad7-492e-bbb1-5c272e438bd7/AppIcon-production-0-0-1x_U007emarketing-0-11-0-0-85-220.png/512x512bb.jpg", "SecuMap": "https://play-lh.googleusercontent.com/Xy5bWpEq0APHNdesM4QW2xLbw-CA0JbNwbRpee-wCqGjwcR0XUQyA1HKT4M4g7GHjfwWHYLBEd43glWqdCualQ", "Docteur Sirop": "https://play-lh.googleusercontent.com/VGCm61LfX89MaIQQ-9W6sakueDzYzjoUSzYjs3HmVxOxgwuIMc2FHRiYO9DMC0Zi-KimIofdSoyVK4a1hW5F", "Mentalia": "https://play-lh.googleusercontent.com/tlLU7smTubxVpb1KvxZFKGx-O2H3OHwbU6aKWJm6E297ZwDvt8yad1MMrDU4VZ9mS7de5AWdEWYFi3BzkmqV", "KEYM": "https://play-lh.googleusercontent.com/AaPVvKcWmlNcPyA7_2TvFz8ZbNzcI3U1ZaRtmKOKtWwu6gHFU5UABsF9q7Jg_U2Ysvo=s200", "Beauty Squad": "https://play-lh.googleusercontent.com/TTYwjVpzC0Qjntj9-wLSoqVUIqmQwz4LdhS1RtrYTMlGWL2fHW_b5FI82iLvQ-Dj7EE=s200"};
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
   const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')
     :'<span class="nostore">B2B / internal — not on public stores</span>';
   return `<article class="pcard" data-cat="${p.cat}">
-    <div class="ptop"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div>
+    <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
     <div class="meta">${p.role}</div>${badge}
     <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${links}</div>
   </article>`;
