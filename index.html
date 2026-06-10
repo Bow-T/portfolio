@@ -1,300 +1,557 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bow — Flutter Developer</title>
-<meta name="description" content="Hi, I'm Bow (Tuan Nguyen) — a Flutter developer crafting striking, real-world mobile apps. 30+ shipped, 500K+ downloads.">
+<title>Bow — Tuan Nguyen · Flutter Developer</title>
+<meta name="description" content="Hey, I'm Bow (Tuan Nguyen) — a Flutter developer who ships delightful mobile apps. 30+ apps, 500K+ downloads, 6+ years.">
+<meta property="og:title" content="Bow — Tuan Nguyen · Flutter Developer">
+<meta property="og:description" content="I build delightful Flutter apps. 30+ shipped · 500K+ downloads.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0a0f0a; --ink:#e9f3e6; --muted:#aebfa9; --soft:#7a8c72; --line:rgba(215,226,200,.14);
-    --g1:#d9f99d; --g2:#a3e635; --g3:#4ade80; --g4:#2dd4bf;
+  :root, [data-theme="dark"]{
+    --bg:#0a0f0a; --bg2:#0d130c; --elev:#111811; --card:#111811; --cardb:#26331d;
+    --text:#e9f3e6; --muted:#a4b8a0; --soft:#728668; --line:#1a2614;
+    --spot:rgba(163,230,53,.24); --shadow:0 18px 48px rgba(0,0,0,.5);
+    --g1:#bef264; --g2:#84cc16; --g3:#22c55e; --g4:#14b8a6;
     --grad:linear-gradient(100deg,var(--g1),var(--g2),var(--g3),var(--g4));
+    --chip:rgba(190,242,100,.05); --chipb:rgba(190,242,100,.14);
+  }
+  [data-theme="light"]{
+    --bg:#fbfdf6; --bg2:#f1f7e9; --elev:#ffffff; --card:#ffffff; --cardb:#e3eed7;
+    --text:#16241a; --muted:#566453; --soft:#8a9785; --line:#e8f0de;
+    --spot:rgba(132,204,22,.16); --shadow:0 14px 40px rgba(40,70,30,.10);
+    --g1:#84cc16; --g2:#22c55e; --g3:#16a34a; --g4:#0d9488;
+    --chip:#f0f6e6; --chipb:#e0ecd0;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  html,body,#root{background:var(--bg);}
   html{scroll-behavior:smooth;}
-  body{font-family:'Kanit',sans-serif;color:var(--ink);overflow-x:clip;-webkit-font-smoothing:antialiased;}
+  body{font-family:'Sora',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+    line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .4s,color .4s;}
   a{color:inherit;text-decoration:none;}
-  .wrap{max-width:1280px;margin:0 auto;}
-  .hero-heading{background:var(--grad);background-size:200% auto;-webkit-background-clip:text;background-clip:text;
-    -webkit-text-fill-color:transparent;color:transparent;animation:shimmer 8s linear infinite;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .gtext{background:var(--grad);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 7s linear infinite;}
   @keyframes shimmer{to{background-position:200% center;}}
-  .fade{opacity:0;transform:translateY(30px);}
-  .fade.show{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.25,.1,.25,1),transform .7s cubic-bezier(.25,.1,.25,1);}
 
-  /* ===== HERO ===== */
-  .hero{height:100svh;min-height:640px;display:flex;flex-direction:column;overflow-x:clip;position:relative;}
-  .nav{display:flex;justify-content:space-between;gap:10px;padding:24px 24px 0;color:#d7e2ea;}
-  .nav a{font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:14px;transition:opacity .2s;}
-  .nav a:hover{opacity:.7;}
-  .heading-box{overflow:hidden;margin-top:24px;}
-  .hero h1{font-weight:900;text-transform:uppercase;letter-spacing:-.04em;line-height:.9;white-space:nowrap;width:100%;
-    text-align:center;font-size:17.5vw;}
-  .hero-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding:0 24px 40px;}
-  .hero-tag{color:#d7e2ea;font-weight:300;text-transform:uppercase;letter-spacing:.04em;line-height:1.25;
-    font-size:clamp(.78rem,1.4vw,1.5rem);max-width:280px;}
-  .portrait-wrap{position:absolute;left:50%;transform:translateX(-50%);bottom:0;z-index:10;will-change:transform;
-    width:min(46vw,520px);}
-  .portrait{position:relative;width:100%;aspect-ratio:3/4.4;border-radius:28px 28px 0 0;overflow:hidden;
-    background:radial-gradient(120% 80% at 50% 0,rgba(163,230,53,.18),transparent 60%),#0e150d;
-    border:1px solid var(--line);border-bottom:none;}
-  .portrait img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:relative;z-index:1;}
-  .portrait .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-    color:var(--soft);text-align:center;padding:20px;}
-  .portrait .ph .big{font-weight:900;font-size:64px;letter-spacing:.1em;}
-  .portrait .ph small{font-size:12px;max-width:200px;line-height:1.4;}
+  /* aurora background */
+  .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:float 18s ease-in-out infinite;}
+  [data-theme="light"] .blob{opacity:.28;}
+  .b1{width:520px;height:520px;background:var(--g1);top:-160px;left:-120px;}
+  .b2{width:480px;height:480px;background:var(--g3);top:-80px;right:-120px;animation-delay:-6s;}
+  .b3{width:420px;height:420px;background:var(--g4);top:540px;left:30%;animation-delay:-11s;opacity:.32;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,30px) scale(1.08);}66%{transform:translate(-30px,20px) scale(.95);}}
 
-  /* buttons */
-  .btn-contact{display:inline-block;border:none;cursor:pointer;color:#08210a;font-family:inherit;font-weight:600;
-    text-transform:uppercase;letter-spacing:.12em;border-radius:999px;background:var(--grad);background-size:180% auto;
-    padding:14px 34px;font-size:clamp(.72rem,1vw,1rem);box-shadow:0 6px 22px rgba(163,230,53,.28);
-    outline:2px solid rgba(215,226,200,.7);outline-offset:-3px;transition:transform .2s,background-position .5s,box-shadow .25s;}
-  .btn-contact:hover{transform:translateY(-2px);background-position:right center;box-shadow:0 10px 30px rgba(45,212,191,.32);}
-  .btn-ghost{display:inline-block;border:2px solid #d7e2ea;color:#d7e2ea;border-radius:999px;font-weight:500;
-    text-transform:uppercase;letter-spacing:.12em;padding:11px 28px;font-size:clamp(.72rem,1vw,1rem);transition:.2s;}
-  .btn-ghost:hover{background:rgba(215,226,200,.1);}
+  /* scroll progress */
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:var(--grad);background-size:200%;}
 
-  /* ===== MARQUEE ===== */
-  .marquee{padding:120px 0 40px;overflow:hidden;}
-  .mrow{display:flex;gap:14px;will-change:transform;margin-bottom:14px;}
-  .tile{flex:0 0 auto;width:300px;height:200px;border-radius:18px;overflow:hidden;position:relative;
-    display:flex;flex-direction:column;justify-content:flex-end;padding:18px;border:1px solid var(--line);}
-  .tile .cat{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.75);}
-  .tile .nm{font-weight:700;font-size:22px;color:#fff;line-height:1.05;}
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 72%,transparent);
+    border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .brand{font-weight:800;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px;}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--grad);box-shadow:0 0 12px var(--g2);}
+  .navlinks{display:flex;gap:8px;align-items:center;}
+  .navlinks a.lnk{font-size:14px;font-weight:500;color:var(--muted);padding:7px 12px;border-radius:9px;transition:.18s;}
+  .navlinks a.lnk:hover{color:var(--text);background:var(--chip);}
+  .iconbtn{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);
+    background:var(--chip);cursor:pointer;color:var(--text);font-size:16px;transition:.18s;}
+  .iconbtn:hover{border-color:var(--g2);transform:translateY(-1px);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:10px 18px;border-radius:11px;
+    color:#0a2009;background:var(--grad);background-size:180% auto;transition:transform .15s,box-shadow .2s,background-position .4s;
+    box-shadow:0 8px 22px rgba(132,204,22,.30);}
+  .btn:hover{transform:translateY(-2px);background-position:right center;box-shadow:0 12px 32px rgba(34,197,94,.36);}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--cardb);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--g2);background:var(--chip);}
+  .menu-toggle{display:none;}
 
-  /* ===== ABOUT ===== */
-  .about{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    padding:120px 20px;position:relative;gap:56px;}
-  .about h2,.svc h2,.proj h2{font-weight:900;text-transform:uppercase;line-height:.9;letter-spacing:-.03em;}
-  .about h2{font-size:clamp(3rem,12vw,160px);}
-  .about .reveal-p{font-weight:500;color:#d7e2ea;line-height:1.6;max-width:600px;font-size:clamp(1rem,2vw,1.35rem);}
-  .deco{position:absolute;font-size:clamp(54px,8vw,120px);opacity:.85;filter:drop-shadow(0 10px 30px rgba(163,230,53,.15));pointer-events:none;}
-  .deco.tl{top:6%;left:3%;}.deco.tr{top:6%;right:3%;}.deco.bl{bottom:8%;left:5%;}.deco.br{bottom:8%;right:5%;}
+  section{padding:84px 0;position:relative;z-index:2;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+    margin-bottom:12px;}
+  .eyebrow.gtext{display:inline-block;}
+  h2.sec{font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+  .sec-sub{color:var(--muted);margin-bottom:34px;max-width:640px;}
 
-  /* ===== SERVICES ===== */
-  .svc{background:#fff;color:#0a0f0a;border-radius:48px 48px 0 0;padding:100px 20px;position:relative;z-index:2;}
-  .svc h2{font-size:clamp(3rem,12vw,160px);text-align:center;margin-bottom:80px;color:#0a0f0a;}
-  .svc-list{max-width:1000px;margin:0 auto;}
-  .svc-item{display:flex;gap:26px;align-items:flex-start;padding:44px 0;border-top:1px solid rgba(12,12,12,.15);}
-  .svc-item:last-child{border-bottom:1px solid rgba(12,12,12,.15);}
-  .svc-item .no{font-weight:900;font-size:clamp(2.6rem,9vw,130px);line-height:.85;color:#0a0f0a;}
-  .svc-item .nm{font-weight:600;text-transform:uppercase;font-size:clamp(1rem,2.2vw,2rem);}
-  .svc-item .ds{font-weight:300;line-height:1.6;max-width:42rem;font-size:clamp(.85rem,1.6vw,1.2rem);opacity:.6;margin-top:8px;}
+  /* hero */
+  .hero{padding:96px 0 70px;}
+  .wave{display:inline-block;animation:wave 2.4s ease-in-out infinite;transform-origin:70% 70%;}
+  @keyframes wave{0%,60%,100%{transform:rotate(0);}10%{transform:rotate(16deg);}20%{transform:rotate(-8deg);}30%{transform:rotate(16deg);}40%{transform:rotate(-4deg);}50%{transform:rotate(10deg);}}
+  .hello{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--muted);margin-bottom:16px;}
+  .hello b{color:var(--text);}
+  .hero h1{font-size:clamp(38px,6.5vw,68px);line-height:1.02;font-weight:800;letter-spacing:-2px;margin-bottom:20px;}
+  .hero .lead{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:680px;margin-bottom:30px;}
+  .hero .lead strong{color:var(--text);}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;}
+  .socials{display:flex;gap:12px;}
+  .socials a{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--cardb);
+    background:var(--chip);color:var(--muted);font-size:16px;font-weight:600;transition:.18s;}
+  .socials a:hover{color:var(--text);border-color:var(--g2);transform:translateY(-3px);box-shadow:0 8px 20px rgba(132,204,22,.22);}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:50px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;transition:.2s;}
+  .stat:hover{border-color:var(--cardb);transform:translateY(-3px);}
+  .stat .n{font-size:clamp(26px,3.4vw,36px);font-weight:800;letter-spacing:-1px;}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:3px;}
 
-  /* ===== PROJECTS ===== */
-  .proj{background:var(--bg);border-radius:48px 48px 0 0;margin-top:-50px;padding:90px 20px 40px;position:relative;z-index:3;}
-  .proj h2{font-size:clamp(3rem,12vw,160px);text-align:center;margin-bottom:50px;}
-  .stack{max-width:1100px;margin:0 auto;}
-  .card-wrap{height:88vh;}
-  .pcard{position:sticky;top:110px;border:2px solid #d7e2ea;background:#0a0f0a;border-radius:40px;padding:26px;
-    transform-origin:top center;will-change:transform;box-shadow:0 30px 80px rgba(0,0,0,.5);}
-  .pcard .ptop{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-bottom:22px;}
-  .pcard .pno{font-weight:900;font-size:clamp(2.4rem,7vw,90px);line-height:.8;}
-  .pcard .pcat{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);}
-  .pcard .pnm{font-weight:700;font-size:clamp(1.4rem,3vw,2.4rem);}
-  .pcard .pstat{color:var(--g2);font-weight:600;font-size:14px;}
-  .pcard .plive{margin-left:auto;}
-  .pgrid{display:grid;grid-template-columns:40% 1fr;gap:14px;}
-  .pcol1{display:flex;flex-direction:column;gap:14px;}
-  .panel{border-radius:28px;overflow:hidden;position:relative;display:flex;align-items:flex-end;padding:18px;border:1px solid var(--line);}
-  .panel .pl{font-weight:700;color:#fff;font-size:15px;z-index:1;}
-  .p-a{height:clamp(120px,15vw,210px);} .p-b{height:clamp(150px,20vw,310px);}
-  .p-c{height:100%;min-height:clamp(290px,40vw,540px);}
+  /* about */
+  .about-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:40px;align-items:start;}
+  .about-grid p{color:var(--muted);margin-bottom:15px;}
+  .about-grid p strong{color:var(--text);}
+  .about-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);}
+  .about-card h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;}
+  .about-card .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .about-card .row:last-child{border-bottom:none;}
+  .about-card .row span:first-child{color:var(--muted);}
+  .about-card .row span:last-child{font-weight:600;}
 
-  footer{padding:70px 20px 50px;text-align:center;color:var(--soft);}
-  footer .big{font-weight:900;text-transform:uppercase;font-size:clamp(2rem,7vw,90px);line-height:.95;margin-bottom:24px;}
-  footer .links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;}
-  footer .meta{font-size:13px;}
-  footer .switch{display:inline-block;margin-top:22px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;font-size:13px;}
+  /* skills */
+  .skillgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .skillcard{border:1px solid var(--line);border-radius:18px;padding:20px 22px;background:var(--card);transition:.2s;}
+  .skillcard:hover{border-color:var(--cardb);transform:translateY(-3px);box-shadow:var(--shadow);}
+  .skillcard h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{font-size:13px;background:var(--chip);border:1px solid var(--chipb);color:var(--text);padding:6px 12px;border-radius:9px;font-weight:500;
+    transition:.15s;}
+  .chip:hover{border-color:var(--g2);color:var(--g2);}
 
-  @media(max-width:760px){
-    .hero h1{font-size:22vw;} .portrait-wrap{width:74vw;top:50%;bottom:auto;transform:translate(-50%,-50%);}
-    .portrait{border-radius:28px;}
-    .hero-bottom{flex-direction:column;align-items:flex-start;gap:18px;}
-    .pgrid{grid-template-columns:1fr;} .p-c{min-height:240px;} .pcard .plive{margin-left:0;width:100%;}
-    .card-wrap{height:auto;margin-bottom:24px;} .pcard{position:relative;top:0;transform:none!important;}
-    .tile{width:230px;height:150px;}
+  /* filter */
+  .filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:28px;}
+  .filt{font-size:13.5px;font-weight:600;padding:8px 16px;border-radius:30px;border:1px solid var(--cardb);
+    background:var(--chip);color:var(--muted);cursor:pointer;transition:.18s;}
+  .filt:hover{color:var(--text);border-color:var(--g2);}
+  .filt.active{color:#0a2009;background:var(--grad);border-color:transparent;}
+
+  /* spotlight project grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;perspective:1100px;}
+  .pcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;
+    display:flex;flex-direction:column;transform-style:preserve-3d;will-change:transform;
+    transition:border-color .2s,box-shadow .2s;}
+  .pcard::before{content:"";position:absolute;inset:0;border-radius:18px;opacity:0;transition:opacity .35s;pointer-events:none;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),var(--spot),transparent 65%);}
+  .pcard:hover{border-color:var(--g2);box-shadow:var(--shadow),0 0 0 1px color-mix(in srgb,var(--g2) 30%,transparent);}
+  .pcard:hover::before{opacity:1;}
+  .pcard>*{position:relative;z-index:1;}
+  .ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .pcard h3{font-size:18px;font-weight:700;letter-spacing:-.3px;}
+  .pcard .cat{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;padding-top:3px;}
+  .pcard .meta{font-size:12.5px;color:var(--soft);margin:2px 0 10px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--g3) 16%,transparent);
+    color:var(--g3);font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:11px;align-self:flex-start;
+    border:1px solid color-mix(in srgb,var(--g3) 30%,transparent);}
+  .badge.flag{background:color-mix(in srgb,var(--g2) 16%,transparent);color:var(--g2);border-color:color-mix(in srgb,var(--g2) 30%,transparent);}
+  .pcard p{font-size:13.5px;color:var(--muted);flex:1;margin-bottom:13px;}
+  .ptech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:15px;}
+  .ptech span{font-size:11.5px;color:var(--soft);background:var(--chip);border:1px solid var(--chipb);padding:3px 8px;border-radius:6px;}
+  .plinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;}
+  .plink{font-size:12.5px;font-weight:600;border:1px solid var(--cardb);padding:7px 12px;border-radius:9px;transition:.18s;color:var(--text);}
+  .plink:hover{color:#0a2009;background:var(--grad);border-color:transparent;}
+  .nostore{font-size:12px;color:var(--soft);}
+
+  .more{margin-top:38px;}
+  .more h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;}
+  .morewrap{display:flex;flex-wrap:wrap;gap:10px;}
+  .mpill{font-size:13px;background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:11px;transition:.15s;}
+  .mpill:hover{border-color:var(--g2);transform:translateY(-2px);}
+  .mpill b{font-weight:600;}
+  .mpill span{color:var(--soft);font-size:12px;}
+
+  /* experience */
+  .timeline{position:relative;padding-left:30px;}
+  .timeline:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .titem{position:relative;margin-bottom:28px;}
+  .titem:before{content:"";position:absolute;left:-30px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--grad);
+    box-shadow:0 0 12px var(--g2);}
+  .titem .role{font-weight:700;font-size:17px;}
+  .titem .when{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--g2);margin:3px 0 8px;}
+  .titem p{color:var(--muted);font-size:14.5px;}
+
+  /* contact */
+  .contact-card{position:relative;overflow:hidden;border-radius:24px;padding:54px 40px;text-align:center;
+    border:1px solid var(--cardb);background:var(--card);}
+  .contact-card::before{content:"";position:absolute;inset:0;background:var(--grad);opacity:.10;}
+  .contact-card>*{position:relative;}
+  .contact-card h2{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:-.8px;margin-bottom:12px;}
+  .contact-card p{color:var(--muted);margin:0 auto 28px;max-width:540px;}
+  .cbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .cmeta{margin-top:26px;font-size:13.5px;color:var(--soft);display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+
+  footer{padding:34px 0;text-align:center;color:var(--soft);font-size:13px;border-top:1px solid var(--line);}
+  footer .gtext{font-weight:600;}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media(max-width:880px){
+    .grid{grid-template-columns:repeat(2,1fr);} .skillgrid,.about-grid{grid-template-columns:1fr;}
+    .stats{grid-template-columns:repeat(2,1fr);}
   }
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;} .portrait-wrap{transform:translateX(-50%)!important;}}
+  @media(max-width:600px){
+    .grid{grid-template-columns:1fr;} .navlinks a.lnk{display:none;} section{padding:60px 0;}
+    .contact-card{padding:34px 22px;}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;}}
+
+  /* activity heatmap */
+  :root,[data-theme="dark"]{--l0:#172a14;--l1:#365e1c;--l2:#5a9216;--l3:#84cc16;--l4:#bef264;}
+  [data-theme="light"]{--l0:#e9f1df;--l1:#c2e79b;--l2:#94d152;--l3:#5fa61c;--l4:#3f7a10;}
+  #activity .hcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 22px 16px;box-shadow:var(--shadow);}
+  .heat-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:16px;}
+  .heat-top .h{font-weight:700;font-size:15px;}
+  .heat-top .h b{font-weight:800;}
+  .heat-top .sub{font-size:12.5px;color:var(--muted);}
+  .heat-scroll{overflow-x:auto;padding-bottom:4px;}
+  .heat-inner{display:inline-block;}
+  .heat-months{display:grid;gap:3px;margin-left:34px;font-size:10.5px;color:var(--soft);margin-bottom:6px;}
+  .heat-months span{white-space:nowrap;}
+  .heat-body{display:flex;gap:6px;}
+  .heat-days{display:grid;grid-template-rows:repeat(7,13px);gap:3px;font-size:9.5px;color:var(--soft);width:28px;}
+  .heat-days span{height:13px;line-height:13px;}
+  .heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;}
+  .hc{width:13px;height:13px;border-radius:3px;background:var(--l0);transition:transform .1s;}
+  .hc:hover{transform:scale(1.35);outline:1px solid var(--g2);}
+  .hc.l1{background:var(--l1);}.hc.l2{background:var(--l2);}.hc.l3{background:var(--l3);}.hc.l4{background:var(--l4);}
+  .hc.fut{opacity:0;pointer-events:none;}
+  .heat-legend{display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:12px;font-size:11.5px;color:var(--soft);}
+  .heat-legend .hc{width:11px;height:11px;}
+  .heat-legend .hc:hover{transform:none;outline:none;}
+  /* ===== 5D layered depth ===== */
+  .pcard .ptop,.pcard .badge,.pcard p,.pcard .ptech,.pcard .plinks{transition:transform .28s cubic-bezier(.2,.8,.2,1);}
+  .pcard:hover .ptop{transform:translateZ(44px);}
+  .pcard:hover .badge{transform:translateZ(60px);}
+  .pcard:hover p{transform:translateZ(18px);}
+  .pcard:hover .ptech{transform:translateZ(28px);}
+  .pcard:hover .plinks{transform:translateZ(38px);}
+  .stat,.skillcard,.about-card{will-change:transform;}
 </style>
 </head>
 <body>
-<div id="root">
+<div id="prog"></div>
+<div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
 
-<!-- ===== HERO ===== -->
-<section class="hero">
-  <nav class="nav fade">
-    <a href="#about">About</a><a href="#services">Services</a><a href="#projects">Projects</a><a href="#contact">Contact</a>
-  </nav>
-  <div class="heading-box fade"><h1 class="hero-heading">Hi, i&apos;m bow</h1></div>
-  <div class="hero-bottom">
-    <p class="hero-tag fade">a flutter developer driven by crafting striking and unforgettable mobile apps</p>
-    <span class="fade"><a href="#contact" class="btn-contact">Contact Me</a></span>
+<nav>
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="dot"></span>Bow</a>
+    <div class="navlinks">
+      <a class="lnk" href="#about">About</a>
+      <a class="lnk" href="#skills">Skills</a>
+      <a class="lnk" href="#work">Work</a>
+      <a class="lnk" href="#experience">Experience</a>
+      <a class="lnk" href="#activity">Activity</a>
+      <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
+      <a href="#contact" class="btn">Say hi</a>
+    </div>
   </div>
-  <div class="portrait-wrap fade" id="portrait">
-    <div class="portrait">
-      <div class="ph"><span class="big hero-heading">BOW</span><small>add your photo at <b>assets/me.jpg</b></small></div>
-      <img src="assets/me.jpg" alt="Bow" onerror="this.remove()">
+</nav>
+
+<div id="top"></div>
+
+<header class="hero">
+  <div class="wrap reveal">
+    <div class="hello"><span class="wave">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class="mono">Tuan&nbsp;Nguyen</span></div>
+    <h1>I build <span class="gtext">delightful</span><br>Flutter apps people use.</h1>
+    <p class="lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
+    <div class="cta">
+      <a href="#work" class="btn">View my work ↓</a>
+      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
+    </div>
+    <div class="socials">
+      <a href="mailto:nguyenvantuan4034@gmail.com" title="Email">✉</a>
+      <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" title="LinkedIn">in</a>
+      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" title="GitHub">{ }</a>
+      <a href="tel:+84987620174" title="Phone">☎</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n gtext">30+</div><div class="l">Apps shipped</div></div>
+      <div class="stat"><div class="n gtext">500K+</div><div class="l">Downloads (top app)</div></div>
+      <div class="stat"><div class="n gtext">6+</div><div class="l">Years experience</div></div>
+      <div class="stat"><div class="n gtext">15+</div><div class="l">Live on App&nbsp;Store / Play</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// about</div>
+    <h2 class="sec">End-to-end mobile, done right</h2>
+    <div class="about-grid">
+      <div>
+        <p>I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.</p>
+        <p>At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>authored the company's shared Flutter architecture</strong> that 20+ client apps are built on — turning weeks of project setup into a same-day start.</p>
+        <p>I care about the details users feel: clean architecture (MVVM), pixel-accurate UI, smooth real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.</p>
+      </div>
+      <div class="about-card">
+        <h4 class="gtext">At a glance</h4>
+        <div class="row"><span>Role</span><span>Flutter / Mobile Dev</span></div>
+        <div class="row"><span>Experience</span><span>6+ years (since 2020)</span></div>
+        <div class="row"><span>Focus</span><span>Flutter · iOS &amp; Android</span></div>
+        <div class="row"><span>Location</span><span>Da Nang, Vietnam</span></div>
+        <div class="row"><span>Education</span><span>Duy Tan University</span></div>
+        <div class="row"><span>Currently</span><span>Open to work ✦</span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ===== MARQUEE ===== -->
-<section class="marquee" id="marquee">
-  <div class="mrow" id="mrow1"></div>
-  <div class="mrow" id="mrow2"></div>
-</section>
-
-<!-- ===== ABOUT ===== -->
-<section class="about" id="about">
-  <span class="deco tl fade">🌙</span><span class="deco tr fade">🧩</span>
-  <span class="deco bl fade">📱</span><span class="deco br fade">✦</span>
-  <h2 class="hero-heading fade">About me</h2>
-  <p class="reveal-p" id="aboutText">With 6+ years of experience building mobile apps with Flutter, i focus on clean architecture, real-time features and payments, shipping 30+ production apps end-to-end. I truly enjoy working with teams that aim to stand out and ship something people love. Let&apos;s build something incredible together!</p>
-  <span class="fade"><a href="#contact" class="btn-contact">Contact Me</a></span>
-</section>
-
-<!-- ===== SERVICES ===== -->
-<section class="svc" id="services">
-  <h2 class="fade">What i do</h2>
-  <div class="svc-list" id="svcList"></div>
-</section>
-
-<!-- ===== PROJECTS ===== -->
-<section class="proj" id="projects">
-  <h2 class="hero-heading fade">Projects</h2>
-  <div class="stack" id="stack"></div>
-</section>
-
-<!-- ===== FOOTER ===== -->
-<footer id="contact">
-  <div class="big hero-heading fade">Let&apos;s talk</div>
-  <div class="links fade">
-    <a href="mailto:nguyenvantuan4034@gmail.com" class="btn-contact">Contact Me</a>
-    <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn-ghost">LinkedIn</a>
-    <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn-ghost">GitHub</a>
+<section id="skills">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// skills</div>
+    <h2 class="sec">Tools of the trade</h2>
+    <p class="sec-sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
+    <div class="skillgrid">
+      <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
+        <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
+        <span class="chip">Kotlin / Swift channels</span><span class="chip">Material / Cupertino</span><span class="chip">Lottie</span>
+      </div></div>
+      <div class="skillcard"><h4 class="gtext">Architecture &amp; State</h4><div class="chips">
+        <span class="chip">MVVM</span><span class="chip">Clean Architecture</span><span class="chip">Provider</span>
+        <span class="chip">GetX</span><span class="chip">BLoC</span><span class="chip">Stacked</span>
+        <span class="chip">get_it</span><span class="chip">auto_route</span><span class="chip">build_runner</span>
+      </div></div>
+      <div class="skillcard"><h4 class="gtext">Realtime, Maps &amp; AI</h4><div class="chips">
+        <span class="chip">Agora RTC/RTM/Chat</span><span class="chip">SignalR</span><span class="chip">Socket.IO</span>
+        <span class="chip">OpenAI Realtime voice</span><span class="chip">Unity 3D embed</span><span class="chip">Google Maps</span>
+      </div></div>
+      <div class="skillcard"><h4 class="gtext">Backend, Payments &amp; Ops</h4><div class="chips">
+        <span class="chip">Firebase</span><span class="chip">Supabase</span><span class="chip">dio + retrofit</span>
+        <span class="chip">Stripe</span><span class="chip">PayPal</span><span class="chip">RevenueCat</span>
+        <span class="chip">Fastlane CI/CD</span><span class="chip">Store release</span>
+      </div></div>
+    </div>
   </div>
-  <div class="meta fade">📱 +84 987 620 174 · 📍 Da Nang, Vietnam · 📧 nguyenvantuan4034@gmail.com</div>
-  <a href="classic.html" class="switch">Prefer a simpler, classic CV-style view? →</a>
+</section>
+
+<section id="work">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// work</div>
+    <h2 class="sec">Things I've built</h2>
+    <p class="sec-sub">A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through and have a play.</p>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+    <div class="more">
+      <h4>+ more apps I've built</h4>
+      <div class="morewrap" id="more"></div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// experience</div>
+    <h2 class="sec">The journey so far</h2>
+    <div class="timeline">
+      <div class="titem">
+        <div class="role">Flutter / Mobile Developer — Digital Unicorn</div>
+        <div class="when">2022 — Present · mobile &amp; web agency (FR / VN)</div>
+        <p>Lead developer of the DUOCT &ldquo;Octopus&rdquo; super-app (Flutter + Next.js + Supabase). Sole or lead developer on 25+ production apps, several published to the stores. Authored the company's shared Flutter base architecture adopted by 20+ apps.</p>
+      </div>
+      <div class="titem">
+        <div class="role">Flutter Developer — Freelance / Independent</div>
+        <div class="when">2020 — 2022</div>
+        <p>Built mobile apps as independent projects — including a medical / clinic management app — and a range of Flutter prototypes, while establishing the MVVM base architecture later reused at scale.</p>
+      </div>
+      <div class="titem">
+        <div class="role">B.Eng, Software Engineering — Duy Tan University</div>
+        <div class="when">2015 — 2019 · Da Nang, Vietnam</div>
+        <p>Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="activity">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// activity</div>
+    <h2 class="sec">Shipping, week in week out</h2>
+    <p class="sec-sub">Real contribution activity from my team's GitLab over the last 12 months &mdash; pushes, merge requests, approvals, issues &amp; comments.</p>
+    <div class="hcard">
+      <div class="heat-top">
+        <div class="h" id="heatSub">&hellip;</div>
+        <div class="sub" id="heatBusy"></div>
+      </div>
+      <div class="heat-scroll"><div class="heat-inner">
+        <div class="heat-months" id="heatMonths"></div>
+        <div class="heat-body">
+          <div class="heat-days"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>
+          <div class="heat-grid" id="heatGrid"></div>
+        </div>
+      </div></div>
+      <div class="heat-legend">Less <div class="hc"></div><div class="hc l1"></div><div class="hc l2"></div><div class="hc l3"></div><div class="hc l4"></div> More</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap reveal">
+    <div class="contact-card">
+      <h2>Let's build something <span class="gtext">delightful</span></h2>
+      <p>I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
+      <div class="cbtns">
+        <a href="mailto:nguyenvantuan4034@gmail.com" class="btn">✉ nguyenvantuan4034@gmail.com</a>
+        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
+        <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
+      </div>
+      <div class="cmeta"><span>📱 +84 987 620 174</span><span>📍 Da Nang, Vietnam</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Designed &amp; built by <span class="gtext">Bow</span> · © <span id="yr"></span> Tuan Nguyen · vanilla HTML &amp; CSS, no frameworks.</div>
 </footer>
 
-</div>
 <script>
 const AS="https://apps.apple.com/", GP="https://play.google.com/store/apps/details?id=";
-const grads={Mobility:"linear-gradient(135deg,#16a34a,#0d9488)",Safety:"linear-gradient(135deg,#65a30d,#16a34a)",
- "Health & AI":"linear-gradient(135deg,#0d9488,#0e7490)",Sports:"linear-gradient(135deg,#4d7c0f,#65a30d)",
- Social:"linear-gradient(135deg,#15803d,#0d9488)",Marketplace:"linear-gradient(135deg,#3f6212,#4d7c0f)",
- Lifestyle:"linear-gradient(135deg,#0f766e,#115e59)"};
-const APPS=[
- {n:"Ynstant",cat:"Mobility",stat:"500K+ downloads"},{n:"SecuMap",cat:"Safety",stat:"10K+ · press"},
- {n:"Docteur Sirop",cat:"Health & AI",stat:"AI voice + Unity"},{n:"Carter",cat:"Sports",stat:"Club management"},
- {n:"KEYM",cat:"Social",stat:"Music network"},{n:"Spaurt",cat:"Sports",stat:"5K+ downloads"},
- {n:"ProtectU",cat:"Safety",stat:"Citizen safety"},{n:"Mentalia",cat:"Health & AI",stat:"AI coach"},
- {n:"Nila Sphere",cat:"Lifestyle",stat:"Carbon tracker"},{n:"Beauty Squad",cat:"Marketplace",stat:"On-demand beauty"},
- {n:"Octopush",cat:"Social",stat:"Messenger"},{n:"Octopus",cat:"Mobility",stat:"Super-app"},
+const PROJECTS=[
+ {n:"Octopus / DUOCT",cat:"Mobility",role:"Lead Mobile Developer · 2026–Present",badge:"Flagship",flag:1,
+  d:"Multi-service super-app: ride booking, multi-category express delivery (food, flowers, high-tech, home services) and courier dispatch — with separate customer & driver apps, earnings/payouts and premium subscriptions.",
+  tech:["Flutter","Supabase","Stripe","Google Maps","Next.js admin"],links:[]},
+ {n:"Ynstant",cat:"Mobility",role:"Flutter Developer · 2023",badge:"500K+ downloads",
+  d:"France-focused daily carpooling with 0% service fees: post a ride in under 30s, get bookings from verified passengers, or book instantly / set ride alerts. Real-time matching, in-app messaging and distance-based pricing.",
+  tech:["Flutter","Google Maps","Realtime","Payments"],
+  links:[["App Store",AS+"us/app/ynstant-carpooling/id1610500828"],["Google Play",GP+"dev.ynstant.moove"]]},
+ {n:"SecuMap",cat:"Safety",role:"Sole Developer · 2023–2025",badge:"10K+ · national press",
+  d:"100% French safety-GPS: a real-time, crowd-sourced danger map that automatically re-routes you around reported risks. Report incidents anonymously, save addresses — covered by French national press (Le JDD).",
+  tech:["Flutter","Google Maps","WebSocket","maps_toolkit"],
+  links:[["Google Play",GP+"com.du.secumap"]]},
+ {n:"Docteur Sirop",cat:"Health & AI",role:"Sole Developer · 2025–2026",badge:"AI voice + Unity 3D",
+  d:"AI health companion for hospitalized children: real-time voice conversations with an AI doctor, daily mood check-ins, a relaxation “espace zen”, interactive stories and a reward system that makes the child an active participant in their care.",
+  tech:["Flutter","OpenAI Realtime","Unity 3D","speech_to_text"],
+  links:[["Google Play",GP+"com.doctorsyrup.app"]]},
+ {n:"Carter",cat:"Sports",role:"Lead Developer · 2022–2024",badge:"1K+ downloads",
+  d:"Basketball club app for managers, coaches and players: rosters & positions, events and training sessions, attendance and standings, an exercise library and tactical boards, plus a play-to-earn reward system.",
+  tech:["Flutter","Socket.IO","Firebase","Google Maps"],
+  links:[["App Store",AS+"fr/app/carter-coaching/id6443718007"],["Google Play",GP+"com.du.carter"]]},
+ {n:"KEYM",cat:"Social",role:"Flutter Developer · 2023",badge:"5K+ downloads",
+  d:"Music social network “by artists, for artists” — connect musicians, singers, producers and sound engineers, build a multi-format (audio + visual) portfolio, and search talent by skills and artistic universe.",
+  tech:["Flutter","Media portfolio","Messaging","Firebase"],
+  links:[["apkcombo","https://apkcombo.com/keym-reseau-social-musical/keymmusic.com.keym/"]]},
+ {n:"Spaurt",cat:"Sports",role:"Sole Developer · 2025–2026",badge:"5K+ downloads",
+  d:"Hybrid sports-training app with personalized coaching around four pillars: rep- and time-based workout routines, a routine library, 1-rep-max & PR tracking, physical tests, goals, statistics and calendar scheduling.",
+  tech:["Flutter","fl_chart","Calendar","in_app_review"],
+  links:[["App Store",AS+"fr/app/spaurt/id6743203018"],["Google Play",GP+"com.spaurt.app"]]},
+ {n:"ProtectU",cat:"Safety",role:"Sole Developer · 2025",badge:"1K+ downloads",
+  d:"French citizen-safety app to see, understand and act on risky situations in real time: an interactive incident map, guidance to nearby safe places, live-location sharing and secure messaging to trusted contacts.",
+  tech:["Flutter","SignalR","Google Maps","Firebase"],
+  links:[["App Store",AS+"us/app/protectu/id6743616393"],["Google Play",GP+"com.protectu.fr"]]},
+ {n:"Mentalia",cat:"Health & AI",role:"Lead Developer · 2023–2024",badge:"AI virtual coach",
+  d:"AI-powered mental-preparation & well-being app: chat with a caring AI virtual coach, follow a question-driven flow that suggests audio / PDF / video content, with generative-AI recommendations that evolve with your progress.",
+  tech:["Flutter","Generative AI","Socket.IO","just_audio"],
+  links:[["Google Play",GP+"com.mentalia.app"]]},
+ {n:"Nila Sphere",cat:"Lifestyle",role:"Sole Developer · 2026",badge:"",
+  d:"Carbon-footprint app for carbon neutrality: measure the CO₂ impact of daily tasks, track weekly emissions and a carbon score, complete green challenges to win partner gifts, and share eco achievements on a social feed.",
+  tech:["Flutter","fl_chart","camerawesome","RevenueCat"],
+  links:[["App Store",AS+"us/app/nila-sphere/id6754004164"],["Google Play",GP+"com.nilasphere.fr"]]},
+ {n:"Beauty Squad",cat:"Marketplace",role:"Sole Developer · 2024–2025",badge:"",
+  d:"On-demand at-home beauty marketplace (client + salon): book experienced pros for hair, makeup, skincare, massage, nails and more — multi-step booking & checkout (Stripe / PayPal / wallet), galleries and in-app chat.",
+  tech:["Flutter","Stripe","PayPal","Firestore"],
+  links:[["apkcombo","https://apkcombo.com/beauty-squad/com.beautysquaduser/"]]},
+ {n:"Octopush",cat:"Social",role:"Lead Developer · 2024–2026",badge:"",
+  d:"Customer-conversation messenger for the Octopush (Marseille) multichannel/SMS platform: the team handles all customer conversations and live chat from one app, with push notifications.",
+  tech:["Flutter","dio + retrofit","Firebase Messaging"],
+  links:[["App Store",AS+"us/app/octopush/id6711331710"],["Google Play",GP+"com.du.octopush"]]},
 ];
-const SERVICES=[
- ["01","Mobile App Development","End-to-end Flutter apps for iOS & Android — clean MVVM architecture, pixel-accurate UI and smooth 60fps experiences, from idea to the store."],
- ["02","Real-time & Messaging","Live location, chat and presence with SignalR, Socket.IO and Agora — the kind of real-time features that make apps feel alive."],
- ["03","Payments & Monetization","Stripe, PayPal and RevenueCat subscriptions wired in correctly and safely — checkout flows, wallets and in-app purchases."],
- ["04","App Architecture","A reusable Flutter base architecture adopted by 20+ client apps — turning weeks of project setup into a same-day start."],
- ["05","Store Release & CI/CD","Fastlane pipelines, store-compliant builds and App Store / Google Play submissions — shipping reliably, again and again."],
+const MORE=[
+ ["Live-streaming social","Agora · communities · live video"],["Swy'Eat","restaurant-review social network"],
+ ["Kimia","peer-to-peer travel-deal marketplace"],["UAVLog","drone flight logbook · offline"],
+ ["Arage","local events on a map"],["Let Share","student project sharing (swipe)"],
+ ["Âmes Sœurs","local dating · map clustering"],["Barberz","barber booking (customer + pro)"],
+ ["ShapeUp","on-demand hairdresser booking"],["ard","mosquito-surveillance / public health"],
+ ["Event","event management · galleries"],["Adress","visitor app · QR & ID scanning"],
+ ["Dear","couple / relationship app"],["Sentinelle","safety / surveillance"],
+ ["Flutter Base","in-house architecture · 20+ apps"],["Medical clinic","clinic management (independent)"],
 ];
-const PROJ=[
- {no:"01",cat:"Mobility · Flutter",nm:"Ynstant",stat:"500K+ downloads",link:AS+"us/app/ynstant-carpooling/id1610500828",
-  cat1:"Mobility",imgs:["Carpooling","Ride alerts","Live matching"]},
- {no:"02",cat:"Super-app · Lead dev",nm:"Octopus / DUOCT",stat:"Ride · delivery · courier",link:"#",
-  cat1:"Mobility",imgs:["Delivery","Driver app","Wallet"]},
- {no:"03",cat:"Safety · Sole dev",nm:"SecuMap",stat:"10K+ · national press",link:AS+"fr/app/secumap/id6447151691",
-  cat1:"Safety",imgs:["Danger map","Re-routing","Reports"]},
-];
+const CATS=["All","Mobility","Safety","Health & AI","Sports","Social","Marketplace","Lifestyle"];
 
-/* ----- marquee tiles ----- */
-function tile(a){return `<div class="tile"><div style="position:absolute;inset:0;background:${grads[a.cat]};z-index:0"></div>
-  <div class="cat" style="position:relative">${a.cat}</div><div class="nm" style="position:relative">${a.n}</div>
-  <div class="cat" style="position:relative;margin-top:4px">${a.stat}</div></div>`;}
-const r1=APPS.slice(0,6),r2=APPS.slice(6);
-document.getElementById('mrow1').innerHTML=[...r1,...r1,...r1].map(tile).join('');
-document.getElementById('mrow2').innerHTML=[...r2,...r2,...r2].map(tile).join('');
-
-/* ----- services ----- */
-document.getElementById('svcList').innerHTML=SERVICES.map((s,i)=>`<div class="svc-item fade" style="transition-delay:${i*.08}s">
-  <div class="no">${s[0]}</div><div><div class="nm">${s[1]}</div><div class="ds">${s[2]}</div></div></div>`).join('');
-
-/* ----- projects (sticky stack) ----- */
-document.getElementById('stack').innerHTML=PROJ.map((p,i)=>{
-  const g=grads[p.cat1];
-  const live=p.link==='#'?'<span class="btn-ghost" style="opacity:.5">In production</span>'
-    :`<a href="${p.link}" target="_blank" rel="noopener" class="btn-ghost">Live Project ↗</a>`;
-  return `<div class="card-wrap"><div class="pcard" data-i="${i}">
-    <div class="ptop"><div class="pno hero-heading">${p.no}</div>
-      <div><div class="pcat">${p.cat}</div><div class="pnm">${p.nm}</div><div class="pstat">${p.stat}</div></div>
-      <span class="plive">${live}</span></div>
-    <div class="pgrid">
-      <div class="pcol1">
-        <div class="panel p-a"><div style="position:absolute;inset:0;background:${g}"></div><div class="pl">${p.imgs[0]}</div></div>
-        <div class="panel p-b"><div style="position:absolute;inset:0;background:${g};filter:brightness(.8)"></div><div class="pl">${p.imgs[1]}</div></div>
-      </div>
-      <div class="panel p-c"><div style="position:absolute;inset:0;background:${g};filter:brightness(1.15)"></div><div class="pl">${p.imgs[2]}</div></div>
-    </div></div></div>`;
-}).join('');
-
-/* ----- magnetic portrait ----- */
-(function(){
-  const el=document.getElementById('portrait'); if(!el)return;
-  const pad=150,str=3;
-  addEventListener('mousemove',e=>{
-    const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
-    const inX=Math.abs(e.clientX-cx)<r.width/2+pad, inY=Math.abs(e.clientY-cy)<r.height/2+pad;
-    if(inX&&inY){el.style.transition='transform .3s ease-out';
-      el.style.transform=`translateX(-50%) translate3d(${(e.clientX-cx)/str}px,${(e.clientY-cy)/str}px,0)`;}
-    else{el.style.transition='transform .6s ease-in-out';el.style.transform='translateX(-50%)';}
-  },{passive:true});
-})();
-
-/* ----- scroll marquee + sticky scale ----- */
-const mq=document.getElementById('marquee'),row1=document.getElementById('mrow1'),row2=document.getElementById('mrow2');
-const cards=[...document.querySelectorAll('.pcard')];
-let ticking=false;
-function onScroll(){
-  const off=(scrollY-mq.offsetTop+innerHeight)*0.3;
-  row1.style.transform=`translateX(${off-200}px)`;
-  row2.style.transform=`translateX(${-(off-200)}px)`;
-  const n=cards.length,pin=110;
-  cards.forEach((c,i)=>{
-    const target=1-(n-1-i)*0.04;
-    const next=cards[i+1];
-    if(!next){c.style.transform='scale(1)';return;}
-    const nr=next.getBoundingClientRect();
-    let p=(innerHeight-nr.top)/(innerHeight-pin); p=Math.min(Math.max(p,0),1);
-    c.style.transform=`scale(${(1-(1-target)*p).toFixed(4)})`;
-  });
-  ticking=false;
+const grid=document.getElementById('grid');
+function card(p){
+  const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
+  const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
+  const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')
+    :'<span class="nostore">B2B / internal — not on public stores</span>';
+  return `<article class="pcard" data-cat="${p.cat}">
+    <div class="ptop"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div>
+    <div class="meta">${p.role}</div>${badge}
+    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${links}</div>
+  </article>`;
 }
-addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(onScroll);ticking=true;}},{passive:true});
-addEventListener('resize',onScroll,{passive:true}); onScroll();
+function bind(){ // spotlight + 3D tilt
+  grid.querySelectorAll('.pcard').forEach(c=>{
+    c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();
+      const x=e.clientX-r.left, y=e.clientY-r.top;
+      c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');
+      const rx=(0.5-y/r.height)*13, ry=(x/r.width-0.5)*15;
+      c.style.transition='none';
+      c.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg) scale(1.03)`;});
+    c.addEventListener('mouseleave',()=>{c.style.transition='transform .55s cubic-bezier(.2,.8,.25,1)';c.style.transform='';});
+  });
+}
+function render(cat){grid.innerHTML=PROJECTS.filter(p=>cat==='All'||p.cat===cat).map(card).join('');bind();}
+const fbox=document.getElementById('filters');
+fbox.innerHTML=CATS.map((c,i)=>`<button class="filt ${i===0?'active':''}" data-c="${c}">${c}</button>`).join('');
+fbox.addEventListener('click',e=>{const b=e.target.closest('.filt');if(!b)return;
+  fbox.querySelectorAll('.filt').forEach(x=>x.classList.remove('active'));b.classList.add('active');render(b.dataset.c);});
+render('All');
+document.getElementById('more').innerHTML=MORE.map(m=>`<span class="mpill"><b>${m[0]}</b> <span>— ${m[1]}</span></span>`).join('');
+document.getElementById('yr').textContent=new Date().getFullYear();
 
-/* ----- char-by-char reveal ----- */
+// theme toggle
+const root=document.documentElement, tb=document.getElementById('theme');
+const saved=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+function setTheme(t){root.dataset.theme=t;tb.textContent=t==='dark'?'🌙':'☀️';localStorage.setItem('theme',t);}
+setTheme(saved);
+tb.addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
+
+// 5D: stronger aurora parallax + tilt on stat / skill / about cards
+const aurora=document.querySelector('.aurora');
+function tilt(el,mx,my,tz){
+  el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();
+    const rx=(0.5-(e.clientY-r.top)/r.height)*mx, ry=((e.clientX-r.left)/r.width-0.5)*my;
+    el.style.transition='none';
+    el.style.transform=`perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${tz}px)`;});
+  el.addEventListener('mouseleave',()=>{el.style.transition='transform .5s cubic-bezier(.2,.8,.25,1)';el.style.transform='';});
+}
+document.querySelectorAll('.stat,.skillcard,.about-card').forEach(el=>tilt(el,8,10,8));
+addEventListener('mousemove',e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+  aurora.style.transform=`translate(${x*-42}px,${y*-42}px)`;},{passive:true});
+
+// scroll progress + reveal
+const prog=document.getElementById('prog');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ===== activity heatmap (real GitLab data) =====
+const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":50,"2026-06-03":16,"2026-06-02":33,"2026-06-01":36,"2026-05-31":2,"2026-05-30":1,"2026-05-29":26,"2026-05-28":14,"2026-05-27":47,"2026-05-26":53,"2026-05-25":83,"2026-05-24":8,"2026-05-23":393,"2026-05-22":356,"2026-05-21":216,"2026-05-20":154,"2026-05-19":202,"2026-05-18":390,"2026-05-17":193,"2026-05-16":189,"2026-05-15":119,"2026-05-14":207,"2026-05-13":165,"2026-05-12":97,"2026-05-11":102,"2026-05-10":234,"2026-05-09":163,"2026-05-08":93,"2026-05-07":78,"2026-05-06":71,"2026-05-05":83,"2026-05-04":84,"2026-04-30":52,"2026-04-29":19,"2026-04-28":41,"2026-04-25":1,"2026-04-24":16,"2026-04-23":6,"2026-04-22":11,"2026-04-21":8,"2026-04-20":8,"2026-04-17":7,"2026-04-16":6,"2026-04-15":5,"2026-04-14":10,"2026-04-13":4,"2026-04-10":8,"2026-04-09":5,"2026-04-03":1,"2026-04-02":5,"2026-04-01":7,"2026-03-31":4,"2026-03-30":2,"2026-03-27":5,"2026-03-25":3,"2026-03-23":3,"2026-03-20":1,"2026-03-19":11,"2026-03-18":13,"2026-03-17":7,"2026-03-16":4,"2026-03-13":4,"2026-03-12":1,"2026-03-11":2,"2026-03-10":1,"2026-03-05":2,"2026-02-27":3,"2026-02-26":4,"2026-02-25":2,"2026-02-24":2,"2026-02-23":3,"2026-02-14":1,"2026-02-13":2,"2026-02-12":2,"2026-02-11":6,"2026-02-10":2,"2026-02-09":4,"2026-02-06":3,"2026-02-05":1,"2026-02-04":11,"2026-02-03":4,"2026-02-02":7,"2026-01-30":5,"2026-01-28":1,"2026-01-26":1,"2026-01-23":1,"2026-01-22":3,"2026-01-21":1,"2026-01-20":4,"2026-01-19":2,"2026-01-16":3,"2026-01-15":1,"2026-01-14":6,"2026-01-13":2,"2026-01-09":2,"2026-01-07":1,"2026-01-06":3,"2026-01-05":3,"2026-01-02":1,"2025-12-30":5,"2025-12-29":4,"2025-12-26":8,"2025-12-25":2,"2025-12-23":3,"2025-12-22":1,"2025-12-19":9,"2025-12-18":4,"2025-12-17":6,"2025-12-16":7,"2025-12-15":2,"2025-12-12":3,"2025-12-11":5,"2025-12-10":6,"2025-12-09":4,"2025-12-08":2,"2025-12-05":4,"2025-12-04":1,"2025-12-03":4,"2025-12-02":2,"2025-12-01":2,"2025-11-28":1,"2025-11-26":3,"2025-11-21":1,"2025-11-20":2,"2025-11-18":1,"2025-11-14":1,"2025-11-13":1,"2025-11-12":4,"2025-11-10":4,"2025-10-27":2,"2025-10-20":2,"2025-10-17":2,"2025-10-16":5,"2025-10-15":2,"2025-10-14":16,"2025-10-13":3,"2025-10-10":3,"2025-10-09":3,"2025-10-08":3,"2025-10-07":4,"2025-10-06":5,"2025-10-04":1,"2025-10-03":3,"2025-10-02":3,"2025-10-01":2,"2025-09-30":2,"2025-09-26":4,"2025-09-25":3,"2025-09-24":2,"2025-09-23":5,"2025-09-22":2,"2025-09-19":3,"2025-09-18":2,"2025-09-17":2,"2025-09-16":4,"2025-09-15":2,"2025-09-12":2,"2025-09-11":9,"2025-09-10":8,"2025-09-09":3,"2025-09-08":3,"2025-09-05":10,"2025-09-04":2,"2025-09-03":1,"2025-08-29":2,"2025-08-28":2,"2025-08-27":2,"2025-08-26":1,"2025-08-25":2,"2025-08-22":4,"2025-08-21":3,"2025-08-20":1,"2025-08-19":1,"2025-08-18":1,"2025-08-15":2,"2025-08-14":6,"2025-08-13":3,"2025-08-12":4,"2025-08-11":3,"2025-08-10":1,"2025-08-09":2,"2025-08-08":3,"2025-08-07":10,"2025-08-06":1,"2025-08-05":4,"2025-08-04":7,"2025-08-01":2,"2025-07-31":3,"2025-07-29":2,"2025-07-28":3,"2025-07-25":3,"2025-07-24":5,"2025-07-23":4,"2025-07-22":1,"2025-07-21":1,"2025-07-18":2,"2025-07-17":3,"2025-07-16":2,"2025-07-15":2,"2025-07-14":2,"2025-07-12":4,"2025-07-11":4,"2025-07-10":4,"2025-07-09":2,"2025-07-08":1,"2025-07-07":1,"2025-07-06":2,"2025-07-04":1,"2025-07-03":2,"2025-07-02":1,"2025-07-01":2,"2025-06-30":1,"2025-06-29":1,"2025-06-27":1,"2025-06-26":1,"2025-06-25":3,"2025-06-24":4,"2025-06-23":3,"2025-06-22":1,"2025-06-20":3,"2025-06-19":3,"2025-06-18":2,"2025-06-17":2,"2025-06-16":2,"2025-06-15":1,"2025-06-13":4,"2025-06-12":1,"2025-06-11":4,"2025-06-10":3,"2025-06-09":3},"total":4811,"activeDays":233,"busiest":["2026-05-23",393],"first":"2025-06-09","last":"2026-06-09"};
 (function(){
-  const p=document.getElementById('aboutText'),txt=p.textContent.trim();
-  p.innerHTML=[...txt].map(ch=>`<span style="color:rgba(215,226,200,.2)">${ch===' '?'&nbsp;':ch}</span>`).join('');
-  const spans=[...p.querySelectorAll('span')];
-  function upd(){
-    const r=p.getBoundingClientRect();
-    const prog=(innerHeight*0.8-r.top)/(r.height+innerHeight*0.55);
-    const lit=Math.floor(Math.min(Math.max(prog,0),1)*spans.length);
-    spans.forEach((s,i)=>s.style.color=i<lit?'#d7e2ea':'rgba(215,226,200,.2)');
+  const data=ACT.data;
+  const pad=n=>(n<10?'0':'')+n, iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const lvl=c=>c===0?'':c<=3?'l1':c<=9?'l2':c<=25?'l3':'l4';
+  const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const end=new Date();end.setHours(0,0,0,0);
+  const start=new Date(end);start.setDate(start.getDate()-363);
+  while(start.getDay()!==1)start.setDate(start.getDate()-1);
+  let cells='',spans=[],ncols=0,cur=-1,d=new Date(start);
+  while(d<=end){
+    ncols++; const m=d.getMonth();
+    if(m!==cur){cur=m;spans.push('<span style="grid-column:'+ncols+'">'+MN[m]+'</span>');}
+    for(let i=0;i<7;i++){
+      const k=iso(d),c=data[k]||0,fut=d>end?' fut':'';
+      const t=fut?'':c+' contribution'+(c!==1?'s':'')+' · '+k;
+      cells+='<div class="hc '+lvl(c)+fut+'" title="'+t+'"></div>';
+      d.setDate(d.getDate()+1);
+    }
   }
-  addEventListener('scroll',upd,{passive:true});upd();
+  const mEl=document.getElementById('heatMonths');
+  mEl.style.gridTemplateColumns='repeat('+ncols+',13px)';
+  mEl.innerHTML=spans.join('');
+  document.getElementById('heatGrid').innerHTML=cells;
+  document.getElementById('heatSub').innerHTML='<b>'+ACT.total.toLocaleString()+'</b> contributions in the last year · <b>'+ACT.activeDays+'</b> active days';
+  const bd=new Date(ACT.busiest[0]+'T00:00:00');
+  document.getElementById('heatBusy').textContent='Busiest day: '+ACT.busiest[1]+' on '+MN[bd.getMonth()]+' '+bd.getDate()+', '+bd.getFullYear();
 })();
-
-/* ----- fade-in on view ----- */
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target);}}),{threshold:.05,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.fade').forEach(el=>io.observe(el));
 </script>
 </body>
 </html>
