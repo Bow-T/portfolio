@@ -315,6 +315,7 @@
     <div class="navlinks">
       <a class="lnk" href="#about">About</a>
       <a class="lnk" href="#play">Play</a>
+      <a class="lnk" href="game.html" title="Offline runner game">🎮 Game</a>
       <a class="lnk" href="#skills">Skills</a>
       <a class="lnk" href="#work">Work</a>
       <a class="lnk" href="#experience">Experience</a>
@@ -832,6 +833,8 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
 
     console.log('%cpsst… there is a /secret page. also: press L, or type "bow" / "flutter" / "rain".','color:#728668;font-size:12px');
 })();
+
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
