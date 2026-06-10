@@ -1,5 +1,5 @@
 // Bow portfolio — offline cache + "no internet" game fallback
-const CACHE = 'bow-portfolio-v1';
+const CACHE = 'bow-portfolio-v2';
 const PRECACHE = ['./', './index.html', './game.html', './resume.html', './secret.html'];
 
 self.addEventListener('install', e => {
