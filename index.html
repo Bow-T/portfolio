@@ -225,6 +225,28 @@
   .pcard:hover .ptech{transform:translateZ(28px);}
   .pcard:hover .plinks{transform:translateZ(38px);}
   .stat,.skillcard,.about-card{will-change:transform;}
+
+  /* ===== playground / mini-game ===== */
+  .pz-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;}
+  .pz-score{font-weight:600;font-size:14.5px;color:var(--muted);} .pz-score b{color:var(--g2);font-size:18px;}
+  #playzone{position:relative;height:clamp(360px,52vw,470px);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    background:radial-gradient(130% 90% at 50% 130%,var(--chip),transparent),var(--bg2);touch-action:none;}
+  .pz-target{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:clamp(150px,42%,250px);height:62px;
+    border:2px dashed var(--g2);border-radius:16px;display:grid;place-items:center;color:var(--g2);font-weight:700;
+    text-transform:uppercase;letter-spacing:.1em;font-size:12.5px;background:color-mix(in srgb,var(--g2) 7%,transparent);
+    pointer-events:none;transition:background .15s,box-shadow .15s;}
+  .pz-target.hot{background:color-mix(in srgb,var(--g2) 24%,transparent);box-shadow:0 0 34px color-mix(in srgb,var(--g2) 45%,transparent);}
+  .bub{position:absolute;top:0;left:0;width:74px;height:74px;cursor:grab;touch-action:none;will-change:transform;}
+  .bub:active{cursor:grabbing;}
+  .bub-in{width:100%;height:100%;border-radius:18px;display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:11px;font-weight:700;color:#06210a;padding:6px;line-height:1.12;box-shadow:0 6px 16px rgba(0,0,0,.32);user-select:none;}
+  .bub.ship .bub-in{animation:ship .5s forwards;}
+  @keyframes ship{60%{transform:scale(1.25);}100%{transform:scale(.15) translateY(-50px);opacity:0;}}
+  .pz-hint{font-size:12.5px;color:var(--soft);margin-top:10px;text-align:center;}
+  .pz-win{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;
+    font-size:clamp(20px,4vw,32px);font-weight:800;color:var(--g2);background:color-mix(in srgb,var(--bg) 72%,transparent);
+    backdrop-filter:blur(2px);animation:fadeup .4s;}
+  @keyframes fadeup{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 </style>
 </head>
 <body>
@@ -240,6 +262,7 @@
       <a class="lnk" href="#work">Work</a>
       <a class="lnk" href="#experience">Experience</a>
       <a class="lnk" href="#activity">Activity</a>
+      <a class="lnk" href="#play">Play</a>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
       <a href="#contact" class="btn">Say hi</a>
     </div>
@@ -334,6 +357,20 @@
       <h4>+ more apps I've built</h4>
       <div class="morewrap" id="more"></div>
     </div>
+  </div>
+</section>
+
+<section id="play">
+  <div class="wrap reveal">
+    <div class="eyebrow gtext">// playground</div>
+    <h2 class="sec">Ship my apps 🚀</h2>
+    <p class="sec-sub">A tiny game, just for fun: grab an app bubble and fling it up into the store. They bounce, collide, and ship.</p>
+    <div class="pz-head">
+      <div class="pz-score">Shipped: <b id="pzN">0</b> / <span id="pzT">0</span></div>
+      <button class="btn ghost" id="pzReset">↺ Reset</button>
+    </div>
+    <div id="playzone"><div class="pz-target" id="pzTarget">🚀 Ship to store</div></div>
+    <div class="pz-hint">Drag &amp; throw the app bubbles &mdash; fling them into the store zone at the top.</div>
   </div>
 </section>
 
@@ -551,6 +588,85 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   document.getElementById('heatSub').innerHTML='<b>'+ACT.total.toLocaleString()+'</b> contributions in the last year · <b>'+ACT.activeDays+'</b> active days';
   const bd=new Date(ACT.busiest[0]+'T00:00:00');
   document.getElementById('heatBusy').textContent='Busiest day: '+ACT.busiest[1]+' on '+MN[bd.getMonth()]+' '+bd.getDate()+', '+bd.getFullYear();
+})();
+
+// ===== playground mini-game: fling apps into the store =====
+(function(){
+  const zone=document.getElementById('playzone'); if(!zone) return;
+  const target=document.getElementById('pzTarget');
+  const GAPPS=[['Ynstant','Mobility'],['SecuMap','Safety'],['KEYM','Social'],['Carter','Sports'],['Spaurt','Sports'],
+    ['ProtectU','Safety'],['Octopush','Social'],['Mentalia','Health'],['Nila Sphere','Lifestyle'],['Docteur Sirop','Health'],
+    ['Beauty Squad','Market'],['Octopus','Mobility'],['UAVLog','Other'],['Arage','Lifestyle']];
+  const G={Mobility:'linear-gradient(135deg,#bef264,#84cc16)',Safety:'linear-gradient(135deg,#a3e635,#4ade80)',
+    Health:'linear-gradient(135deg,#5eead4,#2dd4bf)',Sports:'linear-gradient(135deg,#d9f99d,#a3e635)',
+    Social:'linear-gradient(135deg,#86efac,#22c55e)',Market:'linear-gradient(135deg,#bef264,#22c55e)',
+    Lifestyle:'linear-gradient(135deg,#99f6e4,#2dd4bf)',Other:'linear-gradient(135deg,#bef264,#2dd4bf)'};
+  const R=37, SZ=74, GRAV=0.42, REST=0.72, FR=0.992, GFR=0.86;
+  let W=zone.clientWidth,H=zone.clientHeight,items=[],raf=0,started=false;
+  const pzN=document.getElementById('pzN'),pzT=document.getElementById('pzT');
+  function spawn(){
+    cancelAnimationFrame(raf);
+    zone.querySelectorAll('.bub,.pz-win').forEach(b=>b.remove());
+    W=zone.clientWidth;H=zone.clientHeight;
+    items=GAPPS.map((a)=>{
+      const el=document.createElement('div'); el.className='bub';
+      el.innerHTML='<div class="bub-in" style="background:'+(G[a[1]]||G.Other)+'">'+a[0]+'</div>';
+      zone.appendChild(el);
+      const it={el,x:20+Math.random()*(W-SZ-20),y:H-SZ-10-Math.random()*120,
+        vx:(Math.random()-.5)*5,vy:-2-Math.random()*4,shipped:false,drag:false};
+      drag(it); return it;
+    });
+    pzT.textContent=GAPPS.length; pzN.textContent='0';
+    raf=requestAnimationFrame(loop);
+  }
+  function drag(it){
+    let lx,ly;
+    it.el.addEventListener('pointerdown',e=>{e.preventDefault();it.drag=true;it.vx=it.vy=0;
+      try{it.el.setPointerCapture(e.pointerId);}catch(_){} lx=e.clientX;ly=e.clientY;});
+    it.el.addEventListener('pointermove',e=>{if(!it.drag)return;const r=zone.getBoundingClientRect();
+      it.x=e.clientX-r.left-R;it.y=e.clientY-r.top-R;
+      it.vx=(e.clientX-lx)*0.9;it.vy=(e.clientY-ly)*0.9;lx=e.clientX;ly=e.clientY;
+      it.el.style.transform='translate('+it.x+'px,'+it.y+'px)';});
+    const up=()=>{it.drag=false;}; it.el.addEventListener('pointerup',up);it.el.addEventListener('pointercancel',up);
+  }
+  function inTarget(it){const tr=target.getBoundingClientRect(),zr=zone.getBoundingClientRect();
+    const tx=tr.left-zr.left,ty=tr.top-zr.top,cx=it.x+R,cy=it.y+R;
+    return cx>tx&&cx<tx+tr.width&&cy>ty&&cy<ty+tr.height;}
+  function loop(){
+    let hot=false;
+    for(const it of items){
+      if(it.shipped) continue;
+      if(!it.drag){
+        it.vy+=GRAV; it.x+=it.vx; it.y+=it.vy; it.vx*=FR; it.vy*=FR;
+        if(it.x<0){it.x=0;it.vx=-it.vx*REST;} if(it.x>W-SZ){it.x=W-SZ;it.vx=-it.vx*REST;}
+        if(it.y<0){it.y=0;it.vy=-it.vy*REST;}
+        if(it.y>H-SZ){it.y=H-SZ;it.vy=-it.vy*REST;it.vx*=GFR;}
+      }
+      if(inTarget(it)){ hot=true;
+        if(!it.drag){it.shipped=true;it.el.classList.add('ship');setTimeout(()=>it.el.remove(),520);
+          pzN.textContent=items.filter(i=>i.shipped).length; win();}
+      }
+    }
+    for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
+      const a=items[i],b=items[j]; if(a.shipped||b.shipped)continue;
+      const ax=a.x+R,ay=a.y+R,bx=b.x+R,by=b.y+R; let dx=bx-ax,dy=by-ay,d=Math.hypot(dx,dy)||.01;
+      if(d<2*R){const ov=(2*R-d)/2,nx=dx/d,ny=dy/d;
+        if(!a.drag){a.x-=nx*ov;a.y-=ny*ov;} if(!b.drag){b.x+=nx*ov;b.y+=ny*ov;}
+        const p=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
+        if(p<0){if(!a.drag){a.vx+=p*nx;a.vy+=p*ny;} if(!b.drag){b.vx-=p*nx;b.vy-=p*ny;}}}
+    }
+    target.classList.toggle('hot',hot);
+    for(const it of items) if(!it.shipped&&!it.drag) it.el.style.transform='translate('+it.x+'px,'+it.y+'px)';
+    raf=requestAnimationFrame(loop);
+  }
+  let won=false;
+  function win(){ if(won)return; if(items.every(i=>i.shipped)){won=true;
+    const m=document.createElement('div');m.className='pz-win';
+    m.innerHTML='🎉 All '+GAPPS.length+' apps shipped!<br><span style="font-size:14px;color:var(--muted);font-weight:500">you\'d make a great PM 😄</span>';
+    zone.appendChild(m);} }
+  document.getElementById('pzReset').addEventListener('click',()=>{won=false;spawn();});
+  addEventListener('resize',()=>{W=zone.clientWidth;H=zone.clientHeight;});
+  new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!started){started=true;spawn();}}),{threshold:.2}).observe(zone);
 })();
 </script>
 </body>
