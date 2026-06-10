@@ -193,6 +193,30 @@
     .contact-card{padding:34px 22px;}
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;}}
+
+  /* activity heatmap */
+  :root,[data-theme="dark"]{--l0:#172a14;--l1:#365e1c;--l2:#5a9216;--l3:#84cc16;--l4:#bef264;}
+  [data-theme="light"]{--l0:#e9f1df;--l1:#c2e79b;--l2:#94d152;--l3:#5fa61c;--l4:#3f7a10;}
+  #activity .hcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 22px 16px;box-shadow:var(--shadow);}
+  .heat-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:16px;}
+  .heat-top .h{font-weight:700;font-size:15px;}
+  .heat-top .h b{font-weight:800;}
+  .heat-top .sub{font-size:12.5px;color:var(--muted);}
+  .heat-scroll{overflow-x:auto;padding-bottom:4px;}
+  .heat-inner{display:inline-block;}
+  .heat-months{display:grid;gap:3px;margin-left:34px;font-size:10.5px;color:var(--soft);margin-bottom:6px;}
+  .heat-months span{white-space:nowrap;}
+  .heat-body{display:flex;gap:6px;}
+  .heat-days{display:grid;grid-template-rows:repeat(7,13px);gap:3px;font-size:9.5px;color:var(--soft);width:28px;}
+  .heat-days span{height:13px;line-height:13px;}
+  .heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;}
+  .hc{width:13px;height:13px;border-radius:3px;background:var(--l0);transition:transform .1s;}
+  .hc:hover{transform:scale(1.35);outline:1px solid var(--g2);}
+  .hc.l1{background:var(--l1);}.hc.l2{background:var(--l2);}.hc.l3{background:var(--l3);}.hc.l4{background:var(--l4);}
+  .hc.fut{opacity:0;pointer-events:none;}
+  .heat-legend{display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:12px;font-size:11.5px;color:var(--soft);}
+  .heat-legend .hc{width:11px;height:11px;}
+  .heat-legend .hc:hover{transform:none;outline:none;}
 </style>
 </head>
 <body>
@@ -207,6 +231,7 @@
       <a class="lnk" href="#skills">Skills</a>
       <a class="lnk" href="#work">Work</a>
       <a class="lnk" href="#experience">Experience</a>
+      <a class="lnk" href="#activity">Activity</a>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
       <a href="#contact" class="btn">Say hi</a>
     </div>
@@ -459,6 +484,36 @@ const prog=document.getElementById('prog');
 addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
 const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ===== activity heatmap (real GitLab data) =====
+const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":50,"2026-06-03":16,"2026-06-02":33,"2026-06-01":36,"2026-05-31":2,"2026-05-30":1,"2026-05-29":26,"2026-05-28":14,"2026-05-27":47,"2026-05-26":53,"2026-05-25":83,"2026-05-24":8,"2026-05-23":393,"2026-05-22":356,"2026-05-21":216,"2026-05-20":154,"2026-05-19":202,"2026-05-18":390,"2026-05-17":193,"2026-05-16":189,"2026-05-15":119,"2026-05-14":207,"2026-05-13":165,"2026-05-12":97,"2026-05-11":102,"2026-05-10":234,"2026-05-09":163,"2026-05-08":93,"2026-05-07":78,"2026-05-06":71,"2026-05-05":83,"2026-05-04":84,"2026-04-30":52,"2026-04-29":19,"2026-04-28":41,"2026-04-25":1,"2026-04-24":16,"2026-04-23":6,"2026-04-22":11,"2026-04-21":8,"2026-04-20":8,"2026-04-17":7,"2026-04-16":6,"2026-04-15":5,"2026-04-14":10,"2026-04-13":4,"2026-04-10":8,"2026-04-09":5,"2026-04-03":1,"2026-04-02":5,"2026-04-01":7,"2026-03-31":4,"2026-03-30":2,"2026-03-27":5,"2026-03-25":3,"2026-03-23":3,"2026-03-20":1,"2026-03-19":11,"2026-03-18":13,"2026-03-17":7,"2026-03-16":4,"2026-03-13":4,"2026-03-12":1,"2026-03-11":2,"2026-03-10":1,"2026-03-05":2,"2026-02-27":3,"2026-02-26":4,"2026-02-25":2,"2026-02-24":2,"2026-02-23":3,"2026-02-14":1,"2026-02-13":2,"2026-02-12":2,"2026-02-11":6,"2026-02-10":2,"2026-02-09":4,"2026-02-06":3,"2026-02-05":1,"2026-02-04":11,"2026-02-03":4,"2026-02-02":7,"2026-01-30":5,"2026-01-28":1,"2026-01-26":1,"2026-01-23":1,"2026-01-22":3,"2026-01-21":1,"2026-01-20":4,"2026-01-19":2,"2026-01-16":3,"2026-01-15":1,"2026-01-14":6,"2026-01-13":2,"2026-01-09":2,"2026-01-07":1,"2026-01-06":3,"2026-01-05":3,"2026-01-02":1,"2025-12-30":5,"2025-12-29":4,"2025-12-26":8,"2025-12-25":2,"2025-12-23":3,"2025-12-22":1,"2025-12-19":9,"2025-12-18":4,"2025-12-17":6,"2025-12-16":7,"2025-12-15":2,"2025-12-12":3,"2025-12-11":5,"2025-12-10":6,"2025-12-09":4,"2025-12-08":2,"2025-12-05":4,"2025-12-04":1,"2025-12-03":4,"2025-12-02":2,"2025-12-01":2,"2025-11-28":1,"2025-11-26":3,"2025-11-21":1,"2025-11-20":2,"2025-11-18":1,"2025-11-14":1,"2025-11-13":1,"2025-11-12":4,"2025-11-10":4,"2025-10-27":2,"2025-10-20":2,"2025-10-17":2,"2025-10-16":5,"2025-10-15":2,"2025-10-14":16,"2025-10-13":3,"2025-10-10":3,"2025-10-09":3,"2025-10-08":3,"2025-10-07":4,"2025-10-06":5,"2025-10-04":1,"2025-10-03":3,"2025-10-02":3,"2025-10-01":2,"2025-09-30":2,"2025-09-26":4,"2025-09-25":3,"2025-09-24":2,"2025-09-23":5,"2025-09-22":2,"2025-09-19":3,"2025-09-18":2,"2025-09-17":2,"2025-09-16":4,"2025-09-15":2,"2025-09-12":2,"2025-09-11":9,"2025-09-10":8,"2025-09-09":3,"2025-09-08":3,"2025-09-05":10,"2025-09-04":2,"2025-09-03":1,"2025-08-29":2,"2025-08-28":2,"2025-08-27":2,"2025-08-26":1,"2025-08-25":2,"2025-08-22":4,"2025-08-21":3,"2025-08-20":1,"2025-08-19":1,"2025-08-18":1,"2025-08-15":2,"2025-08-14":6,"2025-08-13":3,"2025-08-12":4,"2025-08-11":3,"2025-08-10":1,"2025-08-09":2,"2025-08-08":3,"2025-08-07":10,"2025-08-06":1,"2025-08-05":4,"2025-08-04":7,"2025-08-01":2,"2025-07-31":3,"2025-07-29":2,"2025-07-28":3,"2025-07-25":3,"2025-07-24":5,"2025-07-23":4,"2025-07-22":1,"2025-07-21":1,"2025-07-18":2,"2025-07-17":3,"2025-07-16":2,"2025-07-15":2,"2025-07-14":2,"2025-07-12":4,"2025-07-11":4,"2025-07-10":4,"2025-07-09":2,"2025-07-08":1,"2025-07-07":1,"2025-07-06":2,"2025-07-04":1,"2025-07-03":2,"2025-07-02":1,"2025-07-01":2,"2025-06-30":1,"2025-06-29":1,"2025-06-27":1,"2025-06-26":1,"2025-06-25":3,"2025-06-24":4,"2025-06-23":3,"2025-06-22":1,"2025-06-20":3,"2025-06-19":3,"2025-06-18":2,"2025-06-17":2,"2025-06-16":2,"2025-06-15":1,"2025-06-13":4,"2025-06-12":1,"2025-06-11":4,"2025-06-10":3,"2025-06-09":3},"total":4811,"activeDays":233,"busiest":["2026-05-23",393],"first":"2025-06-09","last":"2026-06-09"};
+(function(){
+  const data=ACT.data;
+  const pad=n=>(n<10?'0':'')+n, iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const lvl=c=>c===0?'':c<=3?'l1':c<=9?'l2':c<=25?'l3':'l4';
+  const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const end=new Date();end.setHours(0,0,0,0);
+  const start=new Date(end);start.setDate(start.getDate()-363);
+  while(start.getDay()!==1)start.setDate(start.getDate()-1);
+  let cells='',spans=[],ncols=0,cur=-1,d=new Date(start);
+  while(d<=end){
+    ncols++; const m=d.getMonth();
+    if(m!==cur){cur=m;spans.push('<span style="grid-column:'+ncols+'">'+MN[m]+'</span>');}
+    for(let i=0;i<7;i++){
+      const k=iso(d),c=data[k]||0,fut=d>end?' fut':'';
+      const t=fut?'':c+' contribution'+(c!==1?'s':'')+' · '+k;
+      cells+='<div class="hc '+lvl(c)+fut+'" title="'+t+'"></div>';
+      d.setDate(d.getDate()+1);
+    }
+  }
+  const mEl=document.getElementById('heatMonths');
+  mEl.style.gridTemplateColumns='repeat('+ncols+',13px)';
+  mEl.innerHTML=spans.join('');
+  document.getElementById('heatGrid').innerHTML=cells;
+  document.getElementById('heatSub').innerHTML='<b>'+ACT.total.toLocaleString()+'</b> contributions in the last year · <b>'+ACT.activeDays+'</b> active days';
+  const bd=new Date(ACT.busiest[0]+'T00:00:00');
+  document.getElementById('heatBusy').textContent='Busiest day: '+ACT.busiest[1]+' on '+MN[bd.getMonth()]+' '+bd.getDate()+', '+bd.getFullYear();
+})();
 </script>
 </body>
 </html>
