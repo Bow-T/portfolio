@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuan Nguyen — Flutter / Mobile Developer · CV</title>
+<style>
+  :root{
+    --accent:#0b6e7a; --accent2:#0d8b9a; --ink:#1f2933; --muted:#5b6770;
+    --line:#e1e6ea; --soft:#f7f9fa; --gold:#b8860b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);line-height:1.5;font-size:13px;background:#eef1f3;}
+  .page{max-width:880px;margin:24px auto;background:#fff;padding:44px 52px 50px;
+    box-shadow:0 2px 22px rgba(0,0,0,.09);border-radius:6px;}
+  header{border-bottom:3px solid var(--accent);padding-bottom:16px;margin-bottom:18px;}
+  h1{font-size:31px;margin:0;letter-spacing:.3px;font-weight:700;}
+  .role{font-size:14px;color:var(--accent);font-weight:600;margin-top:3px;letter-spacing:.5px;text-transform:uppercase;}
+  .contact{margin-top:12px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:5px 16px;}
+  .contact a{color:var(--muted);text-decoration:none;}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1.4px;color:var(--accent);
+    margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line);font-weight:700;}
+  h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent2);margin:16px 0 8px;font-weight:700;}
+  p{margin:0 0 8px;} .summary{font-size:13px;}
+  strong{color:var(--ink);}
+  table.skills{width:100%;border-collapse:collapse;}
+  table.skills td{vertical-align:top;padding:4px 0;border-bottom:1px solid var(--line);font-size:12px;}
+  table.skills td.k{width:140px;font-weight:600;color:var(--accent);padding-right:14px;}
+  .job-title{font-weight:700;font-size:14px;} .job-meta{color:var(--muted);font-size:11.5px;font-style:italic;margin:1px 0 8px;}
+  ul{margin:6px 0 4px;padding-left:18px;} li{margin:0 0 6px;}
+  .proj{margin:0 0 12px;padding:10px 12px;background:var(--soft);border-left:3px solid var(--accent);border-radius:0 5px 5px 0;}
+  .proj.star{border-left-color:var(--gold);background:#fbf8ef;}
+  .proj .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;}
+  .proj .pt{font-weight:700;font-size:13.5px;}
+  .proj .role{font-size:11px;color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;}
+  .proj .stores{font-size:11px;margin-top:2px;}
+  .proj .stores a{color:var(--accent);text-decoration:none;font-weight:600;}
+  .tag{display:inline-block;background:var(--gold);color:#fff;font-size:10px;font-weight:700;
+    padding:1px 7px;border-radius:10px;letter-spacing:.3px;}
+  .tag.lite{background:#e8eef0;color:var(--accent);}
+  .proj .pd{margin:5px 0 4px;font-size:12.5px;}
+  .proj .tech{font-size:11.5px;color:var(--muted);}
+  .proj .tech b{color:var(--accent2);}
+  .ph{color:#a23;}
+  footer{margin-top:22px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;color:#9aa3ab;}
+  @media print{
+    body{background:#fff;font-size:11px;} .page{box-shadow:none;margin:0;max-width:none;border-radius:0;padding:16px 24px;}
+    .proj{break-inside:avoid;} h2{margin-top:14px;} a{color:var(--muted);}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Tuan Nguyen</h1>
+    <div class="role">Flutter / Mobile Application Developer</div>
+    <div class="contact">
+      <span>📧 <a href="mailto:nguyenvantuan4034@gmail.com">nguyenvantuan4034@gmail.com</a></span>
+      <span>📱 +84 987 620 174</span>
+      <span>📍 Da Nang, Vietnam</span>
+      <span>🔗 <a href="https://www.linkedin.com/in/maengseojin/">linkedin.com/in/maengseojin</a></span>
+      <span>💻 <a href="https://github.com/Bow-T">github.com/Bow-T</a></span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Professional Summary</h2>
+    <p class="summary">Flutter / Mobile Application Developer with <strong>6+ years of experience</strong> (since 2020) designing, building and shipping <strong>production mobile apps end-to-end</strong> — from architecture and UI to backend integration, payments, CI/CD and store release. Lead or sole developer on <strong>30+ Flutter applications</strong>, several <strong>live on the App Store and Google Play</strong> — including a <strong>carpooling app with ~37,000 App Store ratings (4.9★)</strong> and a <strong>safety app with 10,000+ downloads and national press</strong> — across ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, dating, music, sports, events and drone logging. <strong>Authored the company's shared Flutter base architecture</strong> that 20+ client apps are built on. Strong at integrating Flutter apps with <strong>Firebase</strong> and <strong>Supabase</strong> backends and <strong>Stripe</strong> payments, and delivering <strong>multilingual (EN/FR)</strong>, real-time, payment-enabled apps for iOS and Android.</p>
+  </section>
+
+  <section>
+    <h2>Core Technical Skills</h2>
+    <table class="skills">
+      <tr><td class="k">Languages</td><td>Dart (primary), TypeScript, JavaScript, SQL, Kotlin &amp; Swift (platform channels), C/C++ (FFI)</td></tr>
+      <tr><td class="k">Mobile</td><td>Flutter (iOS &amp; Android), Material/Cupertino, responsive &amp; adaptive UI, custom animations (Lottie, animate_do), platform channels, push &amp; local notifications; React Native (cross-platform)</td></tr>
+      <tr><td class="k">State / Arch</td><td>MVVM (BaseViewModel + page mixins), Clean Architecture, MVC, MVP, modular monorepo; Provider, GetX, BLoC, Stacked; DI (get_it, injectable); codegen (build_runner, json_serializable, auto_route, intl_utils)</td></tr>
+      <tr><td class="k">Networking</td><td>dio + retrofit, REST, interceptors / smart retry; WebSocket / Socket.IO</td></tr>
+      <tr><td class="k">Realtime / Comms</td><td>Agora (RTC/RTM/Chat), WebRTC (ConnectyCube), SignalR, Socket.IO, OpenAI Realtime (voice/WebRTC)</td></tr>
+      <tr><td class="k">Backend (integration)</td><td>Firebase (Auth, Firestore, Storage, Messaging, Dynamic Links, Analytics), Supabase (Postgres, Row-Level Security, Edge Functions), REST API integration</td></tr>
+      <tr><td class="k">Maps &amp; Location</td><td>Google Maps, geolocator, geocoding, marker clustering, static maps, maps_toolkit</td></tr>
+      <tr><td class="k">Payments</td><td>Stripe (flutter_stripe), RevenueCat subscriptions (purchases_flutter), PayPal, in-app review</td></tr>
+      <tr><td class="k">AI / Media</td><td>OpenAI realtime voice assistant, speech-to-text / TTS, Unity 3D embed; camerawesome, image/video pickers &amp; editors, just_audio, audio_waveforms, video_player/chewie</td></tr>
+      <tr><td class="k">Auth</td><td>Email/OTP, Google, Apple, Facebook Sign-In, Firebase Auth, secure storage</td></tr>
+      <tr><td class="k">i18n &amp; Growth</td><td>intl / intl_utils (ARB) — full EN/FR localization; AppsFlyer, Firebase Analytics, Branch &amp; Dynamic Links, Facebook/TikTok event SDKs</td></tr>
+      <tr><td class="k">Tooling / DevOps</td><td>Git &amp; GitLab/GitHub CI/CD, Fastlane, FVM, Figma, Jira, Trello, Conventional Commits, App Store Connect &amp; Google Play Console</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Professional Experience</h2>
+    <div class="job-title">Flutter / Mobile Developer — Digital Unicorn</div>
+    <div class="job-meta">2022 – Present · Mobile app &amp; web agency (France / Vietnam)</div>
+    <ul>
+      <li><strong>Lead developer of the DUOCT "Octopus" super-app</strong> — a multi-service platform (ride booking, multi-category express delivery, courier dispatch) built as a <strong>Flutter + Next.js + Supabase</strong> monorepo with Stripe payments and Row-Level-Security multi-tenant data isolation.</li>
+      <li><strong>Sole or lead developer on 25+ production Flutter apps</strong>, several <strong>published to the App Store &amp; Google Play</strong> — including <strong>SecuMap (10,000+ downloads, covered by French national press)</strong>, ProtectU, Octopush, Carter, Nila Sphere, Docteur Sirop and Mentalia.</li>
+      <li><strong>Authored and maintained the company's shared Flutter base architecture / starter template</strong> (MVVM BaseViewModel + page mixins, shared models/services/theme/i18n package, auto_route + Provider + get_it, build_runner codegen) — adopted by <strong>20+ client apps</strong>, turning weeks of project setup into a same-day start and standardizing engineering quality across the company.</li>
+      <li><strong>Integrated advanced, varied capabilities</strong>: real-time location &amp; messaging (SignalR, Socket.IO, Agora), AI voice assistants (OpenAI Realtime + Unity 3D), Stripe / PayPal / RevenueCat monetization, crowd-sourced mapping.</li>
+      <li><strong>Delivered full EN/FR localization</strong> and store-compliant builds (ATT, permissions, privacy) for French and international markets.</li>
+      <li><strong>Owned end-to-end delivery</strong>: Jira requirements → Flutter UI → backend integration (Firebase / Supabase) → CI/CD (Fastlane) → store submission.</li>
+    </ul>
+    <div class="job-title">Flutter Developer — Freelance / Independent</div>
+    <div class="job-meta">2020 – 2022</div>
+    <ul>
+      <li>Built mobile apps as <strong>independent projects</strong> before joining Digital Unicorn — including a <strong>medical / clinic management app</strong> — plus a range of Flutter prototypes, while establishing the <strong>MVVM base architecture</strong> later reused at scale.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Selected Projects</h2>
+
+    <h3>🚩 Flagship platform</h3>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Octopus / DUOCT — Multi-service super-app</span> <span class="role">Lead Mobile Developer · 2026 – Present</span></div>
+      <div class="pd">Multi-service super-app with separate <strong>customer and driver/partner apps</strong>: ride/trip booking, multi-category <strong>express delivery</strong> (food, flowers, high-tech, home services) and courier order handling. Drivers get onboarding (documents, vehicle info), trip &amp; order handling and <strong>earnings dashboards with weekly payouts</strong>; customers get category search, delivery estimates/offers, in-app payments &amp; receipts, <strong>premium subscriptions</strong> and partner applications.</div>
+      <div class="tech"><b>Tech:</b> Flutter · auto_route, Provider, get_it · supabase_flutter · flutter_stripe + RevenueCat · flutter_map + geolocator + latlong2 (live tracking) · Firebase Messaging · camerawesome · AppsFlyer · custom in-house OCR package · intl (EN/FR) · Next.js / React / TypeScript admin.</div>
+    </div>
+
+    <h3>🏗️ Foundation &amp; architecture</h3>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Digital Unicorn Flutter Base — In-house starter &amp; architecture</span> <span class="role">Author &amp; Maintainer · 2022 – Present</span></div>
+      <div class="pd">The company's shared Flutter foundation that <strong>every new client app is forked from</strong>. Established the MVVM scaffold (BaseViewModel + page mixins), a shared package for models/services/theme/localization, and pre-wired layers for networking, auth, navigation, i18n, push, analytics, monetization and CI — turning new-project setup from weeks into a same-day bootstrap, and standardizing engineering quality across <strong>20+ apps (2022 → 2026)</strong>.</div>
+      <div class="tech"><b>Tech:</b> Flutter · auto_route · Provider · get_it · dio + retrofit + dio_smart_retry · json_serializable + build_runner · intl_utils (EN/FR) · Firebase · AppsFlyer · RevenueCat · SignalR.</div>
+    </div>
+
+    <h3>📱 Published apps — live on the App Store &amp; Google Play</h3>
+
+    <div class="proj star">
+      <div class="top"><span class="pt">Ynstant — Carpooling / ridesharing app</span> <span class="role">Flutter Developer · 2023</span> <span class="tag">★ 500,000+ downloads · 37,000 App Store ratings (4.9★)</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/us/app/ynstant-carpooling/id1610500828">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=dev.ynstant.moove">Google Play</a></div>
+      <div class="pd">France-focused daily carpooling for weekend getaways and holidays with <strong>0% service fees</strong>: drivers post a ride in under 30 seconds and get bookings from verified passengers, while passengers book instantly or set alerts for matching rides — with in-app messaging and automatic distance-based pricing. The most-rated app in this portfolio.</div>
+      <div class="tech"><b>Tech:</b> Flutter (iOS &amp; Android) · Google Maps + geolocation · real-time ride matching · in-app messaging · payments.</div>
+    </div>
+
+    <div class="proj star">
+      <div class="top"><span class="pt">SecuMap — Safety navigation app</span> <span class="role">Sole Developer · 2023 – 2025</span> <span class="tag">★ 10,000+ downloads · national press (Le JDD)</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/fr/app/secumap/id6447151691">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.du.secumap">Google Play</a></div>
+      <div class="pd">Free French safety-GPS to walk safely across France: a <strong>real-time interactive map</strong> crowd-sourced from thousands of users that flags dangerous and poorly-lit streets and <strong>automatically re-routes</strong> you around reported dangers; report incidents anonymously and save favourite addresses, with nationwide coverage. The most-adopted app in this portfolio.</div>
+      <div class="tech"><b>Tech:</b> Flutter · Google Maps + maps_toolkit + geocoding (routing/geofencing) · WebSocket (live reports) · Firebase Dynamic Links · deep links.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Spaurt — Sports-training app</span> <span class="role">Sole Developer · 2025 – 2026</span> <span class="tag lite">5,000+ downloads</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/fr/app/spaurt/id6743203018">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.spaurt.app">Google Play</a></div>
+      <div class="pd">Hybrid <strong>sports-training</strong> app with personalized coaching built around four pillars (strength, body control, endurance, conditioning): personalized rep- and time-based <strong>workout routines</strong>, a routine library, <strong>1-rep-max &amp; personal-record</strong> tracking, physical tests, goals and statistics, calendar scheduling, session badges and rewards.</div>
+      <div class="tech"><b>Tech:</b> Flutter · fl_chart + sleek_circular_slider (stats) · qr_flutter · calendar_date_picker2 · tutorial_coach_mark · in_app_review · just_audio.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">KEYM — Musical social network</span> <span class="role">Flutter Developer · 2023</span> <span class="tag lite">5,000+ downloads</span></div>
+      <div class="stores">📦 <a href="https://apkcombo.com/keym-reseau-social-musical/keymmusic.com.keym/">apkcombo</a></div>
+      <div class="pd">A music social network <em>"by artists, for artists"</em> connecting musicians, singers, producers, sound engineers, photographers and videographers: build a <strong>multi-format (visual + audio) portfolio</strong>, search talent by skills and artistic universe, and connect with complementary professionals to collaborate and grow your music career.</div>
+      <div class="tech"><b>Tech:</b> Flutter · audio/video media portfolio · in-app messaging · REST / Firebase.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Carter — Basketball club-management app</span> <span class="role">Lead Developer · 2022 – 2024</span> <span class="tag lite">1,000+ downloads</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/fr/app/carter-coaching/id6443718007">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.du.carter">Google Play</a></div>
+      <div class="pd">Basketball app for <strong>managers, coaches and players</strong>: a team-management tool that saves time on season organisation — rosters, player positions, events, training sessions, attendance, standings, an exercise library and tactical boards — and boosts player progression through coach feedback and a <strong>play-to-earn</strong> gamified reward system, with club/team creation, individual coaching and subscriptions.</div>
+      <div class="tech"><b>Tech:</b> Flutter · dio + retrofit · Firebase Messaging + Dynamic Links · Google Maps + geocoding · Socket.IO (realtime) · pie_chart · scrollable_positioned_list.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">ProtectU — Personal-safety app</span> <span class="role">Sole Developer · 2025</span> <span class="tag lite">1,000+ downloads</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/us/app/protectu/id6743616393">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.protectu.fr">Google Play</a></div>
+      <div class="pd">French citizen-safety app to <strong>see, understand and act on risky situations in real time</strong>: an interactive incident map, guidance to nearby safe places (hospitals, police, defibrillators), nearby ProtectU users on the map, live-location sharing and secure messaging to trusted contacts — turning your surroundings into an active protection network.</div>
+      <div class="tech"><b>Tech:</b> Flutter · SignalR (real-time) · Google Maps + geolocator · Firebase · crypto · AppsFlyer + Facebook + TikTok event SDKs · RevenueCat.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Octopush — Business messenger</span> <span class="role">Lead Developer · 2024 – 2026</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/us/app/octopush/id6711331710">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.du.octopush">Google Play</a></div>
+      <div class="pd">Customer-conversation <strong>messenger</strong> for the Octopush (Marseille) multichannel/SMS platform: the team handles all customer conversations and live chat from one app, with push notifications — improving response time and customer relationships.</div>
+      <div class="tech"><b>Tech:</b> Flutter · adaptive_theme · flutter_libphonenumber + multi-formatter · dio + retrofit · Firebase Messaging · shimmer.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Nila Sphere — Carbon-footprint tracker</span> <span class="role">Sole Developer · 2026</span></div>
+      <div class="stores">🍏 <a href="https://apps.apple.com/us/app/nila-sphere/id6754004164">App Store</a> · 🤖 <a href="https://play.google.com/store/apps/details?id=com.nilasphere.fr">Google Play</a></div>
+      <div class="pd">Carbon-footprint app for <strong>carbon neutrality</strong>: measure the CO₂ impact of daily tasks, track weekly emissions and a carbon score, complete <strong>green challenges</strong> to win partner gifts, discover greener consumption alternatives, and share eco achievements on a dedicated social feed — with environmental news and tips.</div>
+      <div class="tech"><b>Tech:</b> Flutter · fl_chart (impact visualizations) · camerawesome · AppsFlyer · RevenueCat · Lottie.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Docteur Sirop — Children's health AI companion</span> <span class="role">Sole Developer · 2025 – 2026</span></div>
+      <div class="stores">🤖 <a href="https://play.google.com/store/apps/details?id=com.doctorsyrup.app">Google Play</a> <span style="color:var(--muted)">(Digital Unicorn account)</span></div>
+      <div class="pd">AI health companion for <strong>hospitalized children</strong>: helps the child understand their hospital environment and care team through <strong>real-time voice conversations with an AI doctor</strong>, daily mood check-ins and questions, a relaxation "espace zen" and interactive stories, plus a reward system that makes the child an active participant in their care — also a communication tool with caregivers.</div>
+      <div class="tech"><b>Tech:</b> Flutter · OpenAI Realtime (openai_core + openai_webrtc) · speech_to_text + flutter_tts + just_audio (voice) · flutter_embed_unity (Unity 3D character) · dio + retrofit · Firebase Auth.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Beauty Squad — On-demand beauty booking</span> <span class="role">Sole Developer · 2024 – 2025</span></div>
+      <div class="stores">📦 <a href="https://apkcombo.com/beauty-squad/com.beautysquaduser/">apkcombo</a></div>
+      <div class="pd">On-demand <strong>at-home beauty</strong> marketplace (client + salon): book experienced pros for hair, makeup, skincare, massage, nails, coaching and even a photographer; browse and filter services, multi-step booking &amp; checkout (<strong>Stripe / PayPal / wallet</strong>), salon profiles, availability and galleries, with in-app chat — while pros manage their salon, services and schedule.</div>
+      <div class="tech"><b>Tech:</b> Flutter · date_picker_timeline · Firestore + Firebase Storage · Google Maps · flutter_stripe · PayPal · booking &amp; chat modules.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Mentalia — Mental-wellness app</span> <span class="role">Lead Developer · 2023 – 2024</span></div>
+      <div class="stores">🤖 <a href="https://play.google.com/store/apps/details?id=com.mentalia.app">Google Play</a> <span style="color:var(--muted)">(Digital Unicorn account)</span></div>
+      <div class="pd">AI-powered <strong>mental-preparation &amp; well-being</strong> app: chat with a caring <strong>AI virtual coach</strong> for constant support toward your goals; a question-driven flow suggests the right content from an audio, PDF and video library, and <strong>generative-AI recommendations</strong> evolve with your progress.</div>
+      <div class="tech"><b>Tech:</b> Flutter · just_audio (meditation audio) · Socket.IO + WebSocket (chat) · Syncfusion PDF viewer · animated_text_kit · Firebase Auth · dio + retrofit.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Arage — Local events discovery</span> <span class="role">Sole Developer · 2024 – 2025</span></div>
+      <div class="stores">📦 <a href="https://apkcombo.com/arage/com.arage.app/">apkcombo</a></div>
+      <div class="pd">Local-events app that connects you to your community: <strong>discover events on an interactive map</strong>, create and manage your own, follow upcoming regional events, filter and join in a few clicks, with attendee profiles, favourites and subscriptions.</div>
+      <div class="tech"><b>Tech:</b> Flutter · Google Maps + static maps · Firestore · auto_route, Provider, get_it · AppsFlyer · RevenueCat.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Let Share — Student peer-to-peer sharing app</span> <span class="role">Core Contributor · 2026</span></div>
+      <div class="stores">📦 <a href="https://apkcombo.com/let-share/com.letshare.app/">apkcombo</a></div>
+      <div class="pd">Student/community app to discover <strong>local projects and initiatives</strong> via a geolocated <strong>swipe</strong> feed: create fully-customised projects (title, photos, theme), approve participants manually, and chat in real time (group &amp; private) — with push notifications and report/block moderation.</div>
+      <div class="tech"><b>Tech:</b> Flutter · auto_route, Provider, get_it · dio + retrofit · Firebase · Google Maps · Socket.IO (chat) · wechat_assets_picker · stylish_bottom_bar · RevenueCat.</div>
+    </div>
+
+    <h3>🧩 Additional client apps &amp; contributions</h3>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Swy'Eat — Restaurant-review social network</span> <span class="role">Lead Developer · 2022 – 2026 · launching on iOS &amp; Android</span></div>
+      <div class="pd">A <strong>social network of certified restaurant reviews</strong>: restaurant &amp; chef profiles with menus, geo/photo-authenticated reviews (avis), a social feed (posts, comments, follows), recipe contests, a leaderboard with points &amp; gifts, KBIS business verification for restaurants, and a map.</div>
+      <div class="tech"><b>Tech:</b> Flutter · dio + retrofit + pretty_dio_logger · Firebase Auth + Google/Apple/Facebook sign-in · Google Maps + static maps + geolocator · rating bar · photo_view · Syncfusion PDF viewer · reorderables · camerawesome · AppsFlyer.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Kimia — Peer-to-peer travel-deal marketplace</span> <span class="role">Sole Developer · 2024 – 2026</span></div>
+      <div class="pd">Marketplace connecting <strong>travellers and requesters</strong>: travellers post trips while others post item/delivery requests and negotiate deals, with bookings, in-app payments, a wallet, chat, reviews and map search.</div>
+      <div class="tech"><b>Tech:</b> Flutter · flutter_stripe · Cloud Firestore · Google Maps + geocoding · image_cropper · App Tracking Transparency · AppsFlyer · dio + retrofit.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">UAVLog — Drone flight logbook</span> <span class="role">Sole Developer · 2024 – 2025</span></div>
+      <div class="pd">Drone/UAV flight logbook: create, start and end missions, attach mission documents, record flights, check weather and handle payments — with offline storage.</div>
+      <div class="tech"><b>Tech:</b> Flutter · Google Maps + location + geocoding · Hive (offline DB) · audio_waveforms + just_audio · torch_light · vibration · RevenueCat · dio + retrofit.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Live-streaming social network</span> <span class="role">Mobile Developer (team) · 2024 – 2025</span></div>
+      <div class="pd">Social-community app: create and join communities with boards and posts, leaderboards and members, an activities feed, inbox messaging, and <strong>live video streaming</strong> with a built-in player.</div>
+      <div class="tech"><b>Tech:</b> Flutter · GetX + injectable (clean architecture) · Agora RTC + RTM + Chat SDK (live stream &amp; realtime chat) · easy_localization · pro_image_editor · WeChat asset/camera pickers · chewie · Firebase.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Event — Event-management app</span> <span class="role">Sole Developer · 2022 – 2024</span></div>
+      <div class="pd">Event app: create events and manage participants, invite members from phone contacts, share event photo/video galleries, comment, and browse by category.</div>
+      <div class="tech"><b>Tech:</b> Flutter · Firebase Dynamic Links · flutter_contacts · flutter_downloader + gal · chewie + video_player · image_editor · extended_image/text.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Âmes Sœurs — Local dating / matchmaking</span> <span class="role">Contributor · 2024 – 2025</span></div>
+      <div class="pd">Local French dating app with verified profiles, video presentations and map-based discovery.</div>
+      <div class="tech"><b>Tech:</b> Flutter · GetX + Stacked · Google Maps + cluster manager + custom markers · calendar_view · Branch deep links · RevenueCat · Firebase + Firestore.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Barberz — Barbershop booking platform (customer + pro)</span> <span class="role">Contributor · 2024 – 2025</span></div>
+      <div class="pd">Two-sided barber/salon booking platform: browse e-services by category, book &amp; checkout, manage favourites, salon profiles and galleries, maps, messaging, ratings and wallet.</div>
+      <div class="tech"><b>Tech:</b> Flutter · GetX (get/get_storage) · dio + http cache · Firebase + Firestore + Storage · Google Maps + place picker · carousel · OTP.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">ShapeUp — On-demand hairdresser booking</span> <span class="role">Contributor · 2025 – 2026</span></div>
+      <div class="pd">On-demand hairdresser booking (<strong>client + pro</strong>): book stylists with hair preferences &amp; styles, multi-step booking &amp; scheduling, Stripe payments, KYC pro onboarding, availability, earnings and ratings.</div>
+      <div class="tech"><b>Tech:</b> Flutter · SignalR (realtime) · Cloud Firestore · Google Maps · flutter_stripe · KYC webview · confetti.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">ard — Mosquito-surveillance / public-health app</span> <span class="role">Sole Developer · 2026</span></div>
+      <div class="pd">Community public-health app for mosquito-borne disease prevention: <strong>report mosquito breeding sites and incidents on a map</strong>, set reminders, take surveys, and follow a community forum, news and training calendar.</div>
+      <div class="tech"><b>Tech:</b> Flutter · SignalR + Socket.IO (realtime) · Google Maps · photo_view · AppsFlyer · dio + retrofit.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Adress — Visitor / enterprise app</span> <span class="role">Contributor · 2025 – 2026</span></div>
+      <div class="pd">Visitor/enterprise app with <strong>enterprise, guest and visitor modes</strong>: explore venues, make bookings/reservations, keep an address book (carnet) and notes, chat, and pay in-app — with QR &amp; ID-card scanning.</div>
+      <div class="tech"><b>Tech:</b> Flutter · mobile_scanner (QR) · flutter_cardidy (card scan) · Firebase Realtime DB · record + just_audio + audio_service · bottom_picker.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Dear — Couple / relationship app</span> <span class="role">Contributor · 2025</span></div>
+      <div class="pd">Relationship app: shared calendar, milestones and photos.</div>
+      <div class="tech"><b>Tech:</b> Flutter · table_calendar · phone_form_field + pinput · scroll_datetime_picker · Google Maps · animations + confetti.</div>
+    </div>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Sentinelle — Safety app</span> <span class="role">Sole Developer · 2024 – 2026</span></div>
+      <div class="pd">Safety / surveillance app (early-stage) with a home dashboard, notifications and account flows, built on the in-house Flutter base.</div>
+      <div class="tech"><b>Tech:</b> Flutter · camera · Google Maps + geocoding + geolocator · dio + retrofit · Firebase.</div>
+    </div>
+
+    <h3>🧪 Independent / personal projects (pre–Digital Unicorn)</h3>
+
+    <div class="proj">
+      <div class="top"><span class="pt">Medical / clinic management app</span> <span class="role">Independent · 2021 – 2022</span>
+        <span class="stores">💻 GitHub <code>Bow-T/ykhoa_app</code></span></div>
+      <div class="pd">Personal Flutter project — a medical / clinic management app (Vietnamese "y khoa") built on a self-made MVVM base.</div>
+      <div class="tech"><b>Tech:</b> Flutter · MVVM · REST.</div>
+    </div>
+
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <p><strong>Software Engineering</strong> — Duy Tan University, Da Nang, Vietnam · 2015 – 2019</p>
+  </section>
+
+  <footer>
+    Store links verified via App Store / Google Play; download figures from Google Play. Project features described from each app's source.
+  </footer>
+
+</div>
+</body>
+</html>
