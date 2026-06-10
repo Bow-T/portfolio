@@ -246,10 +246,30 @@
   .avail .adot{width:9px;height:9px;border-radius:50%;background:#22c55e;animation:pulse 1.9s infinite;}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55);}70%{box-shadow:0 0 0 10px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
   .socials a svg{display:block;}
+  /* ===== music + secrets ===== */
+  .musicbtn{position:fixed;left:18px;bottom:18px;z-index:70;width:46px;height:46px;border-radius:50%;
+    border:1px solid var(--cardb);background:var(--card);color:var(--text);cursor:pointer;display:grid;place-items:center;
+    box-shadow:var(--shadow);transition:.2s;}
+  .musicbtn:hover{border-color:var(--g2);transform:translateY(-2px);}
+  .musicbtn.on{color:#0a2009;background:var(--grad);border-color:transparent;}
+  .musicbtn .eq{display:none;gap:2px;align-items:flex-end;height:16px;}
+  .musicbtn.on .note{display:none;} .musicbtn.on .eq{display:flex;}
+  .musicbtn .eq i{width:3px;height:6px;background:#0a2009;border-radius:2px;animation:eq .9s ease-in-out infinite;}
+  .musicbtn .eq i:nth-child(2){animation-delay:.25s;} .musicbtn .eq i:nth-child(3){animation-delay:.5s;}
+  @keyframes eq{0%,100%{height:5px;}50%{height:15px;}}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translate(-50%,18px);z-index:80;background:var(--card);
+    border:1px solid var(--g2);color:var(--text);padding:12px 18px;border-radius:30px;box-shadow:var(--shadow);
+    font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.4s;}
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+  body.party .blob{animation-duration:5s!important;opacity:.75;}
 </style>
 </head>
 <body>
 <div id="prog"></div>
+<button id="music" class="musicbtn" aria-label="Toggle ambient music" title="Ambient rainy-piano music">
+  <svg class="note" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <span class="eq"><i></i><i></i><i></i></span>
+</button>
 <div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
 
 <nav>
@@ -652,6 +672,66 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       el.textContent=Math.round(to*e).toLocaleString()+suf; if(p<1)requestAnimationFrame(step);})(t0);};
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){run(e.target);io.unobserve(e.target);}}),{threshold:.6});
   document.querySelectorAll('.stat .n[data-to]').forEach(el=>io.observe(el));
+})();
+
+// ===== ambient rainy-piano music (generated, original) =====
+(function(){
+  const btn=document.getElementById('music'); if(!btn) return;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  let on=false,ac,master,delay,timer,bar=0;
+  const midi=m=>440*Math.pow(2,(m-69)/12);
+  function ensure(){
+    if(ac) return;
+    ac=new AC(); master=ac.createGain(); master.gain.value=0; master.connect(ac.destination);
+    delay=ac.createDelay(); delay.delayTime.value=0.36;
+    const fb=ac.createGain(); fb.gain.value=0.33; delay.connect(fb); fb.connect(delay);
+    const wet=ac.createGain(); wet.gain.value=0.45; delay.connect(wet); wet.connect(master);
+    const buf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*0.5;
+    const rs=ac.createBufferSource(); rs.buffer=buf; rs.loop=true;
+    const rlp=ac.createBiquadFilter(); rlp.type='lowpass'; rlp.frequency.value=1100;
+    const rg=ac.createGain(); rg.gain.value=0.03; rs.connect(rlp); rlp.connect(rg); rg.connect(master); rs.start();
+  }
+  function note(f,when,dur,vel){ const o=ac.createOscillator(); o.type='triangle'; o.frequency.value=f;
+    const g=ac.createGain(); g.gain.setValueAtTime(0,when); g.gain.linearRampToValueAtTime(vel,when+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0008,when+dur);
+    const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2400;
+    o.connect(g); g.connect(lp); lp.connect(master); lp.connect(delay); o.start(when); o.stop(when+dur+0.1); }
+  const prog=[[57,60,64],[53,57,60],[60,64,67],[55,59,62]];
+  function schedule(){ if(!on) return; const t=ac.currentTime+0.05,c=prog[bar%4];
+    [c[0],c[1],c[2],c[0]+12,c[1],c[2]].forEach((m,i)=>note(midi(m),t+i*0.56,1.5,0.42));
+    note(midi(c[0]-12),t,3.6,0.16); bar++; timer=setTimeout(schedule,3360); }
+  btn.addEventListener('click',()=>{ on=!on; btn.classList.toggle('on',on);
+    if(on){ ensure(); if(ac.resume)ac.resume(); master.gain.linearRampToValueAtTime(0.16,ac.currentTime+1.4); schedule(); }
+    else{ clearTimeout(timer); if(ac) master.gain.linearRampToValueAtTime(0,ac.currentTime+0.5); } });
+})();
+
+// ===== easter eggs =====
+(function(){
+  console.log('%c👋 Hey, curious dev!','font:700 18px Sora,sans-serif;color:#a3e635');
+  console.log('%cYou opened the console — I like you already.\nThis whole site is hand-coded, no frameworks.\nPsst: the Konami code (↑ ↑ ↓ ↓ ← → ← → B A) does something fun ✨\n— Bow · github.com/Bow-T','color:#8aa;font-size:13px');
+  function confetti(){
+    const c=document.createElement('canvas'); c.style.cssText='position:fixed;inset:0;z-index:200;pointer-events:none';
+    c.width=innerWidth;c.height=innerHeight; document.body.appendChild(c); const x=c.getContext('2d');
+    const cols=['#bef264','#a3e635','#4ade80','#2dd4bf','#22c55e','#fde047'];
+    const P=Array.from({length:170},()=>({x:Math.random()*c.width,y:-20-Math.random()*innerHeight*0.4,
+      vx:(Math.random()-.5)*6,vy:3+Math.random()*5,s:5+Math.random()*7,r:Math.random()*6,
+      vr:(Math.random()-.5)*0.3,col:cols[(Math.random()*cols.length)|0]}));
+    let t=0;(function f(){t++;x.clearRect(0,0,c.width,c.height);
+      P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);
+        x.fillStyle=p.col;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);x.restore();});
+      if(t<210)requestAnimationFrame(f); else c.remove();})();
+  }
+  function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),500);},3400);}
+  const seq=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];let k=0;
+  addEventListener('keydown',e=>{const key=e.key.toLowerCase();
+    if(key===seq[k]){k++; if(k===seq.length){k=0;confetti();toast('🎉 Secret unlocked — you cracked the Konami code!');
+      document.body.classList.add('party');setTimeout(()=>document.body.classList.remove('party'),6000);}}
+    else k=(key===seq[0])?1:0;});
+  const wave=document.querySelector('.wave');let wc=0,wt=0;
+  if(wave){wave.style.cursor='pointer';wave.addEventListener('click',()=>{const n=Date.now();wc=(n-wt<900)?wc+1:1;wt=n;
+    if(wc>=3){wc=0;confetti();toast('✨ Hi there — thanks for waving back! 👋');}});}
 })();
 </script>
 </body>
