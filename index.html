@@ -1,172 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tuan Nguyen — Flutter / Mobile Developer</title>
-<meta name="description" content="Tuan Nguyen — Flutter / Mobile Application Developer. 30+ production apps across mobility, safety, health and social, including one with 500K+ downloads.">
-<meta property="og:title" content="Tuan Nguyen — Flutter / Mobile Developer">
-<meta property="og:description" content="30+ production Flutter apps · 500K+ downloads · 6+ years.">
-<meta property="og:type" content="website">
+<title>Bow — Tuan Nguyen · Flutter Developer</title>
+<meta name="description" content="Hey, I'm Bow (Tuan Nguyen) — a Flutter developer who ships delightful mobile apps. 30+ apps, 500K+ downloads, 6+ years.">
+<meta property="og:title" content="Bow — Tuan Nguyen · Flutter Developer">
+<meta property="og:description" content="I build delightful Flutter apps. 30+ shipped · 500K+ downloads.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#ffffff; --bg2:#f5f8fa; --ink:#16242b; --muted:#5b6770; --soft:#7d8a92;
-    --accent:#0b6e7a; --accent2:#0d8b9a; --gold:#b07d12; --goldbg:#fbf3df;
-    --line:#e6ecef; --card:#ffffff; --shadow:0 6px 24px rgba(16,40,48,.07);
+  :root, [data-theme="dark"]{
+    --bg:#0b0f1a; --bg2:#0e1422; --elev:#121a2c; --card:#121a2c; --cardb:#22304d;
+    --text:#e9eef8; --muted:#9aa9c4; --soft:#6b7a99; --line:#1d273f;
+    --spot:rgba(96,165,250,.20); --shadow:0 18px 48px rgba(0,0,0,.45);
+    --g1:#2dd4bf; --g2:#38bdf8; --g3:#a78bfa; --g4:#f472b6;
+    --grad:linear-gradient(100deg,var(--g1),var(--g2),var(--g3),var(--g4));
+    --chip:rgba(255,255,255,.04); --chipb:rgba(255,255,255,.08);
+  }
+  [data-theme="light"]{
+    --bg:#fbfcff; --bg2:#f3f6fc; --elev:#ffffff; --card:#ffffff; --cardb:#e6ecf6;
+    --text:#16203a; --muted:#566480; --soft:#8b97ad; --line:#e8edf6;
+    --spot:rgba(56,189,248,.16); --shadow:0 14px 40px rgba(30,50,90,.10);
+    --chip:#f1f5fb; --chipb:#e2e9f5;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  body{font-family:'Sora',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+    line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .4s,color .4s;}
   a{color:inherit;text-decoration:none;}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
   .mono{font-family:'JetBrains Mono',monospace;}
+  .gtext{background:var(--grad);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 7s linear infinite;}
+  @keyframes shimmer{to{background-position:200% center;}}
+
+  /* aurora background */
+  .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;animation:float 18s ease-in-out infinite;}
+  [data-theme="light"] .blob{opacity:.28;}
+  .b1{width:520px;height:520px;background:var(--g1);top:-160px;left:-120px;}
+  .b2{width:480px;height:480px;background:var(--g3);top:-80px;right:-120px;animation-delay:-6s;}
+  .b3{width:420px;height:420px;background:var(--g4);top:540px;left:30%;animation-delay:-11s;opacity:.32;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,30px) scale(1.08);}66%{transform:translate(-30px,20px) scale(.95);}}
+
+  /* scroll progress */
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:var(--grad);background-size:200%;}
 
   /* nav */
-  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 72%,transparent);
     border-bottom:1px solid var(--line);}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;}
-  .brand{font-weight:800;font-size:18px;letter-spacing:-.3px;}
-  .brand b{color:var(--accent);}
-  .navlinks{display:flex;gap:26px;align-items:center;}
-  .navlinks a{font-size:14px;font-weight:500;color:var(--muted);transition:color .15s;}
-  .navlinks a:hover{color:var(--accent);}
-  .navlinks .btn{color:#fff;}
-  .btn{display:inline-block;background:var(--accent);color:#fff;font-weight:600;font-size:14px;
-    padding:9px 18px;border-radius:9px;transition:transform .12s,box-shadow .12s,background .15s;}
-  .btn:hover{background:#095863;transform:translateY(-1px);box-shadow:0 6px 16px rgba(11,110,122,.25);}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);}
-  .btn.ghost:hover{background:var(--accent);color:#fff;}
-  .menu-toggle{display:none;font-size:24px;background:none;border:none;cursor:pointer;color:var(--ink);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .brand{font-weight:800;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px;}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--grad);box-shadow:0 0 12px var(--g2);}
+  .navlinks{display:flex;gap:8px;align-items:center;}
+  .navlinks a.lnk{font-size:14px;font-weight:500;color:var(--muted);padding:7px 12px;border-radius:9px;transition:.18s;}
+  .navlinks a.lnk:hover{color:var(--text);background:var(--chip);}
+  .iconbtn{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);
+    background:var(--chip);cursor:pointer;color:var(--text);font-size:16px;transition:.18s;}
+  .iconbtn:hover{border-color:var(--g2);transform:translateY(-1px);}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:10px 18px;border-radius:11px;
+    color:#06121f;background:var(--grad);background-size:180% auto;transition:transform .15s,box-shadow .2s,background-position .4s;
+    box-shadow:0 8px 22px rgba(56,189,248,.22);}
+  .btn:hover{transform:translateY(-2px);background-position:right center;box-shadow:0 12px 30px rgba(167,139,250,.32);}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--cardb);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--g2);background:var(--chip);}
+  .menu-toggle{display:none;}
 
-  section{padding:78px 0;}
-  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);font-weight:600;
-    letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-  h2.sec{font-size:30px;font-weight:800;letter-spacing:-.6px;margin-bottom:8px;}
-  .sec-sub{color:var(--muted);margin-bottom:30px;max-width:640px;}
+  section{padding:84px 0;position:relative;z-index:2;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+    margin-bottom:12px;}
+  .eyebrow.gtext{display:inline-block;}
+  h2.sec{font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+  .sec-sub{color:var(--muted);margin-bottom:34px;max-width:640px;}
 
   /* hero */
-  .hero{padding:84px 0 64px;}
-  .hero .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);
-    background:var(--bg2);border:1px solid var(--line);padding:6px 14px;border-radius:30px;margin-bottom:22px;}
-  .hero h1{font-size:54px;line-height:1.05;font-weight:800;letter-spacing:-1.6px;margin-bottom:14px;}
-  .hero h1 .grad{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .hero .lead{font-size:19px;color:var(--muted);max-width:660px;margin-bottom:28px;}
-  .hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;}
-  .socials{display:flex;gap:14px;align-items:center;}
-  .socials a{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);
-    border-radius:10px;color:var(--muted);transition:.15s;font-size:18px;}
-  .socials a:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px);}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px;
-    border-top:1px solid var(--line);padding-top:30px;}
-  .stat .n{font-size:34px;font-weight:800;letter-spacing:-1px;color:var(--accent);}
-  .stat .l{font-size:13px;color:var(--muted);margin-top:2px;}
+  .hero{padding:96px 0 70px;}
+  .wave{display:inline-block;animation:wave 2.4s ease-in-out infinite;transform-origin:70% 70%;}
+  @keyframes wave{0%,60%,100%{transform:rotate(0);}10%{transform:rotate(16deg);}20%{transform:rotate(-8deg);}30%{transform:rotate(16deg);}40%{transform:rotate(-4deg);}50%{transform:rotate(10deg);}}
+  .hello{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--muted);margin-bottom:16px;}
+  .hello b{color:var(--text);}
+  .hero h1{font-size:clamp(38px,6.5vw,68px);line-height:1.02;font-weight:800;letter-spacing:-2px;margin-bottom:20px;}
+  .hero .lead{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:680px;margin-bottom:30px;}
+  .hero .lead strong{color:var(--text);}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;}
+  .socials{display:flex;gap:12px;}
+  .socials a{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--cardb);
+    background:var(--chip);color:var(--muted);font-size:16px;font-weight:600;transition:.18s;}
+  .socials a:hover{color:var(--text);border-color:var(--g2);transform:translateY(-3px);box-shadow:0 8px 20px rgba(56,189,248,.18);}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:50px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;transition:.2s;}
+  .stat:hover{border-color:var(--cardb);transform:translateY(-3px);}
+  .stat .n{font-size:clamp(26px,3.4vw,36px);font-weight:800;letter-spacing:-1px;}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:3px;}
 
   /* about */
-  #about{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start;}
-  .about-grid p{color:#39474e;margin-bottom:14px;}
-  .about-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow);}
-  .about-card h4{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);margin-bottom:12px;}
-  .about-card .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .about-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:40px;align-items:start;}
+  .about-grid p{color:var(--muted);margin-bottom:15px;}
+  .about-grid p strong{color:var(--text);}
+  .about-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);}
+  .about-card h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;}
+  .about-card .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
   .about-card .row:last-child{border-bottom:none;}
   .about-card .row span:first-child{color:var(--muted);}
   .about-card .row span:last-child{font-weight:600;}
 
   /* skills */
   .skillgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
-  .skillcard{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--card);}
-  .skillcard h4{font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin-bottom:12px;}
+  .skillcard{border:1px solid var(--line);border-radius:18px;padding:20px 22px;background:var(--card);transition:.2s;}
+  .skillcard:hover{border-color:var(--cardb);transform:translateY(-3px);box-shadow:var(--shadow);}
+  .skillcard h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px;}
   .chips{display:flex;flex-wrap:wrap;gap:8px;}
-  .chip{font-size:13px;background:var(--bg2);border:1px solid var(--line);color:#33424a;padding:5px 11px;border-radius:8px;font-weight:500;}
+  .chip{font-size:13px;background:var(--chip);border:1px solid var(--chipb);color:var(--text);padding:6px 12px;border-radius:9px;font-weight:500;
+    transition:.15s;}
+  .chip:hover{border-color:var(--g2);color:var(--g2);}
 
   /* filter */
-  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;}
-  .filt{font-size:13.5px;font-weight:600;padding:7px 15px;border-radius:30px;border:1px solid var(--line);
-    background:var(--card);color:var(--muted);cursor:pointer;transition:.15s;}
-  .filt:hover{border-color:var(--accent);color:var(--accent);}
-  .filt.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:28px;}
+  .filt{font-size:13.5px;font-weight:600;padding:8px 16px;border-radius:30px;border:1px solid var(--cardb);
+    background:var(--chip);color:var(--muted);cursor:pointer;transition:.18s;}
+  .filt:hover{color:var(--text);border-color:var(--g2);}
+  .filt.active{color:#06121f;background:var(--grad);border-color:transparent;}
 
-  /* project grid */
+  /* spotlight project grid */
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-  .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;
-    transition:transform .15s,box-shadow .15s,border-color .15s;}
-  .pcard:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#cfdde1;}
-  .pcard .ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px;}
-  .pcard h3{font-size:17.5px;font-weight:700;letter-spacing:-.3px;}
-  .pcard .cat{font-size:11px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
-  .pcard .meta{font-size:12.5px;color:var(--soft);margin-bottom:10px;}
-  .badge{display:inline-block;background:var(--goldbg);color:var(--gold);font-size:11.5px;font-weight:700;
-    padding:2px 9px;border-radius:20px;margin-bottom:10px;align-self:flex-start;}
-  .badge.flag{background:#e7f3f4;color:var(--accent);}
-  .pcard p{font-size:13.5px;color:#46535a;flex:1;margin-bottom:12px;}
-  .ptech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
-  .ptech span{font-size:11.5px;color:var(--muted);background:var(--bg2);padding:3px 8px;border-radius:6px;}
+  .pcard{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;
+    display:flex;flex-direction:column;transition:transform .2s,border-color .2s,box-shadow .2s;}
+  .pcard::before{content:"";position:absolute;inset:0;border-radius:18px;opacity:0;transition:opacity .35s;pointer-events:none;
+    background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),var(--spot),transparent 65%);}
+  .pcard:hover{transform:translateY(-5px);border-color:var(--cardb);box-shadow:var(--shadow);}
+  .pcard:hover::before{opacity:1;}
+  .pcard>*{position:relative;z-index:1;}
+  .ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .pcard h3{font-size:18px;font-weight:700;letter-spacing:-.3px;}
+  .pcard .cat{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;padding-top:3px;}
+  .pcard .meta{font-size:12.5px;color:var(--soft);margin:2px 0 10px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--g3) 16%,transparent);
+    color:var(--g3);font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:11px;align-self:flex-start;
+    border:1px solid color-mix(in srgb,var(--g3) 30%,transparent);}
+  .badge.flag{background:color-mix(in srgb,var(--g2) 16%,transparent);color:var(--g2);border-color:color-mix(in srgb,var(--g2) 30%,transparent);}
+  .pcard p{font-size:13.5px;color:var(--muted);flex:1;margin-bottom:13px;}
+  .ptech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:15px;}
+  .ptech span{font-size:11.5px;color:var(--soft);background:var(--chip);border:1px solid var(--chipb);padding:3px 8px;border-radius:6px;}
   .plinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;}
-  .plink{font-size:12.5px;font-weight:600;color:var(--accent);border:1px solid var(--line);padding:6px 11px;
-    border-radius:8px;transition:.15s;display:inline-flex;gap:5px;align-items:center;}
-  .plink:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .plink{font-size:12.5px;font-weight:600;border:1px solid var(--cardb);padding:7px 12px;border-radius:9px;transition:.18s;color:var(--text);}
+  .plink:hover{color:#06121f;background:var(--grad);border-color:transparent;}
+  .nostore{font-size:12px;color:var(--soft);}
 
-  .more{margin-top:34px;}
-  .more h4{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;}
+  .more{margin-top:38px;}
+  .more h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;}
   .morewrap{display:flex;flex-wrap:wrap;gap:10px;}
-  .mpill{font-size:13px;background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:9px;color:#3a474e;}
-  .mpill b{color:var(--ink);font-weight:600;}
+  .mpill{font-size:13px;background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:11px;transition:.15s;}
+  .mpill:hover{border-color:var(--g2);transform:translateY(-2px);}
+  .mpill b{font-weight:600;}
   .mpill span{color:var(--soft);font-size:12px;}
 
-  /* experience timeline */
-  #experience{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-  .timeline{position:relative;padding-left:28px;}
+  /* experience */
+  .timeline{position:relative;padding-left:30px;}
   .timeline:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line);}
-  .titem{position:relative;margin-bottom:26px;}
-  .titem:before{content:"";position:absolute;left:-28px;top:5px;width:16px;height:16px;border-radius:50%;
-    background:var(--accent);border:3px solid var(--bg2);}
+  .titem{position:relative;margin-bottom:28px;}
+  .titem:before{content:"";position:absolute;left:-30px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--grad);
+    box-shadow:0 0 12px var(--g2);}
   .titem .role{font-weight:700;font-size:17px;}
-  .titem .when{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent);margin:2px 0 8px;}
-  .titem p{color:#39474e;font-size:14.5px;}
+  .titem .when{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--g2);margin:3px 0 8px;}
+  .titem p{color:var(--muted);font-size:14.5px;}
 
   /* contact */
-  .contact-card{background:linear-gradient(120deg,#0b6e7a,#0d8b9a);color:#fff;border-radius:20px;padding:46px;text-align:center;}
-  .contact-card h2{font-size:30px;font-weight:800;letter-spacing:-.6px;margin-bottom:10px;}
-  .contact-card p{color:#d7eef0;margin-bottom:26px;max-width:520px;margin-left:auto;margin-right:auto;}
-  .contact-card .cbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-  .contact-card .cbtn{background:#fff;color:var(--accent);font-weight:600;padding:12px 22px;border-radius:11px;transition:.15s;}
-  .contact-card .cbtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.2);}
-  .contact-card .cbtn.outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);}
-  .cmeta{margin-top:24px;font-size:13.5px;color:#cdeaec;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+  .contact-card{position:relative;overflow:hidden;border-radius:24px;padding:54px 40px;text-align:center;
+    border:1px solid var(--cardb);background:var(--card);}
+  .contact-card::before{content:"";position:absolute;inset:0;background:var(--grad);opacity:.10;}
+  .contact-card>*{position:relative;}
+  .contact-card h2{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:-.8px;margin-bottom:12px;}
+  .contact-card p{color:var(--muted);margin:0 auto 28px;max-width:540px;}
+  .cbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .cmeta{margin-top:26px;font-size:13.5px;color:var(--soft);display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
 
-  footer{padding:30px 0;text-align:center;color:var(--soft);font-size:13px;border-top:1px solid var(--line);}
+  footer{padding:34px 0;text-align:center;color:var(--soft);font-size:13px;border-top:1px solid var(--line);}
+  footer .gtext{font-weight:600;}
 
-  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
   .reveal.in{opacity:1;transform:none;}
 
   @media(max-width:880px){
     .grid{grid-template-columns:repeat(2,1fr);} .skillgrid,.about-grid{grid-template-columns:1fr;}
-    .stats{grid-template-columns:repeat(2,1fr);gap:24px;} .hero h1{font-size:40px;}
+    .stats{grid-template-columns:repeat(2,1fr);}
   }
   @media(max-width:600px){
-    .grid{grid-template-columns:1fr;} .navlinks{display:none;} .menu-toggle{display:block;}
-    .navlinks.open{display:flex;position:absolute;top:62px;left:0;right:0;flex-direction:column;background:#fff;
-      padding:16px 24px;gap:14px;border-bottom:1px solid var(--line);box-shadow:var(--shadow);}
-    .hero h1{font-size:34px;} .hero .lead{font-size:17px;} section{padding:56px 0;} .contact-card{padding:30px 20px;}
+    .grid{grid-template-columns:1fr;} .navlinks a.lnk{display:none;} section{padding:60px 0;}
+    .contact-card{padding:34px 22px;}
   }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;}}
 </style>
 </head>
 <body>
+<div id="prog"></div>
+<div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
 
 <nav>
   <div class="wrap">
-    <a href="#top" class="brand">Tuan <b>Nguyen</b></a>
-    <button class="menu-toggle" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
-    <div class="navlinks" id="nav">
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#work">Work</a>
-      <a href="#experience">Experience</a>
-      <a href="#contact" class="btn">Contact</a>
+    <a href="#top" class="brand"><span class="dot"></span>Bow</a>
+    <div class="navlinks">
+      <a class="lnk" href="#about">About</a>
+      <a class="lnk" href="#skills">Skills</a>
+      <a class="lnk" href="#work">Work</a>
+      <a class="lnk" href="#experience">Experience</a>
+      <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
+      <a href="#contact" class="btn">Say hi</a>
     </div>
   </div>
 </nav>
@@ -175,46 +215,46 @@
 
 <header class="hero">
   <div class="wrap reveal">
-    <span class="tag">📍 Da Nang, Vietnam · Open to opportunities</span>
-    <h1>Flutter developer who ships<br><span class="grad">real apps people use.</span></h1>
-    <p class="lead">I'm <strong>Tuan Nguyen</strong> — a Flutter / Mobile developer with 6+ years building <strong>production apps end-to-end</strong>, from architecture to the App&nbsp;Store. 30+ apps across mobility, safety, health and social — including a carpooling app with <strong>500,000+ downloads</strong>.</p>
+    <div class="hello"><span class="wave">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class="mono">Tuan&nbsp;Nguyen</span></div>
+    <h1>I build <span class="gtext">delightful</span><br>Flutter apps people use.</h1>
+    <p class="lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
     <div class="cta">
-      <a href="#work" class="btn">View my work</a>
-      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub</a>
+      <a href="#work" class="btn">View my work ↓</a>
+      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
     </div>
     <div class="socials">
       <a href="mailto:nguyenvantuan4034@gmail.com" title="Email">✉</a>
-      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" title="GitHub">⌥</a>
       <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" title="LinkedIn">in</a>
+      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" title="GitHub">{ }</a>
       <a href="tel:+84987620174" title="Phone">☎</a>
     </div>
     <div class="stats">
-      <div class="stat"><div class="n">30+</div><div class="l">Apps shipped</div></div>
-      <div class="stat"><div class="n">500K+</div><div class="l">Downloads (top app)</div></div>
-      <div class="stat"><div class="n">6+</div><div class="l">Years experience</div></div>
-      <div class="stat"><div class="n">15+</div><div class="l">Live on App&nbsp;Store / Play</div></div>
+      <div class="stat"><div class="n gtext">30+</div><div class="l">Apps shipped</div></div>
+      <div class="stat"><div class="n gtext">500K+</div><div class="l">Downloads (top app)</div></div>
+      <div class="stat"><div class="n gtext">6+</div><div class="l">Years experience</div></div>
+      <div class="stat"><div class="n gtext">15+</div><div class="l">Live on App&nbsp;Store / Play</div></div>
     </div>
   </div>
 </header>
 
 <section id="about">
   <div class="wrap reveal">
-    <div class="eyebrow">// about</div>
+    <div class="eyebrow gtext">// about</div>
     <h2 class="sec">End-to-end mobile, done right</h2>
     <div class="about-grid">
       <div>
-        <p>I'm a Flutter / Mobile Application Developer based in Da Nang, Vietnam. Over the last six years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.</p>
+        <p>I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.</p>
         <p>At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>authored the company's shared Flutter architecture</strong> that 20+ client apps are built on — turning weeks of project setup into a same-day start.</p>
-        <p>I'm strongest where it counts for users: clean architecture (MVVM), pixel-accurate UI, real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.</p>
+        <p>I care about the details users feel: clean architecture (MVVM), pixel-accurate UI, smooth real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.</p>
       </div>
       <div class="about-card">
-        <h4>At a glance</h4>
+        <h4 class="gtext">At a glance</h4>
         <div class="row"><span>Role</span><span>Flutter / Mobile Dev</span></div>
         <div class="row"><span>Experience</span><span>6+ years (since 2020)</span></div>
         <div class="row"><span>Focus</span><span>Flutter · iOS &amp; Android</span></div>
         <div class="row"><span>Location</span><span>Da Nang, Vietnam</span></div>
         <div class="row"><span>Education</span><span>Duy Tan University</span></div>
-        <div class="row"><span>Languages</span><span>EN / FR app i18n</span></div>
+        <div class="row"><span>Currently</span><span>Open to work ✦</span></div>
       </div>
     </div>
   </div>
@@ -222,27 +262,27 @@
 
 <section id="skills">
   <div class="wrap reveal">
-    <div class="eyebrow">// skills</div>
+    <div class="eyebrow gtext">// skills</div>
     <h2 class="sec">Tools of the trade</h2>
-    <p class="sec-sub">Deep in Flutter, with the surrounding stack I use to ship complete, real-time, payment-enabled apps.</p>
+    <p class="sec-sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
     <div class="skillgrid">
-      <div class="skillcard"><h4>Mobile &amp; Languages</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
         <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
-        <span class="chip">Kotlin / Swift channels</span><span class="chip">Material / Cupertino</span><span class="chip">Lottie animations</span>
+        <span class="chip">Kotlin / Swift channels</span><span class="chip">Material / Cupertino</span><span class="chip">Lottie</span>
       </div></div>
-      <div class="skillcard"><h4>Architecture &amp; State</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext">Architecture &amp; State</h4><div class="chips">
         <span class="chip">MVVM</span><span class="chip">Clean Architecture</span><span class="chip">Provider</span>
         <span class="chip">GetX</span><span class="chip">BLoC</span><span class="chip">Stacked</span>
-        <span class="chip">get_it / DI</span><span class="chip">auto_route</span><span class="chip">build_runner</span>
+        <span class="chip">get_it</span><span class="chip">auto_route</span><span class="chip">build_runner</span>
       </div></div>
-      <div class="skillcard"><h4>Realtime, Maps &amp; AI</h4><div class="chips">
-        <span class="chip">Agora RTC/RTM/Chat</span><span class="chip">SignalR</span><span class="chip">Socket.IO / WebSocket</span>
-        <span class="chip">OpenAI Realtime voice</span><span class="chip">Unity 3D embed</span><span class="chip">Google Maps</span><span class="chip">geolocation</span>
+      <div class="skillcard"><h4 class="gtext">Realtime, Maps &amp; AI</h4><div class="chips">
+        <span class="chip">Agora RTC/RTM/Chat</span><span class="chip">SignalR</span><span class="chip">Socket.IO</span>
+        <span class="chip">OpenAI Realtime voice</span><span class="chip">Unity 3D embed</span><span class="chip">Google Maps</span>
       </div></div>
-      <div class="skillcard"><h4>Backend, Payments &amp; Ops</h4><div class="chips">
-        <span class="chip">Firebase</span><span class="chip">Supabase</span><span class="chip">REST (dio + retrofit)</span>
+      <div class="skillcard"><h4 class="gtext">Backend, Payments &amp; Ops</h4><div class="chips">
+        <span class="chip">Firebase</span><span class="chip">Supabase</span><span class="chip">dio + retrofit</span>
         <span class="chip">Stripe</span><span class="chip">PayPal</span><span class="chip">RevenueCat</span>
-        <span class="chip">Fastlane CI/CD</span><span class="chip">App Store / Play release</span>
+        <span class="chip">Fastlane CI/CD</span><span class="chip">Store release</span>
       </div></div>
     </div>
   </div>
@@ -250,13 +290,13 @@
 
 <section id="work">
   <div class="wrap reveal">
-    <div class="eyebrow">// work</div>
-    <h2 class="sec">Selected projects</h2>
-    <p class="sec-sub">A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through to see them.</p>
+    <div class="eyebrow gtext">// work</div>
+    <h2 class="sec">Things I've built</h2>
+    <p class="sec-sub">A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through and have a play.</p>
     <div class="filters" id="filters"></div>
     <div class="grid" id="grid"></div>
     <div class="more">
-      <h4>More apps I've built</h4>
+      <h4>+ more apps I've built</h4>
       <div class="morewrap" id="more"></div>
     </div>
   </div>
@@ -264,8 +304,8 @@
 
 <section id="experience">
   <div class="wrap reveal">
-    <div class="eyebrow">// experience</div>
-    <h2 class="sec">Where I've worked</h2>
+    <div class="eyebrow gtext">// experience</div>
+    <h2 class="sec">The journey so far</h2>
     <div class="timeline">
       <div class="titem">
         <div class="role">Flutter / Mobile Developer — Digital Unicorn</div>
@@ -280,7 +320,7 @@
       <div class="titem">
         <div class="role">B.Eng, Software Engineering — Duy Tan University</div>
         <div class="when">2015 — 2019 · Da Nang, Vietnam</div>
-        <p>Software engineering degree; began building Flutter apps and the MVVM patterns that shaped my career.</p>
+        <p>Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.</p>
       </div>
     </div>
   </div>
@@ -289,92 +329,82 @@
 <section id="contact">
   <div class="wrap reveal">
     <div class="contact-card">
-      <h2>Let's build something</h2>
+      <h2>Let's build something <span class="gtext">delightful</span></h2>
       <p>I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
       <div class="cbtns">
-        <a href="mailto:nguyenvantuan4034@gmail.com" class="cbtn">✉ nguyenvantuan4034@gmail.com</a>
-        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="cbtn outline">LinkedIn</a>
-        <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="cbtn outline">GitHub</a>
+        <a href="mailto:nguyenvantuan4034@gmail.com" class="btn">✉ nguyenvantuan4034@gmail.com</a>
+        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
+        <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
       </div>
-      <div class="cmeta">
-        <span>📱 +84 987 620 174</span><span>📍 Da Nang, Vietnam</span>
-      </div>
+      <div class="cmeta"><span>📱 +84 987 620 174</span><span>📍 Da Nang, Vietnam</span></div>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">© <span id="yr"></span> Tuan Nguyen · Flutter / Mobile Developer · Built with vanilla HTML &amp; CSS.</div>
+  <div class="wrap">Designed &amp; built by <span class="gtext">Bow</span> · © <span id="yr"></span> Tuan Nguyen · vanilla HTML &amp; CSS, no frameworks.</div>
 </footer>
 
 <script>
 const AS="https://apps.apple.com/", GP="https://play.google.com/store/apps/details?id=";
 const PROJECTS=[
- {n:"Octopus / DUOCT",cat:"Mobility",tags:["mobility"],role:"Lead Mobile Developer · 2026–Present",badge:"Flagship",flag:1,
+ {n:"Octopus / DUOCT",cat:"Mobility",role:"Lead Mobile Developer · 2026–Present",badge:"Flagship",flag:1,
   d:"Multi-service super-app: ride booking, multi-category express delivery (food, flowers, high-tech, home services) and courier dispatch — with separate customer & driver apps, earnings/payouts and premium subscriptions.",
   tech:["Flutter","Supabase","Stripe","Google Maps","Next.js admin"],links:[]},
- {n:"Ynstant",cat:"Mobility",tags:["mobility"],role:"Flutter Developer · 2023",badge:"500K+ downloads",
+ {n:"Ynstant",cat:"Mobility",role:"Flutter Developer · 2023",badge:"500K+ downloads",
   d:"France-focused daily carpooling with 0% service fees: post a ride in under 30s, get bookings from verified passengers, or book instantly / set ride alerts. Real-time matching, in-app messaging and distance-based pricing.",
   tech:["Flutter","Google Maps","Realtime","Payments"],
   links:[["App Store",AS+"us/app/ynstant-carpooling/id1610500828"],["Google Play",GP+"dev.ynstant.moove"]]},
- {n:"SecuMap",cat:"Safety",tags:["safety"],role:"Sole Developer · 2023–2025",badge:"10K+ · national press",
+ {n:"SecuMap",cat:"Safety",role:"Sole Developer · 2023–2025",badge:"10K+ · national press",
   d:"100% French safety-GPS: a real-time, crowd-sourced danger map that automatically re-routes you around reported risks. Report incidents anonymously, save addresses — covered by French national press (Le JDD).",
   tech:["Flutter","Google Maps","WebSocket","maps_toolkit"],
   links:[["Google Play",GP+"com.du.secumap"]]},
- {n:"Docteur Sirop",cat:"Health & AI",tags:["health"],role:"Sole Developer · 2025–2026",badge:"AI voice + Unity 3D",
+ {n:"Docteur Sirop",cat:"Health & AI",role:"Sole Developer · 2025–2026",badge:"AI voice + Unity 3D",
   d:"AI health companion for hospitalized children: real-time voice conversations with an AI doctor, daily mood check-ins, a relaxation “espace zen”, interactive stories and a reward system that makes the child an active participant in their care.",
   tech:["Flutter","OpenAI Realtime","Unity 3D","speech_to_text"],
   links:[["Google Play",GP+"com.doctorsyrup.app"]]},
- {n:"Carter",cat:"Sports",tags:["sports"],role:"Lead Developer · 2022–2024",badge:"1K+ downloads",
+ {n:"Carter",cat:"Sports",role:"Lead Developer · 2022–2024",badge:"1K+ downloads",
   d:"Basketball club app for managers, coaches and players: rosters & positions, events and training sessions, attendance and standings, an exercise library and tactical boards, plus a play-to-earn reward system.",
   tech:["Flutter","Socket.IO","Firebase","Google Maps"],
   links:[["App Store",AS+"fr/app/carter-coaching/id6443718007"],["Google Play",GP+"com.du.carter"]]},
- {n:"KEYM",cat:"Social",tags:["social"],role:"Flutter Developer · 2023",badge:"5K+ downloads",
+ {n:"KEYM",cat:"Social",role:"Flutter Developer · 2023",badge:"5K+ downloads",
   d:"Music social network “by artists, for artists” — connect musicians, singers, producers and sound engineers, build a multi-format (audio + visual) portfolio, and search talent by skills and artistic universe.",
   tech:["Flutter","Media portfolio","Messaging","Firebase"],
   links:[["apkcombo","https://apkcombo.com/keym-reseau-social-musical/keymmusic.com.keym/"]]},
- {n:"Spaurt",cat:"Sports",tags:["sports"],role:"Sole Developer · 2025–2026",badge:"5K+ downloads",
+ {n:"Spaurt",cat:"Sports",role:"Sole Developer · 2025–2026",badge:"5K+ downloads",
   d:"Hybrid sports-training app with personalized coaching around four pillars: rep- and time-based workout routines, a routine library, 1-rep-max & PR tracking, physical tests, goals, statistics and calendar scheduling.",
   tech:["Flutter","fl_chart","Calendar","in_app_review"],
   links:[["App Store",AS+"fr/app/spaurt/id6743203018"],["Google Play",GP+"com.spaurt.app"]]},
- {n:"ProtectU",cat:"Safety",tags:["safety"],role:"Sole Developer · 2025",badge:"1K+ downloads",
+ {n:"ProtectU",cat:"Safety",role:"Sole Developer · 2025",badge:"1K+ downloads",
   d:"French citizen-safety app to see, understand and act on risky situations in real time: an interactive incident map, guidance to nearby safe places, live-location sharing and secure messaging to trusted contacts.",
   tech:["Flutter","SignalR","Google Maps","Firebase"],
   links:[["App Store",AS+"us/app/protectu/id6743616393"],["Google Play",GP+"com.protectu.fr"]]},
- {n:"Mentalia",cat:"Health & AI",tags:["health"],role:"Lead Developer · 2023–2024",badge:"AI virtual coach",
+ {n:"Mentalia",cat:"Health & AI",role:"Lead Developer · 2023–2024",badge:"AI virtual coach",
   d:"AI-powered mental-preparation & well-being app: chat with a caring AI virtual coach, follow a question-driven flow that suggests audio / PDF / video content, with generative-AI recommendations that evolve with your progress.",
   tech:["Flutter","Generative AI","Socket.IO","just_audio"],
   links:[["Google Play",GP+"com.mentalia.app"]]},
- {n:"Nila Sphere",cat:"Lifestyle",tags:["lifestyle"],role:"Sole Developer · 2026",badge:"",
+ {n:"Nila Sphere",cat:"Lifestyle",role:"Sole Developer · 2026",badge:"",
   d:"Carbon-footprint app for carbon neutrality: measure the CO₂ impact of daily tasks, track weekly emissions and a carbon score, complete green challenges to win partner gifts, and share eco achievements on a social feed.",
   tech:["Flutter","fl_chart","camerawesome","RevenueCat"],
   links:[["App Store",AS+"us/app/nila-sphere/id6754004164"],["Google Play",GP+"com.nilasphere.fr"]]},
- {n:"Beauty Squad",cat:"Marketplace",tags:["marketplace"],role:"Sole Developer · 2024–2025",badge:"",
+ {n:"Beauty Squad",cat:"Marketplace",role:"Sole Developer · 2024–2025",badge:"",
   d:"On-demand at-home beauty marketplace (client + salon): book experienced pros for hair, makeup, skincare, massage, nails and more — multi-step booking & checkout (Stripe / PayPal / wallet), galleries and in-app chat.",
   tech:["Flutter","Stripe","PayPal","Firestore"],
   links:[["apkcombo","https://apkcombo.com/beauty-squad/com.beautysquaduser/"]]},
- {n:"Octopush",cat:"Social",tags:["social"],role:"Lead Developer · 2024–2026",badge:"",
+ {n:"Octopush",cat:"Social",role:"Lead Developer · 2024–2026",badge:"",
   d:"Customer-conversation messenger for the Octopush (Marseille) multichannel/SMS platform: the team handles all customer conversations and live chat from one app, with push notifications.",
   tech:["Flutter","dio + retrofit","Firebase Messaging"],
   links:[["App Store",AS+"us/app/octopush/id6711331710"],["Google Play",GP+"com.du.octopush"]]},
 ];
 const MORE=[
- ["Live-streaming social","Agora · communities · live video"],
- ["Swy'Eat","restaurant-review social network"],
- ["Kimia","peer-to-peer travel-deal marketplace"],
- ["UAVLog","drone flight logbook · offline"],
- ["Arage","local events on a map"],
- ["Let Share","student project sharing (swipe)"],
- ["Âmes Sœurs","local dating · map clustering"],
- ["Barberz","barber booking (customer + pro)"],
- ["ShapeUp","on-demand hairdresser booking"],
- ["ard","mosquito-surveillance / public health"],
- ["Event","event management · galleries"],
- ["Adress","visitor app · QR & ID scanning"],
- ["Dear","couple / relationship app"],
- ["Sentinelle","safety / surveillance"],
- ["Flutter Base","in-house architecture · 20+ apps"],
- ["Medical clinic","clinic management (independent)"],
+ ["Live-streaming social","Agora · communities · live video"],["Swy'Eat","restaurant-review social network"],
+ ["Kimia","peer-to-peer travel-deal marketplace"],["UAVLog","drone flight logbook · offline"],
+ ["Arage","local events on a map"],["Let Share","student project sharing (swipe)"],
+ ["Âmes Sœurs","local dating · map clustering"],["Barberz","barber booking (customer + pro)"],
+ ["ShapeUp","on-demand hairdresser booking"],["ard","mosquito-surveillance / public health"],
+ ["Event","event management · galleries"],["Adress","visitor app · QR & ID scanning"],
+ ["Dear","couple / relationship app"],["Sentinelle","safety / surveillance"],
+ ["Flutter Base","in-house architecture · 20+ apps"],["Medical clinic","clinic management (independent)"],
 ];
 const CATS=["All","Mobility","Safety","Health & AI","Sports","Social","Marketplace","Lifestyle"];
 
@@ -382,36 +412,41 @@ const grid=document.getElementById('grid');
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
-  const links=p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')
-    || '<span class="meta">B2B / internal — not on public stores</span>';
+  const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')
+    :'<span class="nostore">B2B / internal — not on public stores</span>';
   return `<article class="pcard" data-cat="${p.cat}">
-    <div class="ptop"><h3>${p.n}</h3><span class="cat">${p.cat}</span></div>
-    <div class="meta">${p.role}</div>
-    ${badge}
-    <p>${p.d}</p>
-    <div class="ptech">${tech}</div>
-    <div class="plinks">${links}</div>
+    <div class="ptop"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div>
+    <div class="meta">${p.role}</div>${badge}
+    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${links}</div>
   </article>`;
 }
-function render(cat){
-  grid.innerHTML=PROJECTS.filter(p=>cat==='All'||p.cat===cat).map(card).join('');
+function bind(){ // spotlight
+  grid.querySelectorAll('.pcard').forEach(c=>{
+    c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();
+      c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');});
+  });
 }
+function render(cat){grid.innerHTML=PROJECTS.filter(p=>cat==='All'||p.cat===cat).map(card).join('');bind();}
 const fbox=document.getElementById('filters');
 fbox.innerHTML=CATS.map((c,i)=>`<button class="filt ${i===0?'active':''}" data-c="${c}">${c}</button>`).join('');
-fbox.addEventListener('click',e=>{
-  const b=e.target.closest('.filt'); if(!b)return;
-  fbox.querySelectorAll('.filt').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); render(b.dataset.c);
-});
+fbox.addEventListener('click',e=>{const b=e.target.closest('.filt');if(!b)return;
+  fbox.querySelectorAll('.filt').forEach(x=>x.classList.remove('active'));b.classList.add('active');render(b.dataset.c);});
 render('All');
 document.getElementById('more').innerHTML=MORE.map(m=>`<span class="mpill"><b>${m[0]}</b> <span>— ${m[1]}</span></span>`).join('');
 document.getElementById('yr').textContent=new Date().getFullYear();
 
-// scroll reveal
-const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.12});
+// theme toggle
+const root=document.documentElement, tb=document.getElementById('theme');
+const saved=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+function setTheme(t){root.dataset.theme=t;tb.textContent=t==='dark'?'🌙':'☀️';localStorage.setItem('theme',t);}
+setTheme(saved);
+tb.addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
+
+// scroll progress + reveal
+const prog=document.getElementById('prog');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-// close mobile menu on click
-document.getElementById('nav').addEventListener('click',()=>document.getElementById('nav').classList.remove('open'));
 </script>
 </body>
 </html>
