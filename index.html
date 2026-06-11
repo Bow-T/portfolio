@@ -384,16 +384,14 @@
   #cring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.6px solid var(--g2);border-radius:50%;z-index:250;pointer-events:none;transition:width .22s,height .22s,background .22s,border-color .22s,box-shadow .22s;box-shadow:0 0 16px 1px rgba(45,212,191,.42),0 6px 16px rgba(0,0,0,.35);}
   #cring.big{width:54px;height:54px;background:rgba(163,230,53,.1);border-color:var(--g1);box-shadow:0 0 28px 2px rgba(163,230,53,.5),0 10px 22px rgba(0,0,0,.4);}
   #cring.down{width:24px;height:24px;}
-  /* tech ball pit */
-  .ballpit{position:relative;height:clamp(230px,34vh,300px);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:20px;touch-action:none;background:radial-gradient(120% 90% at 50% 120%,color-mix(in srgb,var(--g2) 9%,transparent),transparent),var(--bg2);}
-  .ballpit .bphint{position:absolute;top:12px;left:14px;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.12em;pointer-events:none;z-index:2;}
-  .ball{position:absolute;top:0;left:0;border-radius:50%;display:grid;place-items:center;overflow:hidden;cursor:grab;user-select:none;will-change:transform;
-    background:radial-gradient(circle at 33% 27%,#ffffff 0%,#f1f5ee 42%,#c8d2c3 100%);
-    box-shadow:0 16px 28px -8px rgba(0,0,0,.6),0 5px 12px rgba(0,0,0,.34),inset 0 4px 7px rgba(255,255,255,.95),inset 0 -15px 24px rgba(0,0,0,.16);}
-  .ball::after{content:"";position:absolute;top:9%;left:15%;width:42%;height:32%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,0) 72%);}
-  .ball:active{cursor:grabbing;}
-  .ball img{width:50%;height:50%;object-fit:contain;pointer-events:none;position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18));}
-  .ball .lbl{font-weight:700;font-size:11px;color:#0a2009;text-align:center;padding:3px;line-height:1.05;position:relative;z-index:1;}
+  /* skills cards polish */
+  .skillcard{position:relative;overflow:hidden;}
+  .skillcard::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s;}
+  .skillcard:hover::before{opacity:1;}
+  .skillcard:hover{border-color:var(--g2);box-shadow:0 16px 34px -10px rgba(0,0,0,.5);}
+  .chip{display:inline-flex;align-items:center;gap:6px;transition:transform .16s,box-shadow .16s,border-color .16s,color .16s;}
+  .chip .cico{width:14px;height:14px;object-fit:contain;flex:none;}
+  .chip:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3);}
 </style>
 </head>
 <body>
@@ -490,7 +488,6 @@
     
     <h2 class="sec" data-i18n-html="skills.title">Tools of the trade</h2>
     <p class="sec-sub" data-i18n="skills.sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
-    <div class="ballpit" id="ballpit"></div>
     <div class="skillgrid">
       <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
         <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
@@ -1041,30 +1038,11 @@ setLang(localStorage.getItem('lang')||'en');
   addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest(H))ring.classList.remove('big');});
   addEventListener('mousedown',()=>ring.classList.add('down'));addEventListener('mouseup',()=>ring.classList.remove('down'));
 })();
-// ===== tech-stack ball pit =====
-(function(){ const box=document.getElementById('ballpit'); if(!box) return;
-  box.insertAdjacentHTML('beforeend','<span class="bphint">my stack · drag me</span>');
-  const TECH=[['Flutter','flutter'],['Dart','dart'],['Firebase','firebase'],['Supabase','supabase'],['Stripe','stripe'],['TypeScript','typescript'],['Next.js','nextdotjs'],['Figma','figma'],['GitHub','github'],['GitLab','gitlab'],['Kotlin','kotlin'],['Swift','swift'],['Maps','googlemaps']];
-  const G=0.45,RE=0.72,FR=0.99,GF=0.86; let balls=[],raf=0,running=false;
-  function build(){const W=box.clientWidth,H=box.clientHeight;
-    balls=TECH.map((tk,i)=>{const sz=56+Math.floor(Math.random()*16);const el=document.createElement('div');el.className='ball';el.style.width=el.style.height=sz+'px';
-      const img=document.createElement('img');img.src='https://cdn.simpleicons.org/'+tk[1];img.alt=tk[0];img.loading='lazy';img.referrerPolicy='no-referrer';
-      img.onerror=()=>{el.innerHTML='';const s=document.createElement('span');s.className='lbl';s.textContent=tk[0];el.appendChild(s);};
-      el.appendChild(img);box.appendChild(el);
-      const r=sz/2;const it={el,r,x:r+Math.random()*Math.max(1,W-sz),y:Math.random()*(H/2),vx:(Math.random()-.5)*5,vy:0,dr:false};drag(it);return it;});}
-  function drag(it){let lx,ly;it.el.addEventListener('pointerdown',e=>{e.preventDefault();it.dr=true;it.vx=it.vy=0;try{it.el.setPointerCapture(e.pointerId);}catch(_){}lx=e.clientX;ly=e.clientY;});
-    it.el.addEventListener('pointermove',e=>{if(!it.dr)return;const rc=box.getBoundingClientRect();it.x=e.clientX-rc.left-it.r;it.y=e.clientY-rc.top-it.r;it.vx=(e.clientX-lx)*.9;it.vy=(e.clientY-ly)*.9;lx=e.clientX;ly=e.clientY;it.el.style.transform='translate('+it.x+'px,'+it.y+'px)';});
-    const up=()=>it.dr=false;it.el.addEventListener('pointerup',up);it.el.addEventListener('pointercancel',up);}
-  function loop(){const W=box.clientWidth,H=box.clientHeight;
-    for(const b of balls){if(b.dr)continue;b.vy+=G;b.x+=b.vx;b.y+=b.vy;b.vx*=FR;b.vy*=FR;const d=b.r*2;
-      if(b.x<0){b.x=0;b.vx=-b.vx*RE;}if(b.x>W-d){b.x=W-d;b.vx=-b.vx*RE;}if(b.y<0){b.y=0;b.vy=-b.vy*RE;}if(b.y>H-d){b.y=H-d;b.vy=-b.vy*RE;b.vx*=GF;}}
-    for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j];if(a.dr||b.dr)continue;
-      const ax=a.x+a.r,ay=a.y+a.r,bx=b.x+b.r,by=b.y+b.r,dx=bx-ax,dy=by-ay,dist=Math.hypot(dx,dy)||.01,min=a.r+b.r;
-      if(dist<min){const ov=(min-dist)/2,nx=dx/dist,ny=dy/dist;a.x-=nx*ov;a.y-=ny*ov;b.x+=nx*ov;b.y+=ny*ov;const p=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(p<0){a.vx+=p*nx;a.vy+=p*ny;b.vx-=p*nx;b.vy-=p*ny;}}}
-    for(const b of balls)if(!b.dr)b.el.style.transform='translate('+b.x+'px,'+b.y+'px)';
-    raf=requestAnimationFrame(loop);}
-  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){if(!balls.length)build();if(!running){running=true;cancelAnimationFrame(raf);loop();}}else{running=false;cancelAnimationFrame(raf);}}),{threshold:0.05});
-  io.observe(box);
+// skill chips: add brand logos where available
+(function(){
+  const M={'flutter':'flutter','dart':'dart','react native':'react','firebase':'firebase','supabase':'supabase','stripe':'stripe','paypal':'paypal','figma':'figma','google maps':'googlemaps','socket.io':'socketdotio','kotlin':'kotlin','swift':'swift','fastlane':'fastlane','revenuecat':'revenuecat'};
+  document.querySelectorAll('.skillcard .chip').forEach(ch=>{const t=ch.textContent.toLowerCase();
+    for(const k in M){if(t.indexOf(k)>=0){const img=document.createElement('img');img.className='cico';img.src='https://cdn.simpleicons.org/'+M[k];img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();ch.prepend(img);break;}}});
 })();
 </script>
 </body>
