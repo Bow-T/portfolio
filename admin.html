@@ -4,58 +4,79 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>Bow · Admin</title>
+<title>Bow · Dashboard</title>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <style>
-  :root{--bg:#0a0f0a;--bg2:#0e150d;--card:#111811;--cardb:#26331d;--chip:#16210f;--chipb:#2a3b1d;
-    --text:#e9f3e6;--muted:#8aa07f;--soft:#5f7355;--line:#1d2a16;--g1:#bef264;--g2:#2dd4bf;--g3:#4ade80;
-    --grad:linear-gradient(100deg,#bef264,#4ade80,#2dd4bf);}
+  :root{--bg:#0a0f0a;--bg2:#0e150d;--card:#111811;--cardb:#27361c;--chip:#16210f;--chipb:#2a3b1d;
+    --text:#e9f3e6;--muted:#8aa07f;--soft:#62765a;--line:#1d2a16;--g1:#bef264;--g2:#2dd4bf;--g3:#4ade80;
+    --grad:linear-gradient(100deg,#bef264,#4ade80,#2dd4bf);--shadow:0 18px 50px rgba(0,0,0,.45);}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 60px;}
-  header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
-  header .logo{height:30px;width:auto;}
-  header h1{font-size:18px;font-weight:800;letter-spacing:-.3px;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:
+    radial-gradient(120% 80% at 100% -10%,rgba(45,212,191,.07),transparent),
+    radial-gradient(120% 80% at -10% 0%,rgba(190,242,100,.06),transparent),var(--bg);
+    color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:26px 18px 70px;}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:26px;}
+  header .logo{height:30px;width:auto;filter:drop-shadow(0 0 7px rgba(45,212,191,.4));}
+  header .pill{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g2);
+    border:1px solid var(--chipb);background:var(--chip);padding:5px 10px;border-radius:20px;}
   header .grow{flex:1;}
-  header a,.out{color:var(--muted);font-size:13px;text-decoration:none;border:1px solid var(--line);padding:7px 13px;border-radius:9px;background:transparent;cursor:pointer;font-family:inherit;}
-  header a:hover,.out:hover{border-color:var(--g2);color:var(--text);}
-  .card{background:var(--card);border:1px solid var(--cardb);border-radius:18px;padding:24px;max-width:380px;margin:60px auto 0;}
-  .card h2{font-size:19px;font-weight:800;margin-bottom:4px;}
+  .ibtn{color:var(--muted);font-size:13px;text-decoration:none;border:1px solid var(--line);padding:8px 13px;
+    border-radius:10px;background:var(--card);cursor:pointer;font-family:inherit;transition:.15s;}
+  .ibtn:hover{border-color:var(--g2);color:var(--text);}
+  /* login */
+  .card{background:var(--card);border:1px solid var(--cardb);border-radius:20px;padding:26px;max-width:380px;margin:70px auto 0;box-shadow:var(--shadow);}
+  .card .lock{font-size:34px;margin-bottom:8px;}
+  .card h2{font-size:20px;font-weight:800;margin-bottom:4px;}
   .card p.sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
-  .card input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:11px;font-family:inherit;outline:none;}
+  .card input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:11px;font-family:inherit;outline:none;}
   .card input:focus{border-color:var(--g2);}
-  .btn{width:100%;border:none;background:var(--grad);color:#0a2009;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;}
+  .btn{width:100%;border:none;background:var(--grad);color:#0a2009;font-weight:700;padding:12px;border-radius:11px;cursor:pointer;font-family:inherit;font-size:14px;}
   .err{color:#f87171;font-size:12.5px;margin-top:11px;min-height:16px;}
-  .kpis{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;}
-  .kpi{flex:1;min-width:120px;background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:16px 18px;}
+  /* kpis */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .kpi{background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden;}
+  .kpi .ic{position:absolute;top:12px;right:14px;font-size:18px;opacity:.5;}
   .kpi b{display:block;font-size:30px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1;}
-  .kpi span{color:var(--muted);font-size:12.5px;}
-  .block{margin-bottom:22px;} h3{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:0 0 10px;}
-  .bar{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px;}
-  .bk{width:150px;min-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bt{flex:1;height:9px;background:var(--chip);border-radius:6px;overflow:hidden;} .bt i{display:block;height:100%;background:var(--grad);}
-  .bv{width:38px;text-align:right;color:var(--muted);}
-  table{width:100%;border-collapse:collapse;font-size:12.5px;}
-  th{text-align:left;color:var(--soft);font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line);text-transform:uppercase;font-size:10.5px;letter-spacing:.05em;}
-  td{padding:8px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top;}
-  td.when{color:var(--text);white-space:nowrap;} td .ref{color:var(--g2);font-weight:600;}
-  .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;}
-  .loading{color:var(--muted);text-align:center;padding:30px;}
+  .kpi span{color:var(--muted);font-size:12px;}
+  /* breakdown grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  .panel{background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:16px 18px;}
+  .panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:0 0 12px;}
+  .bar{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px;}
+  .bk{width:140px;min-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bt{flex:1;height:9px;background:var(--chip);border-radius:6px;overflow:hidden;} .bt i{display:block;height:100%;background:var(--grad);border-radius:6px;}
+  .bv{width:34px;text-align:right;color:var(--muted);}
+  /* table */
+  .tcard{background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:8px 4px 4px;overflow:hidden;}
+  .tcard h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:10px 14px 8px;}
+  .tablewrap{overflow:auto;max-height:520px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap;}
+  th{position:sticky;top:0;background:var(--card);text-align:left;color:var(--soft);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--line);text-transform:uppercase;font-size:10px;letter-spacing:.05em;z-index:1;}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top;}
+  tr:hover td{background:rgba(255,255,255,.015);}
+  td.when{color:var(--text);} td .ip{font-family:ui-monospace,Menlo,monospace;color:var(--g1);font-size:11px;}
+  td .ref{color:var(--g2);font-weight:700;} td .dev b{color:var(--text);font-weight:600;}
+  .flag{margin-right:5px;}
+  .empty{color:var(--muted);text-align:center;padding:40px;}
   .hide{display:none!important;}
+  @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr;}.grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <img class="logo" src="assets/wordmark.svg" alt="Bow">
-    <h1>· Admin</h1>
+    <span class="pill" id="hpill">Dashboard</span>
     <span class="grow"></span>
-    <a href="index.html">← Về trang chính</a>
-    <button class="out hide" id="out">Đăng xuất</button>
+    <button class="ibtn hide" id="refresh">↻ Làm mới</button>
+    <a class="ibtn" href="index.html">← Trang chính</a>
+    <button class="ibtn hide" id="out">Đăng xuất</button>
   </header>
 
   <div class="card hide" id="login">
-    <h2>🔒 Khu vực riêng</h2>
+    <div class="lock">🔒</div>
+    <h2>Khu vực riêng</h2>
     <p class="sub">Chỉ dành cho Bow. Đăng nhập để xem thống kê truy cập.</p>
     <input id="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password">
     <button class="btn" id="go">Đăng nhập</button>
@@ -64,10 +85,13 @@
 
   <main id="dash" class="hide">
     <div class="kpis" id="kpis"></div>
-    <div id="breaks"></div>
-    <div class="block">
+    <div class="grid" id="breaks"></div>
+    <div class="tcard">
       <h3>Lượt truy cập gần đây</h3>
-      <div class="tablewrap"><table id="tbl"><thead><tr><th>Thời gian</th><th>Vị trí</th><th>Nhà mạng</th><th>Ref</th><th>Trang</th><th>Thiết bị</th></tr></thead><tbody id="tbody"></tbody></table></div>
+      <div class="tablewrap">
+        <table><thead><tr><th>Thời gian</th><th>IP</th><th>Vị trí</th><th>Nhà mạng</th><th>Thiết bị</th><th>Màn hình</th><th>Ref</th><th>Trang</th></tr></thead>
+        <tbody id="tbody"></tbody></table>
+      </div>
     </div>
   </main>
 </div>
@@ -79,41 +103,70 @@
   const ADMIN='nguyenvantuan4034@gmail.com';
   const app=initializeApp({apiKey:"AIzaSyCKTi16MRvh8OtVPuN7hBOTXqSnmCHZ9hQ",authDomain:"bow-portfolio-11921.firebaseapp.com",projectId:"bow-portfolio-11921",storageBucket:"bow-portfolio-11921.firebasestorage.app",messagingSenderId:"864661220560",appId:"1:864661220560:web:aae593e86db7017c64c2d5",measurementId:"G-CSDMCK4J9W"});
   const auth=getAuth(app), db=getFirestore(app);
-  const goBtn=document.getElementById('go'), pw=document.getElementById('pw'), err=document.getElementById('err');
+  const E=id=>document.getElementById(id);
+  const goBtn=E('go'), pw=E('pw'), err=E('err');
   goBtn.onclick=async()=>{ const p=pw.value; if(!p) return; err.textContent='Đang xử lý…';
     try{ await signInWithEmailAndPassword(auth,ADMIN,p); }
     catch(e){ if(e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'){ try{ await createUserWithEmailAndPassword(auth,ADMIN,p); }catch(e2){ err.textContent=e2.message; } } else err.textContent=e.message; } };
   pw.addEventListener('keydown',e=>{ if(e.key==='Enter') goBtn.click(); });
-  document.getElementById('out').onclick=()=>signOut(auth);
+  E('out').onclick=()=>signOut(auth);
+  E('refresh').onclick=()=>load();
   onAuthStateChanged(auth,user=>{ const inn=user&&user.email===ADMIN;
     if(!inn && sessionStorage.getItem('adm')!=='1'){ location.replace('index.html'); return; }
-    document.getElementById('login').classList.toggle('hide',inn);
-    document.getElementById('dash').classList.toggle('hide',!inn);
-    document.getElementById('out').classList.toggle('hide',!inn);
+    E('login').classList.toggle('hide',inn);
+    E('dash').classList.toggle('hide',!inn);
+    E('out').classList.toggle('hide',!inn);
+    E('refresh').classList.toggle('hide',!inn);
+    E('hpill').textContent=inn?'Visitor analytics':'Dashboard';
     if(inn) load(); });
-  const fmt=ts=>{ try{ const d=ts&&ts.toDate?ts.toDate():new Date(ts); return d.toLocaleString('vi-VN'); }catch(_){ return ''; } };
-  const tally=(rows,k)=>{ const m={}; rows.forEach(r=>{ const v=r[k]||'(?)'; m[v]=(m[v]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
-  const bar=(title,arr)=>{ if(!arr.length) return ''; const mx=arr[0][1]||1;
-    return '<div class="block"><h3>'+title+'</h3>'+arr.map(p=>'<div class="bar"><span class="bk">'+p[0]+'</span><span class="bt"><i style="width:'+Math.round(p[1]/mx*100)+'%"></i></span><span class="bv">'+p[1]+'</span></div>').join('')+'</div>'; };
-  async function load(){ try{
-      const snap=await getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(500)));
-      render(snap.docs.map(d=>d.data()));
-    }catch(e){ document.getElementById('kpis').innerHTML='<div class="err">'+(e.message||e)+'</div>'; } }
+
+  const fmt=ts=>{ try{ const d=ts&&ts.toDate?ts.toDate():new Date(ts); return d.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(_){ return ''; } };
+  const flags={Vietnam:'🇻🇳',"United States":'🇺🇸',Japan:'🇯🇵',Singapore:'🇸🇬',France:'🇫🇷',Germany:'🇩🇪',"South Korea":'🇰🇷',China:'🇨🇳',India:'🇮🇳',Thailand:'🇹🇭',"United Kingdom":'🇬🇧',Australia:'🇦🇺',Canada:'🇨🇦'};
+  function parseUA(ua){ ua=ua||'';
+    let os='?'; if(/windows nt/i.test(ua))os='Windows'; else if(/iphone|ipad|ipod/i.test(ua))os='iOS'; else if(/mac os x/i.test(ua))os='macOS'; else if(/android/i.test(ua))os='Android'; else if(/linux/i.test(ua))os='Linux';
+    let br='?'; if(/edg\//i.test(ua))br='Edge'; else if(/opr\/|opera/i.test(ua))br='Opera'; else if(/samsungbrowser/i.test(ua))br='Samsung'; else if(/chrome|crios/i.test(ua))br='Chrome'; else if(/firefox|fxios/i.test(ua))br='Firefox'; else if(/safari/i.test(ua))br='Safari';
+    let dev = /ipad|tablet/i.test(ua)?'Tablet':(/mobile|iphone|android.*mobile/i.test(ua)?'Mobile':'Desktop');
+    return {os,br,dev}; }
+  const devIcon=d=>d==='Mobile'?'📱':d==='Tablet'?'📲':'💻';
+  const tally=(rows,fn)=>{ const m={}; rows.forEach(r=>{ const v=fn(r)||'(?)'; m[v]=(m[v]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
+  const panel=(title,arr)=>{ if(!arr.length) return ''; const mx=arr[0][1]||1;
+    return '<div class="panel"><h3>'+title+'</h3>'+arr.map(p=>'<div class="bar"><span class="bk">'+p[0]+'</span><span class="bt"><i style="width:'+Math.round(p[1]/mx*100)+'%"></i></span><span class="bv">'+p[1]+'</span></div>').join('')+'</div>'; };
+
+  async function load(){ E('refresh').textContent='↻ Đang tải…';
+    try{ const snap=await getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(500)));
+      render(snap.docs.map(d=>{ const r=d.data(); const u=parseUA(r.ua); r._br=u.br; r._os=u.os; r._dev=u.dev; return r; }));
+    }catch(e){ E('kpis').innerHTML='<div class="err">'+(e.message||e)+'</div>'; }
+    E('refresh').textContent='↻ Làm mới'; }
+
   function render(rows){
     const total=rows.length;
     const today=rows.filter(r=>{ const d=r.ts&&r.ts.toDate?r.ts.toDate():null; return d&&d.toDateString()===new Date().toDateString(); }).length;
+    const countries=new Set(rows.map(r=>r.country).filter(Boolean)).size;
     const refs=rows.filter(r=>r.ref).length;
-    document.getElementById('kpis').innerHTML=
-      '<div class="kpi"><b>'+total+'</b><span>tổng lượt (gần đây)</span></div>'+
-      '<div class="kpi"><b>'+today+'</b><span>hôm nay</span></div>'+
-      '<div class="kpi"><b>'+refs+'</b><span>có gắn ref</span></div>';
-    document.getElementById('breaks').innerHTML=
-      bar('Theo quốc gia',tally(rows,'country').slice(0,8))+
-      bar('Theo thành phố',tally(rows,'city').slice(0,8))+
-      bar('Theo nguồn (ref)',tally(rows.filter(r=>r.ref),'ref').slice(0,8))+
-      bar('Theo nhà mạng (ISP)',tally(rows,'isp').slice(0,8));
-    document.getElementById('tbody').innerHTML=rows.slice(0,80).map(r=>
-      '<tr><td class="when">'+fmt(r.ts)+'</td><td>'+((r.city||'')+(r.country?', '+r.country:''))+'</td><td>'+(r.isp||'')+'</td><td><span class="ref">'+(r.ref||'')+'</span></td><td>'+(r.path||'')+'</td><td>'+(r.screen||'')+'</td></tr>').join('');
+    E('kpis').innerHTML=
+      '<div class="kpi"><span class="ic">👁️</span><b>'+total+'</b><span>tổng lượt</span></div>'+
+      '<div class="kpi"><span class="ic">📅</span><b>'+today+'</b><span>hôm nay</span></div>'+
+      '<div class="kpi"><span class="ic">🌍</span><b>'+countries+'</b><span>quốc gia</span></div>'+
+      '<div class="kpi"><span class="ic">🔗</span><b>'+refs+'</b><span>có ref</span></div>';
+    E('breaks').innerHTML=
+      panel('Quốc gia',tally(rows,r=>(flags[r.country]?flags[r.country]+' ':'')+(r.country||'')).slice(0,7))+
+      panel('Thành phố',tally(rows,r=>r.city).slice(0,7))+
+      panel('Trình duyệt',tally(rows,r=>r._br).slice(0,7))+
+      panel('Hệ điều hành',tally(rows,r=>r._os).slice(0,7))+
+      panel('Thiết bị',tally(rows,r=>devIcon(r._dev)+' '+r._dev).slice(0,7))+
+      panel('Nhà mạng (ISP)',tally(rows,r=>r.isp).slice(0,7))+
+      panel('Nguồn (ref)',tally(rows.filter(r=>r.ref),r=>r.ref).slice(0,7))+
+      panel('Trang vào',tally(rows,r=>r.path).slice(0,7));
+    if(!total){ E('tbody').innerHTML='<tr><td colspan="8" class="empty">Chưa có lượt truy cập nào. Mở site ở cửa sổ ẩn danh để tạo dữ liệu.</td></tr>'; return; }
+    E('tbody').innerHTML=rows.slice(0,120).map(r=>
+      '<tr><td class="when">'+fmt(r.ts)+'</td>'+
+      '<td><span class="ip">'+(r.ip||'—')+'</span></td>'+
+      '<td>'+(flags[r.country]?'<span class="flag">'+flags[r.country]+'</span>':'')+((r.city||'')+(r.country?', '+r.country:''))+'</td>'+
+      '<td>'+(r.isp||'')+'</td>'+
+      '<td class="dev">'+devIcon(r._dev)+' <b>'+r._br+'</b> · '+r._os+'</td>'+
+      '<td>'+(r.screen||'')+(r.dpr&&r.dpr!=1?' @'+r.dpr+'x':'')+'</td>'+
+      '<td><span class="ref">'+(r.ref||'')+'</span></td>'+
+      '<td>'+(r.path||'')+'</td></tr>').join('');
   }
 </script>
 </body>
