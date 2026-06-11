@@ -302,9 +302,6 @@
   .langsel{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-right:4px;}
   .langsel button{border:none;background:transparent;color:var(--muted);font:600 11px/1 inherit;padding:7px 8px;cursor:pointer;font-family:inherit;}
   .langsel button.on{background:var(--grad);color:#0a2009;} .langsel button:hover{color:var(--text);}
-  /* visualizer */
-  #viz{position:fixed;left:0;bottom:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .5s;}
-  #viz.on{opacity:.85;}
   /* chatbot */
   #chatbtn{position:fixed;right:18px;bottom:18px;z-index:72;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;
     background:var(--grad);background-size:180%;color:#0a2009;font-size:22px;box-shadow:0 8px 22px rgba(132,204,22,.32);transition:transform .15s;}
@@ -775,18 +772,10 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
   let idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5;
-  let ac,gain,analyser,data,raf=0;
-  const cvz=document.createElement('canvas');cvz.id='viz';document.body.appendChild(cvz);const vx=cvz.getContext('2d');
-  function vsize(){cvz.width=innerWidth;cvz.height=92;}vsize();addEventListener('resize',vsize);
+  let ac,gain;
   function ensure(){ if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();
-    gain=ac.createGain();gain.gain.value=vol;analyser=ac.createAnalyser();analyser.fftSize=128;analyser.smoothingTimeConstant=0.82;
-    gain.connect(analyser);analyser.connect(ac.destination);data=new Uint8Array(analyser.frequencyBinCount);}
+    gain=ac.createGain();gain.gain.value=vol;gain.connect(ac.destination);}
     if(ac.state==='suspended')ac.resume(); }
-  function vloop(){ if(!playing){vx.clearRect(0,0,cvz.width,cvz.height);return;}
-    analyser.getByteFrequencyData(data);vx.clearRect(0,0,cvz.width,cvz.height);const n=data.length,bw=cvz.width/n;
-    for(let i=0;i<n;i++){const h=Math.pow(data[i]/255,1.3)*cvz.height*0.95;const g=vx.createLinearGradient(0,cvz.height,0,cvz.height-h);
-      g.addColorStop(0,'rgba(132,204,22,0)');g.addColorStop(1,'rgba(190,242,100,.5)');vx.fillStyle=g;vx.fillRect(i*bw+1,cvz.height-h,bw-2,h);}
-    raf=requestAnimationFrame(vloop); }
   // panel UI
   const p=document.createElement('div');p.className='player';
   p.innerHTML='<div class="cover" id="pcov"><span class="bdg">♫ now playing</span><span id="pemo">🌧️</span></div>'
@@ -811,8 +800,8 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     cur.addEventListener('ended',()=>{ if(repeat==='one'){cur.currentTime=0;cur.play();} else if(repeat==='off'&&idx===TRACKS.length-1&&!shuffle){doPause();} else next(); });
     paint(); if(auto)doPlay(); }
   function doPlay(){ ensure(); if(ac.resume)ac.resume(); cur.play().catch(()=>{}); playing=true; ppB.textContent='⏸'; btn.classList.add('on');
-    cvz.classList.add('on'); cancelAnimationFrame(raf); vloop(); if(window.__rain)window.__rain(true); renderList(); }
-  function doPause(){ if(cur)cur.pause(); playing=false; ppB.textContent='▶'; btn.classList.remove('on'); cvz.classList.remove('on'); if(window.__rain)window.__rain(false); renderList(); }
+    if(window.__rain)window.__rain(true); renderList(); }
+  function doPause(){ if(cur)cur.pause(); playing=false; ppB.textContent='▶'; btn.classList.remove('on'); if(window.__rain)window.__rain(false); renderList(); }
   function next(){ load(shuffle?(Math.random()*TRACKS.length|0):idx+1,true); }
   function prev(){ if(cur&&cur.currentTime>3){cur.currentTime=0;return;} load(shuffle?(Math.random()*TRACKS.length|0):idx-1,true); }
   ppB.addEventListener('click',()=>playing?doPause():(cur?doPlay():load(idx,true)));
