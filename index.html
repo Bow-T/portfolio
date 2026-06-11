@@ -55,6 +55,8 @@
   nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
   .brand{font-weight:800;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px;}
   .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--grad);box-shadow:0 0 12px var(--g2);}
+  .brand .blogo{filter:drop-shadow(0 0 7px rgba(45,212,191,.45));transition:transform .3s;}
+  .brand:hover .blogo{transform:rotate(-8deg) scale(1.08);}
   .navlinks{display:flex;gap:8px;align-items:center;}
   .navlinks a.lnk{font-size:14px;font-weight:500;color:var(--muted);padding:7px 12px;border-radius:9px;transition:.18s;}
   .navlinks a.lnk:hover{color:var(--text);background:var(--chip);}
@@ -393,6 +395,7 @@
   .chip .cico{width:14px;height:14px;object-fit:contain;flex:none;}
   .chip:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3);}
 </style>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <body>
 <div id="pre"><div class="pcount" id="pcount">0</div><div class="plbl">loading</div></div>
@@ -406,7 +409,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="#top" class="brand"><span class="dot"></span>Bow</a>
+    <a href="#top" class="brand"><svg class="blogo" viewBox="0 0 64 64" width="26" height="26" fill="none" aria-hidden="true"><defs><linearGradient id="blg" x1="10" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".5" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#blg)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M41 8 C 15 22, 15 42, 41 56"/><path d="M41 8 L 30 32 L 41 56"/><path d="M30 32 H 55"/><path d="M48 25.5 L 55 32 L 48 38.5"/><path d="M30 32 l -6 -4 M30 32 l -6 4"/></g></svg>Bow</a>
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>

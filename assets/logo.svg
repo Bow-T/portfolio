@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="Bow logo">
+  <defs>
+    <linearGradient id="bowg" x1="10" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#bef264"/>
+      <stop offset=".5" stop-color="#4ade80"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+  <g stroke="url(#bowg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cây cung: nét cong thanh mảnh, mềm mại nhưng vững -->
+    <path d="M41 8 C 15 22, 15 42, 41 56"/>
+    <!-- dây cung kéo căng (sức bật / sẵn sàng) -->
+    <path d="M41 8 L 30 32 L 41 56"/>
+    <!-- mũi tên: hướng tới trước (vươn lên, bảo vệ) -->
+    <path d="M30 32 H 55"/>
+    <path d="M48 25.5 L 55 32 L 48 38.5"/>
+    <!-- đuôi tên (fletching) -->
+    <path d="M30 32 l -6 -4 M30 32 l -6 4"/>
+  </g>
+</svg>
