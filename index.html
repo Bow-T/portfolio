@@ -363,6 +363,10 @@
   .player .schint{font-size:12px;color:var(--muted);padding:12px 14px 8px;text-align:center;line-height:1.45;}
   .player .schint b{color:var(--g2);}
   .player #scmount iframe{display:block;border:0;border-bottom-left-radius:18px;border-bottom-right-radius:18px;}
+  .player .scstations{display:flex;flex-wrap:wrap;gap:6px;padding:2px 12px 10px;}
+  .player .scchip{font-size:11.5px;border:1px solid var(--line);background:var(--chip);color:var(--muted);border-radius:16px;padding:5px 10px;cursor:pointer;font-family:inherit;}
+  .player .scchip:hover{border-color:var(--g2);color:var(--text);}
+  .player .scchip.on{background:var(--grad);color:#0a2009;border-color:transparent;}
 </style>
 </head>
 <body>
@@ -784,7 +788,16 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     {src:'assets/kiss-the-rain.mp3',title:'Kiss the Rain',artist:'Yiruma',emoji:'🌧️',g:'linear-gradient(135deg,#2dd4bf,#0d9488)'},
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
-  const NOO='https://soundcloud.com/noophuocthinh';
+  const STATIONS=[
+    {name:'Chillies',url:'https://soundcloud.com/chillies'},
+    {name:'buitruonglinh',url:'https://soundcloud.com/buitruonglinh'},
+    {name:'Lofi Vietnam',url:'https://soundcloud.com/lofi-vietnam'},
+    {name:'Vũ.',url:'https://soundcloud.com/vuofficial'},
+    {name:'Thái Đinh',url:'https://soundcloud.com/thaidinh'},
+    {name:'GreyD',url:'https://soundcloud.com/grey-d'},
+    {name:'Noo (hạn chế)',url:'https://soundcloud.com/noophuocthinh'},
+  ];
+  let scStation=0;
   let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5,scBuilt=false;
   const p=document.createElement('div');p.className='player';
   p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ Nhạc Việt</button></div>'
@@ -796,7 +809,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     +'<div class="volrow">🔉<input class="vol" id="pvol" type="range" min="0" max="100" value="50"></div>'
     +'<div class="list" id="plist"></div>'
     +'</div>'
-    +'<div id="psc" style="display:none"><div class="schint">Nhạc Việt chill · <b>Noo Phước Thịnh</b><br>bấm ▶ trên trình phát bên dưới</div><div id="scmount"></div></div>';
+    +'<div id="psc" style="display:none"><div class="schint">Nhạc Việt chill · chọn nghệ sĩ rồi bấm ▶ trên trình phát</div><div class="scstations" id="scst"></div><div id="scmount"></div></div>';
   document.body.appendChild(p);
   const $=id=>p.querySelector(id);
   const cov=$('#pcov'),emo=$('#pemo'),tit=$('#ptit'),art=$('#part'),seek=$('#pseek'),ctE=$('#pct'),duE=$('#pdu'),ppB=$('#ppp'),listE=$('#plist');
@@ -815,8 +828,10 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   function localPause(){if(cur)cur.pause();playing=false;onState();}
   function nextT(){loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx+1,true);}
   function prevT(){if(cur&&cur.currentTime>3){cur.currentTime=0;return;}loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx-1,true);}
-  function buildSC(){if(scBuilt)return;scBuilt=true;
-    $('#scmount').innerHTML='<iframe width="100%" height="300" frameborder="0" allow="autoplay" loading="lazy" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(NOO)+'&color=%23a3e635&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe>';}
+  function scFrame(url){return '<iframe width="100%" height="300" frameborder="0" allow="autoplay" loading="lazy" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23a3e635&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe>';}
+  function renderStations(){$('#scst').innerHTML=STATIONS.map((s,i)=>'<button class="scchip'+(i===scStation?' on':'')+'" data-i="'+i+'">'+s.name+'</button>').join('');
+    $('#scst').querySelectorAll('.scchip').forEach(b=>b.onclick=()=>{scStation=+b.dataset.i;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation].url);});}
+  function buildSC(){if(scBuilt)return;scBuilt=true;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation].url);}
   function switchMode(m){if(m===mode)return;if(mode==='local'&&cur){cur.pause();playing=false;onState();}mode=m;
     p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
     $('#plocal').style.display=(m==='local')?'':'none';$('#psc').style.display=(m==='sc')?'':'none';if(m==='sc')buildSC();}
