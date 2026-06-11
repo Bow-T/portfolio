@@ -378,7 +378,65 @@
   #pre .plbl{position:absolute;bottom:40px;left:0;right:0;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.4em;text-transform:uppercase;}
   #grain{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.04;mix-blend-mode:overlay;background-size:170px 170px;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  /* custom cursor */
+  html.has-cursor, html.has-cursor *{cursor:none!important;}
+  #cdot{position:fixed;top:0;left:0;width:7px;height:7px;border-radius:50%;background:var(--g1);z-index:250;pointer-events:none;}
+  #cring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid var(--g2);border-radius:50%;z-index:250;pointer-events:none;transition:width .22s,height .22s,background .22s,border-color .22s;}
+  #cring.big{width:54px;height:54px;background:rgba(163,230,53,.12);border-color:var(--g1);}
+  #cring.down{width:24px;height:24px;}
+  /* tech ball pit */
+  .ballpit{position:relative;height:clamp(230px,34vh,300px);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:20px;touch-action:none;background:radial-gradient(120% 90% at 50% 120%,color-mix(in srgb,var(--g2) 9%,transparent),transparent),var(--bg2);}
+  .ballpit .bphint{position:absolute;top:12px;left:14px;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.12em;pointer-events:none;z-index:2;}
+  .ball{position:absolute;top:0;left:0;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:700;font-size:12px;color:#0a2009;cursor:grab;user-select:none;box-shadow:0 6px 16px rgba(0,0,0,.32),inset 0 -6px 12px rgba(0,0,0,.12);will-change:transform;padding:4px;line-height:1.05;}
+  .ball:active{cursor:grabbing;}
 </style>
+<script defer src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js">
+// ===== custom cursor (dot + ring) =====
+(function(){ if(matchMedia('(pointer:coarse)').matches) return;
+  const dot=document.createElement('div');dot.id='cdot';const ring=document.createElement('div');ring.id='cring';
+  document.body.append(dot,ring);document.documentElement.classList.add('has-cursor');
+  let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform='translate('+mx+'px,'+my+'px) translate(-50%,-50%)';},{passive:true});
+  (function l(){rx+=(mx-rx)*0.2;ry+=(my-ry)*0.2;ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';requestAnimationFrame(l);})();
+  const H='a,button,input,textarea,select,.chip,.ball,.pcard,.lnk,.iconbtn,.scchip,.psrc button,.li,.mb,.gx,#chatbtn,.musicbtn,.chip2,.langsel button';
+  addEventListener('mouseover',e=>{if(e.target.closest&&e.target.closest(H))ring.classList.add('big');});
+  addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest(H))ring.classList.remove('big');});
+  addEventListener('mousedown',()=>ring.classList.add('down'));addEventListener('mouseup',()=>ring.classList.remove('down'));
+})();
+// ===== smooth scroll (Lenis, graceful if CDN blocked) =====
+addEventListener('load',function(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!window.Lenis) return;
+  try{const lenis=new Lenis({duration:1.05,smoothWheel:true});
+    (function raf(t){lenis.raf(t);requestAnimationFrame(raf);})();
+    document.querySelectorAll('.chatmsgs,.player .list,#scmount,#gz').forEach(el=>el&&el.setAttribute('data-lenis-prevent',''));
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const id=a.getAttribute('href');if(id&&id.length>1){const tg=document.querySelector(id);if(tg){e.preventDefault();lenis.scrollTo(tg,{offset:-70});}}}));
+  }catch(_){}
+});
+// ===== tech-stack ball pit =====
+(function(){ const box=document.getElementById('ballpit'); if(!box) return;
+  box.insertAdjacentHTML('beforeend','<span class="bphint">my stack · drag me</span>');
+  const TECH=['Flutter','Dart','Firebase','Supabase','Stripe','Provider','BLoC','GetX','Agora','dio','Lottie','Fastlane','RevenueCat','Maps'];
+  const COL=['#bef264','#a3e635','#84cc16','#4ade80','#22c55e','#2dd4bf','#14b8a6','#65a30d','#10b981'];
+  const G=0.45,RE=0.72,FR=0.99,GF=0.86; let balls=[],raf=0,running=false;
+  function build(){const W=box.clientWidth,H=box.clientHeight;
+    balls=TECH.map((name,i)=>{const sz=Math.max(48,Math.min(82,40+name.length*3.4));const el=document.createElement('div');el.className='ball';el.textContent=name;el.style.width=el.style.height=sz+'px';
+      const c=COL[i%COL.length];el.style.background='radial-gradient(circle at 35% 28%,'+c+',color-mix(in srgb,'+c+' 55%,#0a1f08))';
+      box.appendChild(el);const r=sz/2;const it={el,r,x:r+Math.random()*Math.max(1,W-sz),y:Math.random()*(H/2),vx:(Math.random()-.5)*5,vy:0,dr:false};drag(it);return it;});}
+  function drag(it){let lx,ly;it.el.addEventListener('pointerdown',e=>{e.preventDefault();it.dr=true;it.vx=it.vy=0;try{it.el.setPointerCapture(e.pointerId);}catch(_){}lx=e.clientX;ly=e.clientY;});
+    it.el.addEventListener('pointermove',e=>{if(!it.dr)return;const rc=box.getBoundingClientRect();it.x=e.clientX-rc.left-it.r;it.y=e.clientY-rc.top-it.r;it.vx=(e.clientX-lx)*.9;it.vy=(e.clientY-ly)*.9;lx=e.clientX;ly=e.clientY;it.el.style.transform='translate('+it.x+'px,'+it.y+'px)';});
+    const up=()=>it.dr=false;it.el.addEventListener('pointerup',up);it.el.addEventListener('pointercancel',up);}
+  function loop(){const W=box.clientWidth,H=box.clientHeight;
+    for(const b of balls){if(b.dr)continue;b.vy+=G;b.x+=b.vx;b.y+=b.vy;b.vx*=FR;b.vy*=FR;const d=b.r*2;
+      if(b.x<0){b.x=0;b.vx=-b.vx*RE;}if(b.x>W-d){b.x=W-d;b.vx=-b.vx*RE;}if(b.y<0){b.y=0;b.vy=-b.vy*RE;}if(b.y>H-d){b.y=H-d;b.vy=-b.vy*RE;b.vx*=GF;}}
+    for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){const a=balls[i],b=balls[j];if(a.dr||b.dr)continue;
+      const ax=a.x+a.r,ay=a.y+a.r,bx=b.x+b.r,by=b.y+b.r,dx=bx-ax,dy=by-ay,dist=Math.hypot(dx,dy)||.01,min=a.r+b.r;
+      if(dist<min){const ov=(min-dist)/2,nx=dx/dist,ny=dy/dist;a.x-=nx*ov;a.y-=ny*ov;b.x+=nx*ov;b.y+=ny*ov;const p=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;if(p<0){a.vx+=p*nx;a.vy+=p*ny;b.vx-=p*nx;b.vy-=p*ny;}}}
+    for(const b of balls)if(!b.dr)b.el.style.transform='translate('+b.x+'px,'+b.y+'px)';
+    raf=requestAnimationFrame(loop);}
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){if(!balls.length)build();if(!running){running=true;cancelAnimationFrame(raf);loop();}}else{running=false;cancelAnimationFrame(raf);}}),{threshold:0.05});
+  io.observe(box);
+})();
+</script>
 </head>
 <body>
 <div id="pre"><div class="pcount" id="pcount">0</div><div class="plbl">loading</div></div>
@@ -474,6 +532,7 @@
     
     <h2 class="sec" data-i18n-html="skills.title">Tools of the trade</h2>
     <p class="sec-sub" data-i18n="skills.sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
+    <div class="ballpit" id="ballpit"></div>
     <div class="skillgrid">
       <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
         <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
