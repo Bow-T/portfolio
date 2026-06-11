@@ -1,5 +1,5 @@
 // Bow portfolio — offline cache + "no internet" game fallback
-const CACHE = 'bow-portfolio-v3';
+const CACHE = 'bow-portfolio-v4';
 const PRECACHE = ['./', './index.html', './game.html', './resume.html', './secret.html'];
 
 self.addEventListener('install', e => {
@@ -22,7 +22,7 @@ self.addEventListener('fetch', e => {
   // Page navigations: network-first, fall back to cache, then to the game when truly offline.
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r; })
+      fetch(req, { cache: 'no-store' }).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r; })
         .catch(() => caches.match(req).then(m => m || caches.match('./index.html')).then(m => m || caches.match('./game.html')))
     );
     return;
