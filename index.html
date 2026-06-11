@@ -399,7 +399,7 @@
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+  import { getAnalytics, logEvent, isSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
   const app = initializeApp({
     apiKey:"AIzaSyCKTi16MRvh8OtVPuN7hBOTXqSnmCHZ9hQ",
     authDomain:"bow-portfolio-11921.firebaseapp.com",
@@ -409,7 +409,18 @@
     appId:"1:864661220560:web:aae593e86db7017c64c2d5",
     measurementId:"G-CSDMCK4J9W"
   });
-  isSupported().then(ok=>{ if(ok) getAnalytics(app); }).catch(()=>{});
+  let analytics=null; const q=[];
+  window.track=(n,p)=>{ if(analytics) logEvent(analytics,n,p||{}); else q.push([n,p||{}]); };
+  isSupported().then(ok=>{ if(ok){ analytics=getAnalytics(app); q.forEach(a=>logEvent(analytics,a[0],a[1])); q.length=0; } }).catch(()=>{});
+  addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('a,button,[data-track],.pcard,.chip,.ball,.li,.scchip,.psrc button');
+    if(!el) return;
+    var label = el.getAttribute('data-track')||'', type = el.tagName.toLowerCase();
+    var href = (el.getAttribute && el.getAttribute('href'))||'';
+    if(!label){ var card=el.closest('.pcard'); if(card){ var h=card.querySelector('h3'); label='project: '+((h&&h.textContent)||'').trim(); type='project'; } else { label=((el.textContent||el.getAttribute('aria-label')||href||'').trim()).slice(0,80); } }
+    var sec=el.closest('section'); var area = sec ? (sec.id||'section') : (el.closest('nav')?'nav':'page');
+    window.track('ui_click', {label: label||'(empty)', target_type:type, area:area, link_url:(''+href).slice(0,100)});
+  }, true);
 </script>
 </head>
 <body>
