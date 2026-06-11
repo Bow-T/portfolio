@@ -1,21 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122 52" width="122" height="52" fill="none" role="img" aria-label="bow">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 138 56" width="138" height="56" fill="none" role="img" aria-label="BOW">
   <defs>
-    <linearGradient id="wmg" x1="6" y1="26" x2="116" y2="26" gradientUnits="userSpaceOnUse">
+    <linearGradient id="wmg" x1="10" y1="28" x2="132" y2="28" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#bef264"/>
       <stop offset=".55" stop-color="#4ade80"/>
       <stop offset="1" stop-color="#2dd4bf"/>
     </linearGradient>
   </defs>
-  <g stroke="url(#wmg)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-    <!-- b -->
-    <path d="M16 9 V43"/>
-    <circle cx="26" cy="32.5" r="10.5"/>
-    <!-- o = cây cung (vòng + dây + mũi tên) -->
-    <circle cx="57" cy="32.5" r="10.5"/>
-    <path d="M51.5 25 V40"/>
-    <path d="M50 32.5 H 69"/>
-    <path d="M65 28.5 L69 32.5 L65 36.5"/>
-    <!-- w -->
-    <path d="M80 22 L87 43 L94 28 L101 43 L108 22"/>
+  <g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- B -->
+    <path d="M15 10 V46"/>
+    <path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/>
+    <path d="M15 28 H29 a11 9 0 0 1 0 18 H15"/>
+    <!-- O = cây cung -->
+    <circle cx="66" cy="28" r="17"/>
+    <path d="M56 18 V38"/>
+    <path d="M54 28 H84"/>
+    <path d="M78 22 L84 28 L78 34"/>
+    <!-- W -->
+    <path d="M96 10 L104 46 L112 26 L120 46 L128 10"/>
   </g>
 </svg>
