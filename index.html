@@ -268,7 +268,7 @@
     background:radial-gradient(circle 120px at var(--fx,50%) var(--fy,50%),rgba(255,244,214,.07),transparent 62%),
       radial-gradient(circle 175px at var(--fx,50%) var(--fy,50%),rgba(0,0,0,0) 0%,rgba(0,0,0,0) 25%,rgba(0,0,0,.42) 54%,rgba(0,0,0,.8) 80%,rgba(0,0,0,.95) 100%);}
   #flash.on{opacity:1;}
-  #gbtn{position:fixed;right:18px;bottom:18px;z-index:70;border:1px solid var(--cardb);background:var(--card);color:var(--text);
+  #gbtn{position:fixed;right:18px;bottom:80px;z-index:70;border:1px solid var(--cardb);background:var(--card);color:var(--text);
     padding:10px 16px;border-radius:30px;font-weight:600;font-size:13px;cursor:pointer;box-shadow:var(--shadow);
     opacity:0;transform:translateY(14px);pointer-events:none;transition:.3s;font-family:inherit;}
   #gbtn.show{opacity:1;transform:none;pointer-events:auto;} #gbtn:hover{border-color:var(--g2);}
@@ -299,6 +299,35 @@
   .gwin{position:absolute;inset:0;display:grid;place-items:center;align-content:center;text-align:center;padding:20px;z-index:3;
     font-weight:800;font-size:clamp(20px,4vw,28px);color:var(--g2);background:color-mix(in srgb,var(--bg) 74%,transparent);backdrop-filter:blur(2px);}
   .gwin small{display:block;font-size:14px;color:var(--muted);font-weight:500;margin-top:6px;}
+  .langsel{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-right:4px;}
+  .langsel button{border:none;background:transparent;color:var(--muted);font:600 11px/1 inherit;padding:7px 8px;cursor:pointer;font-family:inherit;}
+  .langsel button.on{background:var(--grad);color:#0a2009;} .langsel button:hover{color:var(--text);}
+  /* visualizer */
+  #viz{position:fixed;left:0;bottom:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .5s;}
+  #viz.on{opacity:.85;}
+  /* chatbot */
+  #chatbtn{position:fixed;right:18px;bottom:18px;z-index:72;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--grad);background-size:180%;color:#0a2009;font-size:22px;box-shadow:0 8px 22px rgba(132,204,22,.32);transition:transform .15s;}
+  #chatbtn:hover{transform:translateY(-2px) scale(1.05);}
+  .chatpanel{position:fixed;right:18px;bottom:78px;z-index:73;width:min(340px,calc(100vw - 36px));max-height:70vh;display:none;flex-direction:column;
+    background:var(--card);border:1px solid var(--cardb);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.5);overflow:hidden;}
+  .chatpanel.open{display:flex;animation:gfade .25s;}
+  .chathead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);}
+  .chathead .av{width:34px;height:34px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:18px;}
+  .chathead b{font-size:14px;} .chathead small{color:var(--g2);font-size:11px;display:block;}
+  .chathead .cx{margin-left:auto;cursor:pointer;border:none;background:transparent;color:var(--muted);font-size:18px;}
+  .chatmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;}
+  .msg{max-width:82%;padding:9px 12px;border-radius:14px;font-size:13.5px;line-height:1.45;}
+  .msg a{color:var(--g2);}
+  .msg.bot{background:var(--chip);border:1px solid var(--chipb);align-self:flex-start;border-bottom-left-radius:4px;}
+  .msg.me{background:var(--grad);color:#0a2009;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px;}
+  .chip2{font-size:12px;border:1px solid var(--cardb);background:var(--chip);color:var(--text);border-radius:20px;padding:5px 11px;cursor:pointer;}
+  .chip2:hover{border-color:var(--g2);color:var(--g2);}
+  .chatin{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);}
+  .chatin input{flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:13px;outline:none;}
+  .chatin input:focus{border-color:var(--g2);}
+  .chatin button{border:none;background:var(--grad);color:#0a2009;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -313,15 +342,16 @@
   <div class="wrap">
     <a href="#top" class="brand"><span class="dot"></span>Bow</a>
     <div class="navlinks">
-      <a class="lnk" href="#about">About</a>
-      <a class="lnk" href="#play">Play</a>
-      <a class="lnk" href="game.html" title="Offline runner game">🎮 Game</a>
-      <a class="lnk" href="#skills">Skills</a>
-      <a class="lnk" href="#work">Work</a>
-      <a class="lnk" href="#experience">Experience</a>
-      <a class="lnk" href="#activity">Activity</a>
+      <a class="lnk" href="#about" data-i18n="nav.about">About</a>
+      <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
+      <a class="lnk" href="game.html" title="Offline runner game" data-i18n="nav.game">🎮 Game</a>
+      <a class="lnk" href="#skills" data-i18n="nav.skills">Skills</a>
+      <a class="lnk" href="#work" data-i18n="nav.work">Work</a>
+      <a class="lnk" href="#experience" data-i18n="nav.experience">Experience</a>
+      <a class="lnk" href="#activity" data-i18n="nav.activity">Activity</a>
+      <span class="langsel" id="langsel"><button data-l="en">EN</button><button data-l="vi">VI</button><button data-l="fr">FR</button></span>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
-      <a href="#contact" class="btn">Say hi</a>
+      <a href="#contact" class="btn" data-i18n="nav.sayhi">Say hi</a>
     </div>
   </div>
 </nav>
@@ -330,13 +360,13 @@
 
 <header class="hero">
   <div class="wrap reveal">
-    <div class="avail"><span class="adot"></span> Available for work · Da Nang / Remote</div>
-    <div class="hello"><span class="wave">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class="mono">Tuan&nbsp;Nguyen</span></div>
-    <h1>I build <span class="gtext">delightful</span><br>Flutter apps people use.</h1>
-    <p class="lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
+    <div class="avail"><span class="adot"></span> <span data-i18n="hero.avail">Available for work · Da Nang / Remote</span></div>
+    <div class="hello" data-i18n-html="hero.hello"><span class="wave">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class="mono">Tuan&nbsp;Nguyen</span></div>
+    <h1 data-i18n-html="hero.h1">I build <span class="gtext">delightful</span><br>Flutter apps people use.</h1>
+    <p class="lead" data-i18n-html="hero.lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
     <div class="cta">
-      <a href="#work" class="btn">View my work ↓</a>
-      <a href="resume.html" target="_blank" rel="noopener" class="btn ghost">📄 Résumé</a>
+      <a href="#work" class="btn" data-i18n="cta.work">View my work ↓</a>
+      <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-i18n="cta.cv">📄 Résumé</a>
       <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
     </div>
     <div class="socials">
@@ -346,10 +376,10 @@
       <a href="tel:+84987620174" title="Phone" aria-label="Phone"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.09 4.18 2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
     </div>
     <div class="stats">
-      <div class="stat"><div class="n gtext" data-to="30" data-suf="+">0</div><div class="l">Apps shipped</div></div>
-      <div class="stat"><div class="n gtext" data-to="500" data-suf="K+">0</div><div class="l">Downloads (top app)</div></div>
-      <div class="stat"><div class="n gtext" data-to="6" data-suf="+">0</div><div class="l">Years experience</div></div>
-      <div class="stat"><div class="n gtext" data-to="15" data-suf="+">0</div><div class="l">Live on App&nbsp;Store / Play</div></div>
+      <div class="stat"><div class="n gtext" data-to="30" data-suf="+">0</div><div class="l" data-i18n="stat.apps">Apps shipped</div></div>
+      <div class="stat"><div class="n gtext" data-to="500" data-suf="K+">0</div><div class="l" data-i18n="stat.dl">Downloads (top app)</div></div>
+      <div class="stat"><div class="n gtext" data-to="6" data-suf="+">0</div><div class="l" data-i18n="stat.yrs">Years experience</div></div>
+      <div class="stat"><div class="n gtext" data-to="15" data-suf="+">0</div><div class="l" data-i18n="stat.live">Live on App&nbsp;Store / Play</div></div>
     </div>
   </div>
 </header>
@@ -357,8 +387,8 @@
 <section id="play">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// playground</div>
-    <h2 class="sec">Made of little things ✨</h2>
-    <p class="sec-sub">Like apps, this whole thing is built from thousands of tiny pieces. Run your cursor across it — the particles scatter, then find their way home.</p>
+    <h2 class="sec" data-i18n-html="play.title">Made of little things ✨</h2>
+    <p class="sec-sub" data-i18n-html="play.sub">Like apps, this whole thing is built from thousands of tiny pieces. Run your cursor across it — the particles scatter, then find their way home.</p>
     <div class="pcanvas-wrap"><canvas id="pcanvas"></canvas></div>
     <div class="pc-hint">move your cursor (or finger) through the letters</div>
   </div>
@@ -367,12 +397,12 @@
 <section id="about">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// about</div>
-    <h2 class="sec">End-to-end mobile, done right</h2>
+    <h2 class="sec" data-i18n-html="about.title">End-to-end mobile, done right</h2>
     <div class="about-grid">
       <div>
-        <p>I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.</p>
-        <p>At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>authored the company's shared Flutter architecture</strong> that 20+ client apps are built on — turning weeks of project setup into a same-day start.</p>
-        <p>I care about the details users feel: clean architecture (MVVM), pixel-accurate UI, smooth real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.</p>
+        <p data-i18n-html="about.p1">I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.</p>
+        <p data-i18n-html="about.p2">At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>authored the company's shared Flutter architecture</strong> that 20+ client apps are built on — turning weeks of project setup into a same-day start.</p>
+        <p data-i18n-html="about.p3">I care about the details users feel: clean architecture (MVVM), pixel-accurate UI, smooth real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.</p>
       </div>
       <div class="about-card">
         <h4 class="gtext">At a glance</h4>
@@ -390,8 +420,8 @@
 <section id="skills">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// skills</div>
-    <h2 class="sec">Tools of the trade</h2>
-    <p class="sec-sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
+    <h2 class="sec" data-i18n-html="skills.title">Tools of the trade</h2>
+    <p class="sec-sub" data-i18n="skills.sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
     <div class="skillgrid">
       <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
         <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
@@ -418,8 +448,8 @@
 <section id="work">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// work</div>
-    <h2 class="sec">Things I've built</h2>
-    <p class="sec-sub">A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through and have a play.</p>
+    <h2 class="sec" data-i18n-html="work.title">Things I've built</h2>
+    <p class="sec-sub" data-i18n-html="work.sub">A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through and have a play.</p>
     <div class="filters" id="filters"></div>
     <div class="grid" id="grid"></div>
     <div class="more">
@@ -432,7 +462,7 @@
 <section id="experience">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// experience</div>
-    <h2 class="sec">The journey so far</h2>
+    <h2 class="sec" data-i18n-html="experience.title">The journey so far</h2>
     <div class="timeline">
       <div class="titem">
         <div class="role">Flutter / Mobile Developer — Digital Unicorn</div>
@@ -456,8 +486,8 @@
 <section id="activity">
   <div class="wrap reveal">
     <div class="eyebrow gtext">// activity</div>
-    <h2 class="sec">Shipping, week in week out</h2>
-    <p class="sec-sub">Real contribution activity from my team's GitLab over the last 12 months &mdash; pushes, merge requests, approvals, issues &amp; comments.</p>
+    <h2 class="sec" data-i18n-html="activity.title">Shipping, week in week out</h2>
+    <p class="sec-sub" data-i18n-html="activity.sub">Real contribution activity from my team's GitLab over the last 12 months &mdash; pushes, merge requests, approvals, issues &amp; comments.</p>
     <div class="hcard">
       <div class="heat-top">
         <div class="h" id="heatSub">&hellip;</div>
@@ -478,8 +508,8 @@
 <section id="contact">
   <div class="wrap reveal">
     <div class="contact-card">
-      <h2>Let's build something <span class="gtext">delightful</span></h2>
-      <p>I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
+      <h2 data-i18n-html="contact.title">Let's build something <span class="gtext">delightful</span></h2>
+      <p data-i18n="contact.p">I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
       <div class="cbtns">
         <a href="mailto:nguyenvantuan4034@gmail.com" class="btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> nguyenvantuan4034@gmail.com</a>
         <a href="resume.html" target="_blank" rel="noopener" class="btn ghost">📄 Résumé</a>
@@ -712,45 +742,31 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   document.querySelectorAll('.stat .n[data-to]').forEach(el=>io.observe(el));
 })();
 
-// ===== music: Kiss the Rain / Fox Rain (playlist) + rain mood =====
+// ===== music (Kiss the Rain / Fox Rain) + analyser visualizer + rain =====
 (function(){
   const btn=document.getElementById('music'); if(!btn) return;
   const TRACKS=['assets/kiss-the-rain.mp3','assets/fox-rain.mp3'];
-  let on=false, ti=(Math.random()*TRACKS.length)|0, audio=null;
-  function fade(a,to,ms){const f=a.volume,t0=performance.now();(function s(t){const p=Math.min((t-t0)/ms,1);a.volume=Math.max(0,Math.min(1,f+(to-f)*p));if(p<1)requestAnimationFrame(s);else if(to===0)a.pause();})(t0);}
-  function playFile(){ audio=new Audio(TRACKS[ti]); audio.volume=0;
+  let on=false,ti=(Math.random()*TRACKS.length)|0,audio=null,ac,gain,analyser,data,raf=0;
+  const cvz=document.createElement('canvas');cvz.id='viz';document.body.appendChild(cvz);const vx=cvz.getContext('2d');
+  function vsize(){cvz.width=innerWidth;cvz.height=92;}vsize();addEventListener('resize',vsize);
+  function ensure(){ if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();
+    gain=ac.createGain();gain.gain.value=0;analyser=ac.createAnalyser();analyser.fftSize=128;analyser.smoothingTimeConstant=0.82;
+    gain.connect(analyser);analyser.connect(ac.destination);data=new Uint8Array(analyser.frequencyBinCount);}
+    if(ac.state==='suspended')ac.resume(); }
+  function fadeG(to,ms){const t=ac.currentTime;gain.gain.cancelScheduledValues(t);gain.gain.setValueAtTime(gain.gain.value,t);gain.gain.linearRampToValueAtTime(to,t+ms/1000);}
+  function playFile(){ ensure(); audio=new Audio(TRACKS[ti]); audio.crossOrigin='anonymous';
+    try{ac.createMediaElementSource(audio).connect(gain);}catch(_){}
     audio.addEventListener('ended',()=>{ti=(ti+1)%TRACKS.length;if(on)playFile();});
-    audio.play().then(()=>{fade(audio,0.42,1500);if(window.__rain)window.__rain(true);}).catch(()=>{}); }
+    audio.play().then(()=>{fadeG(0.4,1.5);if(window.__rain)window.__rain(true);}).catch(()=>{}); }
+  function vloop(){ if(!on){vx.clearRect(0,0,cvz.width,cvz.height);return;}
+    analyser.getByteFrequencyData(data);vx.clearRect(0,0,cvz.width,cvz.height);
+    const n=data.length,bw=cvz.width/n;
+    for(let i=0;i<n;i++){const h=Math.pow(data[i]/255,1.3)*cvz.height*0.95;const g=vx.createLinearGradient(0,cvz.height,0,cvz.height-h);
+      g.addColorStop(0,'rgba(132,204,22,0)');g.addColorStop(1,'rgba(190,242,100,.5)');vx.fillStyle=g;vx.fillRect(i*bw+1,cvz.height-h,bw-2,h);}
+    raf=requestAnimationFrame(vloop); }
   btn.addEventListener('click',()=>{ on=!on; btn.classList.toggle('on',on);
-    if(on){playFile();} else {if(audio)fade(audio,0,700);if(window.__rain)window.__rain(false);} });
-})();
-
-// ===== easter eggs =====
-(function(){
-  console.log('%c👋 Hey, curious dev!','font:700 18px Sora,sans-serif;color:#a3e635');
-  console.log('%cYou opened the console — I like you already.\nThis whole site is hand-coded, no frameworks.\nPsst: the Konami code (↑ ↑ ↓ ↓ ← → ← → B A) does something fun ✨\n— Bow · github.com/Bow-T','color:#8aa;font-size:13px');
-  function confetti(){
-    const c=document.createElement('canvas'); c.style.cssText='position:fixed;inset:0;z-index:200;pointer-events:none';
-    c.width=innerWidth;c.height=innerHeight; document.body.appendChild(c); const x=c.getContext('2d');
-    const cols=['#bef264','#a3e635','#4ade80','#2dd4bf','#22c55e','#fde047'];
-    const P=Array.from({length:170},()=>({x:Math.random()*c.width,y:-20-Math.random()*innerHeight*0.4,
-      vx:(Math.random()-.5)*6,vy:3+Math.random()*5,s:5+Math.random()*7,r:Math.random()*6,
-      vr:(Math.random()-.5)*0.3,col:cols[(Math.random()*cols.length)|0]}));
-    let t=0;(function f(){t++;x.clearRect(0,0,c.width,c.height);
-      P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);
-        x.fillStyle=p.col;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);x.restore();});
-      if(t<210)requestAnimationFrame(f); else c.remove();})();
-  }
-  function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);
-    requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),500);},3400);}
-  const seq=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];let k=0;
-  addEventListener('keydown',e=>{const key=e.key.toLowerCase();
-    if(key===seq[k]){k++; if(k===seq.length){k=0;confetti();toast('🎉 Secret unlocked — you cracked the Konami code!');
-      document.body.classList.add('party');setTimeout(()=>document.body.classList.remove('party'),6000);}}
-    else k=(key===seq[0])?1:0;});
-  const wave=document.querySelector('.wave');let wc=0,wt=0;
-  if(wave){wave.style.cursor='pointer';wave.addEventListener('click',()=>{const n=Date.now();wc=(n-wt<900)?wc+1:1;wt=n;
-    if(wc>=3){wc=0;confetti();toast('✨ Hi there — thanks for waving back! 👋');}});}
+    if(on){playFile();cvz.classList.add('on');cancelAnimationFrame(raf);vloop();}
+    else{if(audio){fadeG(0,0.7);setTimeout(()=>{if(!on&&audio)audio.pause();},760);}cvz.classList.remove('on');if(window.__rain)window.__rain(false);} });
 })();
 
 // ===== extra fun: rain, flashlight, keywords, idle, secret game =====
@@ -835,6 +851,53 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
 })();
 
 if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+
+// ===== i18n EN/VI/FR =====
+const I18N={"nav.sayhi":{"en":"Say hi","vi":"Chào nhé","fr":"Dis bonjour"},"nav.about": {"en": "About", "vi": "Giới thiệu", "fr": "À propos"}, "nav.play": {"en": "Play", "vi": "Chơi", "fr": "Jouer"}, "nav.skills": {"en": "Skills", "vi": "Kỹ năng", "fr": "Compétences"}, "nav.work": {"en": "Work", "vi": "Dự án", "fr": "Projets"}, "nav.experience": {"en": "Experience", "vi": "Kinh nghiệm", "fr": "Parcours"}, "nav.activity": {"en": "Activity", "vi": "Hoạt động", "fr": "Activité"}, "nav.game": {"en": "🎮 Game", "vi": "🎮 Game", "fr": "🎮 Jeu"}, "nav.contact": {"en": "Contact", "vi": "Liên hệ", "fr": "Contact"}, "hero.hello": {"en": "<span class=\"wave\">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>", "vi": "<span class=\"wave\">👋</span> &nbsp;Chào, mình là <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>", "fr": "<span class=\"wave\">👋</span> &nbsp;Salut, moi c'est <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>"}, "hero.h1": {"en": "I build <span class=\"gtext\">delightful</span><br>Flutter apps people use.", "vi": "Mình tạo những <span class=\"gtext\">app Flutter</span><br>khiến người ta thích dùng.", "fr": "Je crée des apps Flutter<br><span class=\"gtext\">que les gens adorent.</span>"}, "hero.lead": {"en": "A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.", "vi": "Lập trình viên Flutter / Mobile với <strong>hơn 6 năm</strong> làm app production từ A–Z — từ kiến trúc đến lên App&nbsp;Store. <strong>30+ app</strong> ở nhiều lĩnh vực, trong đó có app đi chung xe đạt <strong>500.000+ lượt tải</strong>.", "fr": "Développeur Flutter / mobile avec <strong>6+ ans</strong> d'expérience, je livre des apps de bout en bout — de l'architecture à l'App&nbsp;Store. <strong>30+ apps</strong>, dont une app de covoiturage à <strong>500 000+ téléchargements</strong>."}, "hero.avail": {"en": "Available for work · Da Nang / Remote", "vi": "Sẵn sàng nhận việc · Đà Nẵng / Remote", "fr": "Disponible · Da Nang / à distance"}, "stat.apps": {"en": "Apps shipped", "vi": "App đã ship", "fr": "Apps livrées"}, "stat.dl": {"en": "Downloads (top app)", "vi": "Lượt tải (app top)", "fr": "Téléchargements (top)"}, "stat.yrs": {"en": "Years experience", "vi": "Năm kinh nghiệm", "fr": "Ans d'expérience"}, "stat.live": {"en": "Live on App Store / Play", "vi": "Có trên App Store / Play", "fr": "Sur App Store / Play"}, "cta.work": {"en": "View my work ↓", "vi": "Xem dự án ↓", "fr": "Voir mes projets ↓"}, "cta.cv": {"en": "📄 Résumé", "vi": "📄 CV", "fr": "📄 CV"}, "about.title": {"en": "End-to-end mobile, done right", "vi": "Mobile trọn gói, làm chuẩn", "fr": "Le mobile de A à Z, bien fait"}, "about.p1": {"en": "I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps spanning ride-hailing &amp; delivery, food, healthcare, mental wellness, personal safety, beauty, sports and social.", "vi": "Mình là lập trình viên Flutter / Mobile ở <strong>Đà Nẵng, Việt Nam</strong>. Suốt 6+ năm, mình là <strong>lead hoặc dev duy nhất</strong> của 30+ app production trải dài từ đặt xe &amp; giao hàng, ẩm thực, y tế, sức khỏe tinh thần, an toàn cá nhân, làm đẹp, thể thao tới mạng xã hội.", "fr": "Je suis développeur Flutter / mobile basé à <strong>Da Nang, Vietnam</strong>. Depuis 6+ ans, je suis <strong>lead ou seul développeur</strong> sur 30+ apps en production : VTC &amp; livraison, food, santé, bien-être, sécurité, beauté, sport et réseaux sociaux."}, "about.p2": {"en": "At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>authored the company's shared Flutter architecture</strong> that 20+ client apps are built on — turning weeks of project setup into a same-day start.", "vi": "Tại <strong>Digital Unicorn</strong>, mình dẫn dắt mảng mobile của super-app DUOCT &ldquo;Octopus&rdquo;, và <strong>tự xây kiến trúc Flutter dùng chung của công ty</strong> mà 20+ app khách hàng đều fork từ đó — biến hàng tuần dựng dự án thành làm xong trong ngày.", "fr": "Chez <strong>Digital Unicorn</strong>, je pilote la partie mobile du super-app DUOCT &ldquo;Octopus&rdquo;, et j'ai <strong>conçu l'architecture Flutter partagée</strong> de l'entreprise, utilisée par 20+ apps clientes — des semaines de mise en place réduites à une journée."}, "about.p3": {"en": "I care about the details users feel: clean architecture (MVVM), pixel-accurate UI, smooth real-time features, in-app payments, and getting builds reliably onto the App&nbsp;Store and Google&nbsp;Play.", "vi": "Mình chăm chút những chi tiết người dùng cảm nhận được: kiến trúc sạch (MVVM), UI chuẩn từng pixel, tính năng real-time mượt, thanh toán trong app, và đưa bản build lên App&nbsp;Store / Google&nbsp;Play một cách ổn định.", "fr": "Je soigne les détails que l'utilisateur ressent : architecture propre (MVVM), UI au pixel près, temps réel fluide, paiements in-app, et des builds livrés de façon fiable sur l'App&nbsp;Store et Google&nbsp;Play."}, "skills.title": {"en": "Tools of the trade", "vi": "Bộ đồ nghề", "fr": "Ma boîte à outils"}, "skills.sub": {"en": "Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.", "vi": "Chuyên sâu Flutter, cùng stack xung quanh để ship app hoàn chỉnh, real-time, có thanh toán.", "fr": "Spécialiste Flutter, avec la stack qui l'entoure pour livrer des apps complètes, temps réel et avec paiements."}, "work.title": {"en": "Things I've built", "vi": "Những thứ mình đã làm", "fr": "Ce que j'ai construit"}, "work.sub": {"en": "A slice of 30+ shipped apps. Many are live on the App&nbsp;Store and Google&nbsp;Play — tap through and have a play.", "vi": "Một phần trong 30+ app đã ship. Nhiều app đang sống trên App&nbsp;Store và Google&nbsp;Play — bấm vào xem thử nhé.", "fr": "Un aperçu de 30+ apps livrées. Beaucoup sont sur l'App&nbsp;Store et Google&nbsp;Play — cliquez pour explorer."}, "activity.title": {"en": "Shipping, week in week out", "vi": "Ship đều đặn mỗi tuần", "fr": "Je livre, semaine après semaine"}, "activity.sub": {"en": "Real contribution activity from my team's GitLab over the last 12 months &mdash; pushes, merge requests, approvals, issues &amp; comments.", "vi": "Hoạt động đóng góp thật trên GitLab của team trong 12 tháng qua &mdash; push, merge request, duyệt code, issue &amp; bình luận.", "fr": "Activité réelle sur le GitLab de l'équipe sur 12 mois &mdash; commits, merge requests, revues, issues &amp; commentaires."}, "play.title": {"en": "Made of little things ✨", "vi": "Tạo nên từ những điều nhỏ ✨", "fr": "Fait de petites choses ✨"}, "play.sub": {"en": "Like apps, this whole thing is built from thousands of tiny pieces. Run your cursor across it — the particles scatter, then find their way home.", "vi": "Như app vậy, cả thứ này được ghép từ hàng nghìn mảnh nhỏ. Rê chuột qua đi — các hạt tản ra rồi tự tìm về chỗ cũ.", "fr": "Comme une app, tout ceci est fait de milliers de petits morceaux. Passez le curseur — les particules se dispersent puis retrouvent leur place."}, "experience.title": {"en": "The journey so far", "vi": "Hành trình tới giờ", "fr": "Le parcours jusqu'ici"}, "contact.title": {"en": "Let's build something <span class=\"gtext\">delightful</span>", "vi": "Cùng tạo điều gì đó <span class=\"gtext\">tuyệt vời</span>", "fr": "Construisons quelque chose de <span class=\"gtext\">génial</span>"}, "contact.p": {"en": "I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.", "vi": "Mình sẵn sàng cho vị trí Flutter / mobile và dự án freelance. Nhanh nhất là email — thường mình trả lời trong vòng một ngày.", "fr": "Je suis ouvert aux postes Flutter / mobile et aux projets freelance. Le plus rapide, c'est l'e-mail — je réponds en général sous 24 h."}};
+function setLang(l){localStorage.setItem('lang',l);document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(e=>{const t=I18N[e.dataset.i18n];if(t&&t[l]!=null)e.textContent=t[l];});
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>{const t=I18N[e.dataset.i18nHtml];if(t&&t[l]!=null)e.innerHTML=t[l];});
+  document.querySelectorAll('#langsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));}
+document.getElementById('langsel').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setLang(b.dataset.l);});
+setLang(localStorage.getItem('lang')||'en');
+
+// ===== chatbot (scripted) =====
+(function(){
+  const btn=document.createElement('button');btn.id='chatbtn';btn.textContent='💬';btn.title='Ask me anything';document.body.appendChild(btn);
+  const p=document.createElement('div');p.className='chatpanel';
+  p.innerHTML='<div class="chathead"><span class="av">🤖</span><div><b>Bow-bot</b><small>● online · ask me anything</small></div><button class="cx" aria-label="Close">✕</button></div>'
+    +'<div class="chatmsgs" id="cmsgs"></div>'
+    +'<div class="chips" id="cchips"></div>'
+    +'<form class="chatin" id="cform"><input id="cin" placeholder="Ask about Bow…" autocomplete="off"><button>➤</button></form>';
+  document.body.appendChild(p);
+  const msgs=p.querySelector('#cmsgs'),chips=p.querySelector('#cchips'),form=p.querySelector('#cform'),input=p.querySelector('#cin');
+  let greeted=false;
+  function add(html,who){const m=document.createElement('div');m.className='msg '+who;m.innerHTML=html;msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;return m;}
+  function botSay(html){const t=add('…','bot');setTimeout(()=>{t.innerHTML=html;msgs.scrollTop=msgs.scrollHeight;},420+Math.random()*250);}
+  const QA=[
+    [['exp','year','năm','kinh nghi','parcours','expérience'],"6+ years building Flutter apps — <b>lead or sole dev on 30+ production apps</b>. Currently leading mobile at <b>Digital Unicorn</b> (the DUOCT super-app), and he authored the shared Flutter architecture used by 20+ apps."],
+    [['app','project','dự án','projet','build'],"Highlights: <b>Ynstant</b> (carpooling, 500K+ downloads), <b>SecuMap</b> (safety, 10K+ &amp; French press), <b>Docteur Sirop</b> (AI + Unity for kids), <b>Carter</b>, <b>KEYM</b>, <b>Spaurt</b>… see them in <a href='#work'>Work</a> with store links."],
+    [['skill','tech','stack','kỹ năng','compét'],"Flutter &amp; Dart first · MVVM / Clean architecture · Provider / GetX / BLoC · real-time (Agora, SignalR, Socket.IO) · payments (Stripe, RevenueCat) · Firebase &amp; Supabase · CI/CD with Fastlane · EN/FR i18n."],
+    [['hire','contact','email','reach','liên hệ','tuyển','recruit','embauche'],"He's open to work! 📬 <a href='mailto:nguyenvantuan4034@gmail.com'>nguyenvantuan4034@gmail.com</a> · 📱 +84 987 620 174 · <a href='https://www.linkedin.com/in/maengseojin/' target='_blank'>LinkedIn</a> · grab his <a href='resume.html' target='_blank'>résumé</a>."],
+    [['download','500','lượt tải','users','metric'],"Headline numbers: <b>500K+ downloads</b> on the top app (Ynstant), <b>30+ apps</b> shipped, <b>6+ years</b>, 15+ live on the stores."],
+    [['where','location','đâu','où','da nang','remote'],"📍 Da Nang, Vietnam 🇻🇳 — open to remote too."],
+    [['cv','resume','résumé'],"<a href='resume.html' target='_blank'>Here's his résumé</a> — open it and Print → Save as PDF."],
+    [['game','play','runner','dino'],"There's a hidden offline runner 🐾 — open <a href='game.html'>the game</a>, or try the Konami code on this page 😉."],
+    [['music','nhạc','song','rain'],"That's ambient piano (Kiss the Rain / Fox Rain) — hit the 🎵 button bottom-left and watch the visualizer dance."],
+    [['secret','egg','fun','hidden','bí mật'],"Try: press <b>L</b> (lights off), type <b>bow</b> / <b>flutter</b>, the Konami code, scroll to the bottom for a mini-game, and find the <a href='secret.html'>/secret</a> room ✨"],
+    [['who','you','là ai','là gì','bot','là bow'],"I'm Bow's mini-assistant 🤖 — Bow is a Flutter / Mobile developer from Da Nang. Ask me about his experience, apps, skills, or how to reach him."],
+    [['hi','hello','hey','chào','salut','yo'],"Hey there! 👋 Ask me anything about Bow — try the chips below."],
+  ];
+  function reply(q){q=q.toLowerCase();for(const[keys,ans]of QA){if(keys.some(k=>q.includes(k)))return ans;}
+    return "I'm just a mini-bot 😅 try asking about his <b>experience</b>, <b>apps</b>, <b>skills</b>, or <b>contact</b> — or tap a chip.";}
+  const CHIPS=[['💼 Experience','experience'],['📱 Apps','apps'],['🛠 Skills','skills'],['📬 Hire me','contact'],['✨ Secrets','secret']];
+  function renderChips(){chips.innerHTML='';CHIPS.forEach(c=>{const b=document.createElement('button');b.className='chip2';b.textContent=c[0];b.onclick=()=>ask(c[1]);chips.appendChild(b);});}
+  function ask(q){add(q,'me');botSay(reply(q));}
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';ask(v);});
+  function openChat(){p.classList.add('open');if(!greeted){greeted=true;botSay("Hey! I'm <b>Bow-bot</b> 🤖 Ask me about his experience, apps, skills, or how to reach him — or tap a chip below 👇");renderChips();}input.focus();}
+  btn.addEventListener('click',()=>p.classList.contains('open')?p.classList.remove('open'):openChat());
+  p.querySelector('.cx').addEventListener('click',()=>p.classList.remove('open'));
+})();
 </script>
 </body>
 </html>
