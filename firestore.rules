@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Visit logs: anyone may append a (small, timestamped) visit,
+    // but ONLY the owner (Bow) may read them. No edits/deletes.
+    match /visits/{id} {
+      allow create: if request.resource.data.ts is timestamp
+                    && request.resource.data.size() <= 20;
+      allow read:   if request.auth != null
+                    && request.auth.token.email == 'nguyenvantuan4034@gmail.com';
+      allow update, delete: if false;
+    }
+
+    // Everything else: locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

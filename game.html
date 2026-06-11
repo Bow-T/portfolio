@@ -33,6 +33,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
   import { getAnalytics, logEvent, isSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
   const app = initializeApp({
     apiKey:"AIzaSyCKTi16MRvh8OtVPuN7hBOTXqSnmCHZ9hQ",
     authDomain:"bow-portfolio-11921.firebaseapp.com",
@@ -42,9 +43,10 @@
     appId:"1:864661220560:web:aae593e86db7017c64c2d5",
     measurementId:"G-CSDMCK4J9W"
   });
+  const db = getFirestore(app);
   let analytics=null; const q=[];
   window.track=(n,p)=>{ if(analytics) logEvent(analytics,n,p||{}); else q.push([n,p||{}]); };
-  try{ if(!sessionStorage.getItem('vinfo')){ fetch('https://ipwho.is/').then(r=>r.json()).then(d=>{ if(!d||d.success===false) return; sessionStorage.setItem('vinfo','1'); window.track('visitor_info',{ city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,100) }); }).catch(function(){}); } }catch(e){}
+  try{ if(!sessionStorage.getItem('vinfo')){ fetch('https://ipwho.is/').then(r=>r.json()).then(d=>{ if(!d||d.success===false) return; sessionStorage.setItem('vinfo','1'); window.track('visitor_info',{ city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,100) }); addDoc(collection(db,'visits'),{ ts:serverTimestamp(), ip:d.ip||'', city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,120), path:location.pathname, ua:(navigator.userAgent||'').slice(0,180) }).catch(function(){}); }).catch(function(){}); } }catch(e){}
   isSupported().then(ok=>{ if(ok){ analytics=getAnalytics(app); q.forEach(a=>logEvent(analytics,a[0],a[1])); q.length=0; } }).catch(()=>{});
   addEventListener('click', function(e){
     var el = e.target.closest && e.target.closest('a,button,[data-track],.pcard,.chip,.ball,.li,.scchip,.psrc button');

@@ -394,12 +394,34 @@
   .chip{display:inline-flex;align-items:center;gap:6px;transition:transform .16s,box-shadow .16s,border-color .16s,color .16s;}
   .chip .cico{width:14px;height:14px;object-fit:contain;flex:none;}
   .chip:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3);}
+  /* private admin dashboard */
+  #adminp{position:fixed;inset:0;z-index:400;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;background:rgba(5,8,5,.72);backdrop-filter:blur(6px);overflow:auto;}
+  #adminp.open{display:flex;}
+  .ad-card{position:relative;background:var(--card);border:1px solid var(--cardb);border-radius:20px;padding:22px;width:min(680px,96vw);box-shadow:0 30px 80px rgba(0,0,0,.6);}
+  .ad-x{position:absolute;top:14px;right:14px;border:none;background:var(--chip);color:var(--text);width:32px;height:32px;border-radius:9px;cursor:pointer;}
+  .ad-card h3{font-size:18px;font-weight:800;margin-bottom:4px;} .ad-sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+  #ad-login input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;margin-bottom:10px;font-family:inherit;}
+  .ad-btn{width:100%;border:none;background:var(--grad);color:#0a2009;font-weight:700;padding:11px;border-radius:10px;cursor:pointer;font-family:inherit;}
+  .ad-err{color:#f87171;font-size:12.5px;margin-top:10px;min-height:16px;}
+  .ad-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .ad-out{border:1px solid var(--cardb);background:var(--chip);color:var(--text);padding:6px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-family:inherit;}
+  .ad-kpis{display:flex;gap:12px;margin-bottom:16px;} .ad-kpi{flex:1;background:var(--chip);border:1px solid var(--chipb);border-radius:14px;padding:14px;text-align:center;}
+  .ad-kpi b{display:block;font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;} .ad-kpi span{color:var(--muted);font-size:12px;}
+  .ad-block{margin-bottom:16px;} .ad-block h4,.ad-list h4{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--g2);margin:0 0 8px;}
+  .ad-bar{display:flex;align-items:center;gap:10px;margin-bottom:5px;font-size:12.5px;}
+  .ad-bk{width:130px;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+  .ad-bt{flex:1;height:8px;background:var(--chip);border-radius:5px;overflow:hidden;} .ad-bt i{display:block;height:100%;background:var(--grad);}
+  .ad-bv{width:34px;text-align:right;color:var(--muted);}
+  .ad-list{margin-top:8px;max-height:300px;overflow:auto;}
+  .ad-row{display:grid;grid-template-columns:128px 1fr 1fr auto;gap:8px;font-size:11.5px;padding:6px 0;border-top:1px solid var(--line);color:var(--muted);align-items:center;}
+  .ad-when{color:var(--text);} .ad-ref{color:var(--g2);font-weight:600;}
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
   import { getAnalytics, logEvent, isSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
   const app = initializeApp({
     apiKey:"AIzaSyCKTi16MRvh8OtVPuN7hBOTXqSnmCHZ9hQ",
     authDomain:"bow-portfolio-11921.firebaseapp.com",
@@ -409,9 +431,10 @@
     appId:"1:864661220560:web:aae593e86db7017c64c2d5",
     measurementId:"G-CSDMCK4J9W"
   });
+  const db = getFirestore(app);
   let analytics=null; const q=[];
   window.track=(n,p)=>{ if(analytics) logEvent(analytics,n,p||{}); else q.push([n,p||{}]); };
-  try{ if(!sessionStorage.getItem('vinfo')){ fetch('https://ipwho.is/').then(r=>r.json()).then(d=>{ if(!d||d.success===false) return; sessionStorage.setItem('vinfo','1'); window.track('visitor_info',{ city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,100) }); }).catch(function(){}); } }catch(e){}
+  try{ if(!sessionStorage.getItem('vinfo')){ fetch('https://ipwho.is/').then(r=>r.json()).then(d=>{ if(!d||d.success===false) return; sessionStorage.setItem('vinfo','1'); window.track('visitor_info',{ city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,100) }); addDoc(collection(db,'visits'),{ ts:serverTimestamp(), ip:d.ip||'', city:d.city||'', region:d.region||'', country:d.country||'', isp:(d.connection&&d.connection.isp)||'', org:(d.connection&&d.connection.org)||'', asn:String((d.connection&&d.connection.asn)||''), tz:(d.timezone&&d.timezone.id)||'', lang:navigator.language||'', screen:(screen.width+'x'+screen.height), ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,120), path:location.pathname, ua:(navigator.userAgent||'').slice(0,180) }).catch(function(){}); }).catch(function(){}); } }catch(e){}
   isSupported().then(ok=>{ if(ok){ analytics=getAnalytics(app); q.forEach(a=>logEvent(analytics,a[0],a[1])); q.length=0; } }).catch(()=>{});
   addEventListener('click', function(e){
     var el = e.target.closest && e.target.closest('a,button,[data-track],.pcard,.chip,.ball,.li,.scchip,.psrc button');
@@ -1074,6 +1097,50 @@ setLang(localStorage.getItem('lang')||'en');
   document.querySelectorAll('.skillcard .chip').forEach(ch=>{const t=ch.textContent.toLowerCase();
     for(const k in M){if(t.indexOf(k)>=0){const img=document.createElement('img');img.className='cico';img.src='https://cdn.simpleicons.org/'+M[k];img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();ch.prepend(img);break;}}});
 })();
+</script>
+<script type="module">
+  import { getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  const ADMIN='nguyenvantuan4034@gmail.com';
+  const app=getApp(), auth=getAuth(app), db=getFirestore(app);
+  const p=document.createElement('div'); p.id='adminp';
+  p.innerHTML=`<div class="ad-card"><button class="ad-x" id="adx">✕</button>
+    <div id="ad-login"><h3>🔒 Private stats</h3><p class="ad-sub">Khu vực riêng của Bow.</p>
+      <input id="ad-pw" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+      <button class="ad-btn" id="ad-go">Đăng nhập</button><div class="ad-err" id="ad-err"></div></div>
+    <div id="ad-dash" style="display:none"><div class="ad-head"><h3>📊 Thống kê truy cập</h3><button class="ad-out" id="ad-out">Đăng xuất</button></div>
+      <div id="ad-sum"></div><div class="ad-list" id="ad-list"></div></div></div>`;
+  document.body.appendChild(p);
+  const $=s=>p.querySelector(s);
+  const open=()=>p.classList.add('open'), close=()=>p.classList.remove('open');
+  $('#adx').onclick=close;
+  if(location.hash==='#admin') open();
+  addEventListener('hashchange',()=>{ if(location.hash==='#admin') open(); });
+  let kb=''; addEventListener('keydown',e=>{ if(e.key&&e.key.length===1){ kb=(kb+e.key.toLowerCase()).slice(-8); if(kb.endsWith('bowstats')) open(); } });
+  $('#ad-go').onclick=async()=>{ const pw=$('#ad-pw').value; if(!pw) return; $('#ad-err').textContent='Đang xử lý…';
+    try{ await signInWithEmailAndPassword(auth,ADMIN,pw); }
+    catch(err){ if(err.code==='auth/user-not-found'||err.code==='auth/invalid-credential'){ try{ await createUserWithEmailAndPassword(auth,ADMIN,pw); }catch(e2){ $('#ad-err').textContent=e2.message; } } else $('#ad-err').textContent=err.message; } };
+  $('#ad-pw').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#ad-go').click(); });
+  $('#ad-out').onclick=()=>signOut(auth);
+  onAuthStateChanged(auth, user=>{ const inn=user&&user.email===ADMIN;
+    $('#ad-login').style.display=inn?'none':'block'; $('#ad-dash').style.display=inn?'block':'none';
+    if(inn){ open(); loadStats(); } });
+  function fmtTime(ts){ try{ const d=ts&&ts.toDate?ts.toDate():new Date(ts); return d.toLocaleString('vi-VN'); }catch(_){ return ''; } }
+  function tally(rows,key){ const m={}; rows.forEach(r=>{ const k=r[key]||'(?)'; m[k]=(m[k]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); }
+  function bar(title,arr){ if(!arr.length) return ''; const mx=arr[0][1]||1;
+    return '<div class="ad-block"><h4>'+title+'</h4>'+arr.map(p=>'<div class="ad-bar"><span class="ad-bk">'+p[0]+'</span><span class="ad-bt"><i style="width:'+Math.round(p[1]/mx*100)+'%"></i></span><span class="ad-bv">'+p[1]+'</span></div>').join('')+'</div>'; }
+  async function loadStats(){ $('#ad-sum').innerHTML='<div class="ad-sub">Đang tải…</div>';
+    try{ const snap=await getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(300))); render(snap.docs.map(d=>d.data())); }
+    catch(e){ $('#ad-sum').innerHTML='<div class="ad-err">'+(e.message||e)+'</div>'; } }
+  function render(rows){ const total=rows.length;
+    const today=rows.filter(r=>{ const d=r.ts&&r.ts.toDate?r.ts.toDate():null; return d&&d.toDateString()===new Date().toDateString(); }).length;
+    $('#ad-sum').innerHTML='<div class="ad-kpis"><div class="ad-kpi"><b>'+total+'</b><span>lượt (gần đây)</span></div><div class="ad-kpi"><b>'+today+'</b><span>hôm nay</span></div></div>'
+      +bar('Theo quốc gia',tally(rows,'country').slice(0,6))
+      +bar('Theo nguồn (ref)',tally(rows.filter(r=>r.ref),'ref').slice(0,6))
+      +bar('Theo nhà mạng',tally(rows,'isp').slice(0,6));
+    $('#ad-list').innerHTML='<h4>Gần đây</h4>'+rows.slice(0,40).map(r=>'<div class="ad-row"><span class="ad-when">'+fmtTime(r.ts)+'</span><span>'+((r.city||'')+(r.country?', '+r.country:''))+'</span><span>'+(r.isp||'')+'</span><span class="ad-ref">'+(r.ref||'')+'</span></div>').join('');
+  }
 </script>
 </body>
 </html>
