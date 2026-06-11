@@ -5,8 +5,8 @@ service cloud.firestore {
     // Visit logs: anyone may append a (small, timestamped) visit,
     // but ONLY the owner (Bow) may read them. No edits/deletes.
     match /visits/{id} {
-      allow create: if request.resource.data.ts is timestamp
-                    && request.resource.data.size() <= 20;
+      allow create: if request.resource.data.ts == request.time
+                    && request.resource.data.size() <= 25;
       allow read:   if request.auth != null
                     && request.auth.token.email == 'nguyenvantuan4034@gmail.com';
       allow update, delete: if false;

@@ -54,7 +54,7 @@
     <button class="out hide" id="out">Đăng xuất</button>
   </header>
 
-  <div class="card" id="login">
+  <div class="card hide" id="login">
     <h2>🔒 Khu vực riêng</h2>
     <p class="sub">Chỉ dành cho Bow. Đăng nhập để xem thống kê truy cập.</p>
     <input id="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password">
@@ -86,6 +86,7 @@
   pw.addEventListener('keydown',e=>{ if(e.key==='Enter') goBtn.click(); });
   document.getElementById('out').onclick=()=>signOut(auth);
   onAuthStateChanged(auth,user=>{ const inn=user&&user.email===ADMIN;
+    if(!inn && sessionStorage.getItem('adm')!=='1'){ location.replace('index.html'); return; }
     document.getElementById('login').classList.toggle('hide',inn);
     document.getElementById('dash').classList.toggle('hide',!inn);
     document.getElementById('out').classList.toggle('hide',!inn);
