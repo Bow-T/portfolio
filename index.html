@@ -776,12 +776,6 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
   const STATIONS=[
-    {name:'Lofi Vietnam',url:'https://soundcloud.com/lofi-vietnam'},
-    {name:'Vũ.',url:'https://soundcloud.com/vuofficial'},
-    {name:'Thái Đinh',url:'https://soundcloud.com/thaidinh'},
-    {name:'buitruonglinh',url:'https://soundcloud.com/buitruonglinh'},
-    {name:'Chillies',url:'https://soundcloud.com/chillies'},
-    {name:'GreyD',url:'https://soundcloud.com/grey-d'},
     {name:'Noo Phước Thịnh',url:'https://soundcloud.com/noophuocthinh'},
   ];
   let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=true,repeat='all',vol=0.5;
@@ -841,14 +835,14 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     let a=snd.artwork_url||(snd.user&&snd.user.avatar_url);if(a){a=a.replace('-large','-t300x300');cov.style.background='#0e150d';cov.style.backgroundImage='url('+a+')';emo.style.display='none';}else{cov.style.backgroundImage='none';cov.style.background='linear-gradient(135deg,#84cc16,#2dd4bf)';emo.style.display='';emo.textContent='☁️';}});
     scWidget.getDuration(d=>{scDur=d;duE.textContent=fmt(d/1000);});}
   function scPlayRandom(){if(!scWidget)return;scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);scWidget.play();});}
-  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:false,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scMeta();if(auto){shuffle?scPlayRandom():scWidget.play();}}});});}
+  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:!!auto,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scMeta();if(auto){playing=true;onState();if(shuffle)scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);});}}});});}
   // ---- mode + controls ----
   function switchMode(m){if(m===mode)return;if(mode==='local'){if(cur)cur.pause();}else{if(scWidget)scWidget.pause();}mode=m;playing=false;
     p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));seek.value=0;ctE.textContent='0:00';duE.textContent='0:00';
     if(m==='local'){if(cur)loadLocal(idx,false);else localMeta();} else {scInit(()=>scMeta());} onState();}
   p.querySelectorAll('.psrc button').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.m)));
   ppB.addEventListener('click',()=>{ if(mode==='local'){playing?localPause():(cur?localPlay():loadLocal(idx,true));}
-    else{scInit(()=>{playing?scWidget.pause():(shuffle?scPlayRandom():scWidget.play());});} });
+    else{scInit(()=>{if(playing){scWidget.pause();}else{scWidget.play();if(shuffle)scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);});}});} });
   $('#pprev').addEventListener('click',()=>mode==='local'?prevT():(scWidget&&scWidget.prev()));
   $('#pnext').addEventListener('click',()=>{if(mode==='local'){nextT();}else if(scWidget){shuffle?scPlayRandom():scWidget.next();}});
   $('#pshuf').addEventListener('click',e=>{shuffle=!shuffle;e.target.classList.toggle('on',shuffle);});
