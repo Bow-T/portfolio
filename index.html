@@ -784,7 +784,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     {name:'Noo Phước Thịnh',url:'https://soundcloud.com/noophuocthinh'},
   ];
   let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=true,repeat='all',vol=0.5;
-  let ac,gain, scLoaded=false,scReady=false,scWidget=null,scStation=0,scDur=0;
+  let ac,gain, scLoaded=false,scReady=false,scWidget=null,scStation=0,scDur=0,scStarted=false;
 
   const p=document.createElement('div');p.className='player';
   p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ SoundCloud</button></div>'
@@ -841,17 +841,17 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     tit.textContent=snd.title||'Noo Phước Thịnh';art.textContent=(snd.user&&snd.user.username)||'Noo Phước Thịnh';
     let a=snd.artwork_url||(snd.user&&snd.user.avatar_url);if(a){a=a.replace('-large','-t300x300');cov.style.background='#0e150d';cov.style.backgroundImage='url('+a+')';emo.style.display='none';btnCover(a);}else{cov.style.backgroundImage='none';cov.style.background='linear-gradient(135deg,#84cc16,#2dd4bf)';emo.style.display='';emo.textContent='🎵';btnCover(null);}});
     scWidget.getDuration(d=>{scDur=d;duE.textContent=fmt(d/1000);});}
-  function scPlayRandom(){if(!scWidget)return;scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);scWidget.play();setTimeout(()=>scMeta(),500);});}
-  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:!!auto,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scMeta();if(auto){playing=true;onState();scMeta();if(shuffle)scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);setTimeout(()=>scMeta(),550);});}}});});}
+  function scPlayRandom(){if(!scWidget)return;scWidget.getSounds(l=>{var n=l?l.length:0;if(n>1)scWidget.skip(Math.random()*n|0);setTimeout(()=>scMeta(),500);});}
+  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:!!auto,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scStarted=true;scMeta();if(auto){playing=true;onState();if(shuffle)scWidget.getSounds(l=>{var n=l?l.length:0;if(n>1)scWidget.skip(Math.random()*n|0);setTimeout(()=>scMeta(),550);});}}});});}
   // ---- mode + controls ----
   function switchMode(m){if(m===mode)return;if(mode==='local'){if(cur)cur.pause();}else{if(scWidget)scWidget.pause();}mode=m;playing=false;
     p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));seek.value=0;ctE.textContent='0:00';duE.textContent='0:00';
     if(m==='local'){if(cur)loadLocal(idx,false);else localMeta();} else {scInit(()=>scMeta());} onState();}
   p.querySelectorAll('.psrc button').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.m)));
   ppB.addEventListener('click',()=>{ if(mode==='local'){playing?localPause():(cur?localPlay():loadLocal(idx,true));}
-    else{scInit(()=>{if(playing){scWidget.pause();}else{scWidget.play();setTimeout(()=>scMeta(),300);if(shuffle)scWidget.getSounds(l=>{if(l&&l.length>1)scWidget.skip(Math.random()*l.length|0);setTimeout(()=>scMeta(),600);});}});} });
-  $('#pprev').addEventListener('click',()=>mode==='local'?prevT():(scWidget&&scWidget.prev()));
-  $('#pnext').addEventListener('click',()=>{if(mode==='local'){nextT();}else if(scWidget){shuffle?scPlayRandom():scWidget.next();}});
+    else{ if(playing){if(scWidget)scWidget.pause();} else if(!scStarted){scLoad(scStation,true);} else {scInit(()=>{try{scWidget.play();}catch(e){scLoad(scStation,true);}setTimeout(()=>scMeta(),300);});} } });
+  $('#pprev').addEventListener('click',()=>{if(mode==='local'){prevT();}else if(scWidget&&scStarted){scWidget.prev();}});
+  $('#pnext').addEventListener('click',()=>{if(mode==='local'){nextT();}else if(!scStarted){scLoad(scStation,true);}else if(shuffle){scPlayRandom();}else{scWidget.next();}});
   $('#pshuf').addEventListener('click',e=>{shuffle=!shuffle;e.target.classList.toggle('on',shuffle);});
   $('#prep').addEventListener('click',e=>{repeat=repeat==='all'?'one':repeat==='one'?'off':'all';e.target.textContent=repeat==='one'?'🔂':'🔁';e.target.classList.toggle('on',repeat!=='off');});
   seek.addEventListener('input',()=>{seeking=true;const d=mode==='local'?(cur&&cur.duration*1000):scDur;if(d)ctE.textContent=fmt(seek.value/1000*d/1000);});
