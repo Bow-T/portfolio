@@ -427,7 +427,7 @@
 <div id="pre"><div class="pcount" id="pcount">0</div><div class="plbl">loading</div></div>
 <div id="grain"></div>
 <div id="prog"></div>
-<button id="music" class="musicbtn" aria-label="Toggle ambient music" title="Ambient rainy-piano music">
+<button id="music" class="musicbtn" data-track="Mở music player" aria-label="Toggle ambient music" title="Ambient rainy-piano music">
   <svg class="note" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
   <span class="eq"><i></i><i></i><i></i></span>
 </button>
@@ -439,7 +439,7 @@
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
-      <a class="lnk" href="game.html" title="Offline runner game" data-i18n="nav.game">🎮 Game</a>
+      <a class="lnk" href="game.html" title="Offline runner game" data-track="Mở game offline" data-i18n="nav.game">🎮 Game</a>
       <a class="lnk" href="#skills" data-i18n="nav.skills">Skills</a>
       <a class="lnk" href="#work" data-i18n="nav.work">Work</a>
       <a class="lnk" href="#experience" data-i18n="nav.experience">Experience</a>
@@ -460,9 +460,9 @@
     <h1 data-i18n-html="hero.h1">I make Flutter apps<br>people <span class="gtext">actually use</span>.</h1>
     <p class="lead" data-i18n-html="hero.lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
     <div class="cta">
-      <a href="#work" class="btn" data-i18n="cta.work">View my work ↓</a>
-      <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-i18n="cta.cv">📄 Résumé</a>
-      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
+      <a href="#work" class="btn" data-track="CTA: Xem dự án" data-i18n="cta.work">View my work ↓</a>
+      <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-track="CTA: Tải CV" data-i18n="cta.cv">📄 Résumé</a>
+      <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost" data-track="GitHub">GitHub ↗</a>
     </div>
     <div class="socials">
       <a href="mailto:nguyenvantuan4034@gmail.com" title="Email" aria-label="Email"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
@@ -606,10 +606,10 @@
       <h2 data-i18n-html="contact.title">Want to work together? <span class="gtext">Let's talk.</span></h2>
       <p data-i18n="contact.p">I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
       <div class="cbtns">
-        <a href="mailto:nguyenvantuan4034@gmail.com" class="btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> nguyenvantuan4034@gmail.com</a>
-        <a href="resume.html" target="_blank" rel="noopener" class="btn ghost">📄 Résumé</a>
-        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
-        <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost">GitHub ↗</a>
+        <a href="mailto:nguyenvantuan4034@gmail.com" class="btn" data-track="Email"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> nguyenvantuan4034@gmail.com</a>
+        <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-track="Tải CV (contact)">📄 Résumé</a>
+        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn ghost" data-track="LinkedIn">LinkedIn ↗</a>
+        <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost" data-track="GitHub">GitHub ↗</a>
       </div>
       <div class="cmeta"><span>📱 +84 987 620 174</span><span>📍 Da Nang, Vietnam</span></div>
     </div>
@@ -688,7 +688,7 @@ const IMG={"Ynstant": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1b/
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
-  const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')
+  const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener" data-track="${p.n}: ${l[0]}">${l[0]} ↗</a>`).join('')
     :'<span class="nostore">B2B / internal — not on public stores</span>';
   return `<article class="pcard" data-cat="${p.cat}">
     <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
@@ -928,7 +928,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
 
   // secret game — "ship your apps" (uses the real app icons)
   (function(){
-    const gb=document.createElement('button');gb.id='gbtn';gb.textContent='🎮 secret game';document.body.appendChild(gb);
+    const gb=document.createElement('button');gb.id='gbtn';gb.textContent='🎮 secret game';gb.setAttribute('data-track','Mở secret game');document.body.appendChild(gb);
     addEventListener('scroll',()=>{gb.classList.toggle('show',innerHeight+scrollY>document.body.scrollHeight-160);},{passive:true});
     const NAMES=['Ynstant','SecuMap','KEYM','Carter','Spaurt','ProtectU','Mentalia','Nila Sphere','Docteur Sirop','Beauty Squad','Octopush'].filter(n=>IMG[n]);
     const R=29,SZ=58,G=.45,RE=.7,FR=.99,GF=.85;
@@ -993,7 +993,7 @@ setLang(localStorage.getItem('lang')||'en');
 
 // ===== chatbot (scripted) =====
 (function(){
-  const btn=document.createElement('button');btn.id='chatbtn';btn.textContent='💬';btn.title='Ask me anything';document.body.appendChild(btn);
+  const btn=document.createElement('button');btn.id='chatbtn';btn.textContent='💬';btn.title='Ask me anything';btn.setAttribute('data-track','Mở chatbot');document.body.appendChild(btn);
   const p=document.createElement('div');p.className='chatpanel';
   p.innerHTML='<div class="chathead"><span class="av">🤖</span><div><b>Bow-bot</b><small>● online · ask me anything</small></div><button class="cx" aria-label="Close">✕</button></div>'
     +'<div class="chatmsgs" id="cmsgs"></div>'
