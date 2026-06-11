@@ -12,6 +12,15 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Click/interaction events: anyone may append a small event, owner reads.
+    match /events/{id} {
+      allow create: if request.resource.data.ts == request.time
+                    && request.resource.data.size() <= 12;
+      allow read:   if request.auth != null
+                    && request.auth.token.email == 'nguyenvantuan4034@gmail.com';
+      allow update, delete: if false;
+    }
+
     // Everything else: locked.
     match /{document=**} {
       allow read, write: if false;

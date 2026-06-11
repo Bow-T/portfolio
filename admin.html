@@ -133,22 +133,28 @@
     return '<div class="panel"><h3>'+title+'</h3>'+arr.map(p=>'<div class="bar"><span class="bk">'+p[0]+'</span><span class="bt"><i style="width:'+Math.round(p[1]/mx*100)+'%"></i></span><span class="bv">'+p[1]+'</span></div>').join('')+'</div>'; };
 
   async function load(){ E('refresh').textContent='↻ Đang tải…';
-    try{ const snap=await getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(500)));
-      render(snap.docs.map(d=>{ const r=d.data(); const u=parseUA(r.ua); r._br=u.br; r._os=u.os; r._dev=u.dev; return r; }));
+    try{ const [vs,ev]=await Promise.all([
+        getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(500))),
+        getDocs(query(collection(db,'events'),orderBy('ts','desc'),limit(1200))).catch(()=>({docs:[]}))
+      ]);
+      const rows=vs.docs.map(d=>{ const r=d.data(); const u=parseUA(r.ua); r._br=u.br; r._os=u.os; r._dev=u.dev; return r; });
+      render(rows, ev.docs.map(d=>d.data()));
     }catch(e){ E('kpis').innerHTML='<div class="err">'+(e.message||e)+'</div>'; }
     E('refresh').textContent='↻ Làm mới'; }
 
-  function render(rows){
+  function render(rows, events){
+    events=events||[];
     const total=rows.length;
     const today=rows.filter(r=>{ const d=r.ts&&r.ts.toDate?r.ts.toDate():null; return d&&d.toDateString()===new Date().toDateString(); }).length;
     const countries=new Set(rows.map(r=>r.country).filter(Boolean)).size;
-    const refs=rows.filter(r=>r.ref).length;
     E('kpis').innerHTML=
       '<div class="kpi"><span class="ic">👁️</span><b>'+total+'</b><span>tổng lượt</span></div>'+
       '<div class="kpi"><span class="ic">📅</span><b>'+today+'</b><span>hôm nay</span></div>'+
       '<div class="kpi"><span class="ic">🌍</span><b>'+countries+'</b><span>quốc gia</span></div>'+
-      '<div class="kpi"><span class="ic">🔗</span><b>'+refs+'</b><span>có ref</span></div>';
+      '<div class="kpi"><span class="ic">🖱️</span><b>'+events.length+'</b><span>lượt click</span></div>';
     E('breaks').innerHTML=
+      panel('🖱️ Tương tác nhiều nhất',tally(events,e=>e.label).slice(0,9))+
+      panel('Khu vực click',tally(events,e=>e.area).slice(0,7))+
       panel('Quốc gia',tally(rows,r=>(flags[r.country]?flags[r.country]+' ':'')+(r.country||'')).slice(0,7))+
       panel('Thành phố',tally(rows,r=>r.city).slice(0,7))+
       panel('Trình duyệt',tally(rows,r=>r._br).slice(0,7))+
