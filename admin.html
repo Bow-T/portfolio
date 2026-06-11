@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Bow · Admin</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<style>
+  :root{--bg:#0a0f0a;--bg2:#0e150d;--card:#111811;--cardb:#26331d;--chip:#16210f;--chipb:#2a3b1d;
+    --text:#e9f3e6;--muted:#8aa07f;--soft:#5f7355;--line:#1d2a16;--g1:#bef264;--g2:#2dd4bf;--g3:#4ade80;
+    --grad:linear-gradient(100deg,#bef264,#4ade80,#2dd4bf);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 60px;}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+  header .logo{height:30px;width:auto;}
+  header h1{font-size:18px;font-weight:800;letter-spacing:-.3px;}
+  header .grow{flex:1;}
+  header a,.out{color:var(--muted);font-size:13px;text-decoration:none;border:1px solid var(--line);padding:7px 13px;border-radius:9px;background:transparent;cursor:pointer;font-family:inherit;}
+  header a:hover,.out:hover{border-color:var(--g2);color:var(--text);}
+  .card{background:var(--card);border:1px solid var(--cardb);border-radius:18px;padding:24px;max-width:380px;margin:60px auto 0;}
+  .card h2{font-size:19px;font-weight:800;margin-bottom:4px;}
+  .card p.sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+  .card input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:11px;font-family:inherit;outline:none;}
+  .card input:focus{border-color:var(--g2);}
+  .btn{width:100%;border:none;background:var(--grad);color:#0a2009;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;}
+  .err{color:#f87171;font-size:12.5px;margin-top:11px;min-height:16px;}
+  .kpis{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;}
+  .kpi{flex:1;min-width:120px;background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:16px 18px;}
+  .kpi b{display:block;font-size:30px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1;}
+  .kpi span{color:var(--muted);font-size:12.5px;}
+  .block{margin-bottom:22px;} h3{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:0 0 10px;}
+  .bar{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px;}
+  .bk{width:150px;min-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bt{flex:1;height:9px;background:var(--chip);border-radius:6px;overflow:hidden;} .bt i{display:block;height:100%;background:var(--grad);}
+  .bv{width:38px;text-align:right;color:var(--muted);}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;color:var(--soft);font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line);text-transform:uppercase;font-size:10.5px;letter-spacing:.05em;}
+  td{padding:8px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top;}
+  td.when{color:var(--text);white-space:nowrap;} td .ref{color:var(--g2);font-weight:600;}
+  .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;}
+  .loading{color:var(--muted);text-align:center;padding:30px;}
+  .hide{display:none!important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="logo" src="assets/wordmark.svg" alt="Bow">
+    <h1>· Admin</h1>
+    <span class="grow"></span>
+    <a href="index.html">← Về trang chính</a>
+    <button class="out hide" id="out">Đăng xuất</button>
+  </header>
+
+  <div class="card" id="login">
+    <h2>🔒 Khu vực riêng</h2>
+    <p class="sub">Chỉ dành cho Bow. Đăng nhập để xem thống kê truy cập.</p>
+    <input id="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+    <button class="btn" id="go">Đăng nhập</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <main id="dash" class="hide">
+    <div class="kpis" id="kpis"></div>
+    <div id="breaks"></div>
+    <div class="block">
+      <h3>Lượt truy cập gần đây</h3>
+      <div class="tablewrap"><table id="tbl"><thead><tr><th>Thời gian</th><th>Vị trí</th><th>Nhà mạng</th><th>Ref</th><th>Trang</th><th>Thiết bị</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  const ADMIN='nguyenvantuan4034@gmail.com';
+  const app=initializeApp({apiKey:"AIzaSyCKTi16MRvh8OtVPuN7hBOTXqSnmCHZ9hQ",authDomain:"bow-portfolio-11921.firebaseapp.com",projectId:"bow-portfolio-11921",storageBucket:"bow-portfolio-11921.firebasestorage.app",messagingSenderId:"864661220560",appId:"1:864661220560:web:aae593e86db7017c64c2d5",measurementId:"G-CSDMCK4J9W"});
+  const auth=getAuth(app), db=getFirestore(app);
+  const goBtn=document.getElementById('go'), pw=document.getElementById('pw'), err=document.getElementById('err');
+  goBtn.onclick=async()=>{ const p=pw.value; if(!p) return; err.textContent='Đang xử lý…';
+    try{ await signInWithEmailAndPassword(auth,ADMIN,p); }
+    catch(e){ if(e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'){ try{ await createUserWithEmailAndPassword(auth,ADMIN,p); }catch(e2){ err.textContent=e2.message; } } else err.textContent=e.message; } };
+  pw.addEventListener('keydown',e=>{ if(e.key==='Enter') goBtn.click(); });
+  document.getElementById('out').onclick=()=>signOut(auth);
+  onAuthStateChanged(auth,user=>{ const inn=user&&user.email===ADMIN;
+    document.getElementById('login').classList.toggle('hide',inn);
+    document.getElementById('dash').classList.toggle('hide',!inn);
+    document.getElementById('out').classList.toggle('hide',!inn);
+    if(inn) load(); });
+  const fmt=ts=>{ try{ const d=ts&&ts.toDate?ts.toDate():new Date(ts); return d.toLocaleString('vi-VN'); }catch(_){ return ''; } };
+  const tally=(rows,k)=>{ const m={}; rows.forEach(r=>{ const v=r[k]||'(?)'; m[v]=(m[v]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); };
+  const bar=(title,arr)=>{ if(!arr.length) return ''; const mx=arr[0][1]||1;
+    return '<div class="block"><h3>'+title+'</h3>'+arr.map(p=>'<div class="bar"><span class="bk">'+p[0]+'</span><span class="bt"><i style="width:'+Math.round(p[1]/mx*100)+'%"></i></span><span class="bv">'+p[1]+'</span></div>').join('')+'</div>'; };
+  async function load(){ try{
+      const snap=await getDocs(query(collection(db,'visits'),orderBy('ts','desc'),limit(500)));
+      render(snap.docs.map(d=>d.data()));
+    }catch(e){ document.getElementById('kpis').innerHTML='<div class="err">'+(e.message||e)+'</div>'; } }
+  function render(rows){
+    const total=rows.length;
+    const today=rows.filter(r=>{ const d=r.ts&&r.ts.toDate?r.ts.toDate():null; return d&&d.toDateString()===new Date().toDateString(); }).length;
+    const refs=rows.filter(r=>r.ref).length;
+    document.getElementById('kpis').innerHTML=
+      '<div class="kpi"><b>'+total+'</b><span>tổng lượt (gần đây)</span></div>'+
+      '<div class="kpi"><b>'+today+'</b><span>hôm nay</span></div>'+
+      '<div class="kpi"><b>'+refs+'</b><span>có gắn ref</span></div>';
+    document.getElementById('breaks').innerHTML=
+      bar('Theo quốc gia',tally(rows,'country').slice(0,8))+
+      bar('Theo thành phố',tally(rows,'city').slice(0,8))+
+      bar('Theo nguồn (ref)',tally(rows.filter(r=>r.ref),'ref').slice(0,8))+
+      bar('Theo nhà mạng (ISP)',tally(rows,'isp').slice(0,8));
+    document.getElementById('tbody').innerHTML=rows.slice(0,80).map(r=>
+      '<tr><td class="when">'+fmt(r.ts)+'</td><td>'+((r.city||'')+(r.country?', '+r.country:''))+'</td><td>'+(r.isp||'')+'</td><td><span class="ref">'+(r.ref||'')+'</span></td><td>'+(r.path||'')+'</td><td>'+(r.screen||'')+'</td></tr>').join('');
+  }
+</script>
+</body>
+</html>
