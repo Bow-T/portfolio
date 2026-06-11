@@ -490,7 +490,7 @@
     <p class="sec-sub" data-i18n="skills.sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
     <div class="skillgrid">
       <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
-        <span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">React Native</span>
+        <span class="chip">Flutter</span><span class="chip">Dart</span>
         <span class="chip">Kotlin / Swift channels</span><span class="chip">Material / Cupertino</span><span class="chip">Lottie</span>
       </div></div>
       <div class="skillcard"><h4 class="gtext">Architecture &amp; State</h4><div class="chips">
@@ -505,7 +505,7 @@
       <div class="skillcard"><h4 class="gtext">Backend, Payments &amp; Ops</h4><div class="chips">
         <span class="chip">Firebase</span><span class="chip">Supabase</span><span class="chip">dio + retrofit</span>
         <span class="chip">Stripe</span><span class="chip">PayPal</span><span class="chip">RevenueCat</span>
-        <span class="chip">Fastlane CI/CD</span><span class="chip">Store release</span>
+        <span class="chip">Fastlane CI/CD</span><span class="chip">Codemagic</span><span class="chip">Store release</span>
       </div></div>
     </div>
   </div>
@@ -1040,7 +1040,7 @@ setLang(localStorage.getItem('lang')||'en');
 })();
 // skill chips: add brand logos where available
 (function(){
-  const M={'flutter':'flutter','dart':'dart','react native':'react','firebase':'firebase','supabase':'supabase','stripe':'stripe','paypal':'paypal','figma':'figma','google maps':'googlemaps','socket.io':'socketdotio','kotlin':'kotlin','swift':'swift','fastlane':'fastlane','revenuecat':'revenuecat'};
+  const M={'flutter':'flutter','dart':'dart','firebase':'firebase','supabase':'supabase','stripe':'stripe','paypal':'paypal','figma':'figma','google maps':'googlemaps','socket.io':'socketdotio','kotlin':'kotlin','swift':'swift','fastlane':'fastlane','codemagic':'codemagic','revenuecat':'revenuecat'};
   document.querySelectorAll('.skillcard .chip').forEach(ch=>{const t=ch.textContent.toLowerCase();
     for(const k in M){if(t.indexOf(k)>=0){const img=document.createElement('img');img.className='cico';img.src='https://cdn.simpleicons.org/'+M[k];img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();ch.prepend(img);break;}}});
 })();
