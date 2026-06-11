@@ -350,6 +350,10 @@
   .player .li:hover{background:var(--chip);} .player .li.cur .n{color:var(--g2);font-weight:600;}
   .player .li .ix{color:var(--soft);width:14px;} .player .li .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .player .li .a{color:var(--muted);font-size:11px;white-space:nowrap;}
+  .player .psrc{display:flex;gap:5px;padding:10px 12px 2px;}
+  .player .psrc button{flex:1;border:1px solid var(--line);background:var(--chip);color:var(--muted);font:600 11.5px inherit;padding:6px;border-radius:9px;cursor:pointer;font-family:inherit;}
+  .player .psrc button.on{background:var(--grad);color:#0a2009;border-color:transparent;}
+  .player .cover{background-size:cover;background-position:center;}
 </style>
 </head>
 <body>
@@ -764,21 +768,25 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   document.querySelectorAll('.stat .n[data-to]').forEach(el=>io.observe(el));
 })();
 
-// ===== mini music player (local playlist) + analyser visualizer =====
+// ===== music player: Local files + SoundCloud (Widget API) =====
 (function(){
   const btn=document.getElementById('music'); if(!btn) return;
   const TRACKS=[
     {src:'assets/kiss-the-rain.mp3',title:'Kiss the Rain',artist:'Yiruma',emoji:'🌧️',g:'linear-gradient(135deg,#2dd4bf,#0d9488)'},
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
-  let idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5;
-  let ac,gain;
-  function ensure(){ if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();
-    gain=ac.createGain();gain.gain.value=vol;gain.connect(ac.destination);}
-    if(ac.state==='suspended')ac.resume(); }
-  // panel UI
+  const STATIONS=[
+    {name:'Chillhop · lofi',url:'https://soundcloud.com/chillhopdotcom/sets/chillhop-essentials-spring-2024'},
+    {name:'Yiruma · piano',url:'https://soundcloud.com/yiruma'},
+    {name:'relaxdaily',url:'https://soundcloud.com/relaxdaily'},
+    {name:'Scott Buckley',url:'https://soundcloud.com/scott-buckley'},
+  ];
+  let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5;
+  let ac,gain, scLoaded=false,scReady=false,scWidget=null,scStation=0,scDur=0;
+
   const p=document.createElement('div');p.className='player';
-  p.innerHTML='<div class="cover" id="pcov"><span class="bdg">♫ now playing</span><span id="pemo">🌧️</span></div>'
+  p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ SoundCloud</button></div>'
+    +'<div class="cover" id="pcov"><span class="bdg">♫ now playing</span><span id="pemo">🌧️</span></div>'
     +'<div class="meta"><div class="ptitle" id="ptit">—</div><div class="partist" id="part">—</div></div>'
     +'<div class="seekrow"><span id="pct">0:00</span><input class="seek" id="pseek" type="range" min="0" max="1000" value="0"><span id="pdu">0:00</span></div>'
     +'<div class="ctrls"><button class="tg" id="pshuf" title="Shuffle">🔀</button><button id="pprev" title="Previous">⏮</button>'
@@ -789,30 +797,62 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   const $=id=>p.querySelector(id);
   const cov=$('#pcov'),emo=$('#pemo'),tit=$('#ptit'),art=$('#part'),seek=$('#pseek'),ctE=$('#pct'),duE=$('#pdu'),ppB=$('#ppp'),listE=$('#plist');
   function fmt(s){if(!s||!isFinite(s))return'0:00';s=s|0;return (s/60|0)+':'+('0'+(s%60)).slice(-2);}
-  function renderList(){listE.innerHTML=TRACKS.map((t,i)=>'<div class="li'+(i===idx?' cur':'')+'" data-i="'+i+'"><span class="ix">'+(i===idx&&playing?'♪':(i+1))+'</span><span class="n">'+t.title+'</span><span class="a">'+t.artist+'</span></div>').join('');
-    listE.querySelectorAll('.li').forEach(li=>li.addEventListener('click',()=>load(+li.dataset.i,true)));}
-  function paint(){const t=TRACKS[idx];cov.style.background=t.g;emo.textContent=t.emoji;tit.textContent=t.title;art.textContent=t.artist;renderList();}
-  function load(i,auto){ i=(i+TRACKS.length)%TRACKS.length; idx=i; if(cur){cur.pause();cur.src='';}
-    cur=new Audio(TRACKS[idx].src); cur.crossOrigin='anonymous';
-    ensure(); try{ac.createMediaElementSource(cur).connect(gain);}catch(_){}
-    cur.addEventListener('loadedmetadata',()=>duE.textContent=fmt(cur.duration));
-    cur.addEventListener('timeupdate',()=>{if(!seeking&&cur.duration){seek.value=cur.currentTime/cur.duration*1000;ctE.textContent=fmt(cur.currentTime);}});
-    cur.addEventListener('ended',()=>{ if(repeat==='one'){cur.currentTime=0;cur.play();} else if(repeat==='off'&&idx===TRACKS.length-1&&!shuffle){doPause();} else next(); });
-    paint(); if(auto)doPlay(); }
-  function doPlay(){ ensure(); if(ac.resume)ac.resume(); cur.play().catch(()=>{}); playing=true; ppB.textContent='⏸'; btn.classList.add('on');
-    if(window.__rain)window.__rain(true); renderList(); }
-  function doPause(){ if(cur)cur.pause(); playing=false; ppB.textContent='▶'; btn.classList.remove('on'); if(window.__rain)window.__rain(false); renderList(); }
-  function next(){ load(shuffle?(Math.random()*TRACKS.length|0):idx+1,true); }
-  function prev(){ if(cur&&cur.currentTime>3){cur.currentTime=0;return;} load(shuffle?(Math.random()*TRACKS.length|0):idx-1,true); }
-  ppB.addEventListener('click',()=>playing?doPause():(cur?doPlay():load(idx,true)));
-  $('#pprev').addEventListener('click',prev); $('#pnext').addEventListener('click',next);
+  function onState(){ppB.textContent=playing?'⏸':'▶';btn.classList.toggle('on',playing);if(window.__rain)window.__rain(playing);renderList();}
+  function renderList(){
+    if(mode==='local'){listE.innerHTML=TRACKS.map((t,i)=>'<div class="li'+(i===idx?' cur':'')+'" data-i="'+i+'"><span class="ix">'+(i===idx&&playing?'♪':i+1)+'</span><span class="n">'+t.title+'</span><span class="a">'+t.artist+'</span></div>').join('');
+      listE.querySelectorAll('.li').forEach(li=>li.onclick=()=>loadLocal(+li.dataset.i,true));}
+    else{listE.innerHTML=STATIONS.map((s,i)=>'<div class="li'+(i===scStation?' cur':'')+'" data-i="'+i+'"><span class="ix">☁️</span><span class="n">'+s.name+'</span><span class="a">station</span></div>').join('');
+      listE.querySelectorAll('.li').forEach(li=>li.onclick=()=>scLoad(+li.dataset.i,true));}
+  }
+  // ---- local ----
+  function ensure(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();gain=ac.createGain();gain.gain.value=vol;gain.connect(ac.destination);}if(ac.state==='suspended')ac.resume();}
+  function localMeta(){const t=TRACKS[idx];cov.style.backgroundImage='none';cov.style.background=t.g;emo.style.display='';emo.textContent=t.emoji;tit.textContent=t.title;art.textContent=t.artist;}
+  function loadLocal(i,auto){i=(i+TRACKS.length)%TRACKS.length;idx=i;if(cur){cur.pause();cur.src='';}
+    cur=new Audio(TRACKS[idx].src);cur.crossOrigin='anonymous';ensure();try{ac.createMediaElementSource(cur).connect(gain);}catch(_){}
+    cur.addEventListener('loadedmetadata',()=>{if(mode==='local')duE.textContent=fmt(cur.duration);});
+    cur.addEventListener('timeupdate',()=>{if(mode==='local'&&!seeking&&cur.duration){seek.value=cur.currentTime/cur.duration*1000;ctE.textContent=fmt(cur.currentTime);}});
+    cur.addEventListener('ended',()=>{if(mode!=='local')return;if(repeat==='one'){cur.currentTime=0;cur.play();}else if(repeat==='off'&&idx===TRACKS.length-1&&!shuffle){playing=false;onState();}else nextT();});
+    localMeta();if(auto)localPlay();}
+  function localPlay(){ensure();if(ac.resume)ac.resume();cur.play().catch(()=>{});playing=true;onState();}
+  function localPause(){if(cur)cur.pause();playing=false;onState();}
+  function nextT(){loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx+1,true);}
+  function prevT(){if(cur&&cur.currentTime>3){cur.currentTime=0;return;}loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx-1,true);}
+  // ---- soundcloud ----
+  function scInit(cb){
+    if(scReady){cb&&cb();return;}
+    if(scLoaded)return; scLoaded=true;
+    const f=document.createElement('iframe');f.id='scframe';f.allow='autoplay';f.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;border:0';
+    f.src='https://w.soundcloud.com/player/?url='+encodeURIComponent(STATIONS[0].url)+'&auto_play=false&visual=false&hide_related=true&show_comments=false&show_user=false&buying=false&sharing=false&download=false';
+    document.body.appendChild(f);
+    const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';
+    s.onload=()=>{scWidget=window.SC.Widget(f);
+      scWidget.bind(SC.Widget.Events.READY,()=>{scReady=true;scWidget.setVolume(vol*100);
+        scWidget.bind(SC.Widget.Events.PLAY,()=>{playing=true;onState();scMeta();});
+        scWidget.bind(SC.Widget.Events.PAUSE,()=>{playing=false;onState();});
+        scWidget.bind(SC.Widget.Events.PLAY_PROGRESS,ev=>{if(!seeking){seek.value=(ev.relativePosition||0)*1000;ctE.textContent=fmt((ev.currentPosition||0)/1000);}});
+        cb&&cb();});};
+    document.head.appendChild(s);
+  }
+  function scMeta(){if(!scWidget)return;scWidget.getCurrentSound(snd=>{if(!snd)return;tit.textContent=snd.title||'SoundCloud';art.textContent=(snd.user&&snd.user.username)||'SoundCloud';
+    let a=snd.artwork_url||(snd.user&&snd.user.avatar_url);if(a){a=a.replace('-large','-t300x300');cov.style.background='#0e150d';cov.style.backgroundImage='url('+a+')';emo.style.display='none';}else{cov.style.backgroundImage='none';cov.style.background='linear-gradient(135deg,#84cc16,#2dd4bf)';emo.style.display='';emo.textContent='☁️';}});
+    scWidget.getDuration(d=>{scDur=d;duE.textContent=fmt(d/1000);});}
+  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:!!auto,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scMeta();if(auto){playing=true;onState();}}});});}
+  // ---- mode + controls ----
+  function switchMode(m){if(m===mode)return;if(mode==='local'){if(cur)cur.pause();}else{if(scWidget)scWidget.pause();}mode=m;playing=false;
+    p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));seek.value=0;ctE.textContent='0:00';duE.textContent='0:00';
+    if(m==='local'){if(cur)loadLocal(idx,false);else localMeta();} else {scInit(()=>scMeta());} onState();}
+  p.querySelectorAll('.psrc button').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.m)));
+  ppB.addEventListener('click',()=>{ if(mode==='local'){playing?localPause():(cur?localPlay():loadLocal(idx,true));}
+    else{scInit(()=>{playing?scWidget.pause():scWidget.play();});} });
+  $('#pprev').addEventListener('click',()=>mode==='local'?prevT():(scWidget&&scWidget.prev()));
+  $('#pnext').addEventListener('click',()=>mode==='local'?nextT():(scWidget&&scWidget.next()));
   $('#pshuf').addEventListener('click',e=>{shuffle=!shuffle;e.target.classList.toggle('on',shuffle);});
   $('#prep').addEventListener('click',e=>{repeat=repeat==='all'?'one':repeat==='one'?'off':'all';e.target.textContent=repeat==='one'?'🔂':'🔁';e.target.classList.toggle('on',repeat!=='off');});
-  seek.addEventListener('input',()=>{seeking=true;if(cur&&cur.duration)ctE.textContent=fmt(seek.value/1000*cur.duration);});
-  seek.addEventListener('change',()=>{if(cur&&cur.duration)cur.currentTime=seek.value/1000*cur.duration;seeking=false;});
-  $('#pvol').addEventListener('input',e=>{vol=e.target.value/100;if(gain)gain.gain.value=vol;});
-  btn.addEventListener('click',()=>{ p.classList.toggle('open'); if(p.classList.contains('open')&&!cur){load(idx,false);} });
-  paint();
+  seek.addEventListener('input',()=>{seeking=true;const d=mode==='local'?(cur&&cur.duration*1000):scDur;if(d)ctE.textContent=fmt(seek.value/1000*d/1000);});
+  seek.addEventListener('change',()=>{if(mode==='local'){if(cur&&cur.duration)cur.currentTime=seek.value/1000*cur.duration;}else{if(scWidget&&scDur)scWidget.seekTo(seek.value/1000*scDur);}seeking=false;});
+  $('#pvol').addEventListener('input',e=>{vol=e.target.value/100;if(gain)gain.gain.value=vol;if(scWidget&&scReady)scWidget.setVolume(vol*100);});
+  btn.addEventListener('click',()=>{p.classList.toggle('open');if(p.classList.contains('open')&&mode==='local'&&!cur)localMeta();});
+  localMeta();renderList();
 })();
 
 // ===== extra fun: rain, flashlight, keywords, idle, secret game =====
