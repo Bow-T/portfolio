@@ -387,10 +387,11 @@
   /* tech ball pit */
   .ballpit{position:relative;height:clamp(230px,34vh,300px);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:20px;touch-action:none;background:radial-gradient(120% 90% at 50% 120%,color-mix(in srgb,var(--g2) 9%,transparent),transparent),var(--bg2);}
   .ballpit .bphint{position:absolute;top:12px;left:14px;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.12em;pointer-events:none;z-index:2;}
-  .ball{position:absolute;top:0;left:0;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:700;font-size:12px;color:#0a2009;cursor:grab;user-select:none;box-shadow:0 6px 16px rgba(0,0,0,.32),inset 0 -6px 12px rgba(0,0,0,.12);will-change:transform;padding:4px;line-height:1.05;}
+  .ball{position:absolute;top:0;left:0;border-radius:50%;display:grid;place-items:center;background:#f4f7f1;cursor:grab;user-select:none;overflow:hidden;will-change:transform;box-shadow:0 8px 20px rgba(0,0,0,.42),inset 0 2px 5px rgba(255,255,255,.7),inset 0 -9px 16px rgba(0,0,0,.07);}
   .ball:active{cursor:grabbing;}
+  .ball img{width:52%;height:52%;object-fit:contain;pointer-events:none;}
+  .ball .lbl{font-weight:700;font-size:11px;color:#0a2009;text-align:center;padding:3px;line-height:1.05;}
 </style>
-<script defer src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 </head>
 <body>
 <div id="pre"><div class="pcount" id="pcount">0</div><div class="plbl">loading</div></div>
@@ -1037,25 +1038,17 @@ setLang(localStorage.getItem('lang')||'en');
   addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest(H))ring.classList.remove('big');});
   addEventListener('mousedown',()=>ring.classList.add('down'));addEventListener('mouseup',()=>ring.classList.remove('down'));
 })();
-// ===== smooth scroll (Lenis, graceful if CDN blocked) =====
-addEventListener('load',function(){
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!window.Lenis) return;
-  try{const lenis=new Lenis({duration:1.05,smoothWheel:true});
-    (function raf(t){lenis.raf(t);requestAnimationFrame(raf);})();
-    document.querySelectorAll('.chatmsgs,.player .list,#scmount,#gz').forEach(el=>el&&el.setAttribute('data-lenis-prevent',''));
-    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const id=a.getAttribute('href');if(id&&id.length>1){const tg=document.querySelector(id);if(tg){e.preventDefault();lenis.scrollTo(tg,{offset:-70});}}}));
-  }catch(_){}
-});
 // ===== tech-stack ball pit =====
 (function(){ const box=document.getElementById('ballpit'); if(!box) return;
   box.insertAdjacentHTML('beforeend','<span class="bphint">my stack · drag me</span>');
-  const TECH=['Flutter','Dart','Firebase','Supabase','Stripe','Provider','BLoC','GetX','Agora','dio','Lottie','Fastlane','RevenueCat','Maps'];
-  const COL=['#bef264','#a3e635','#84cc16','#4ade80','#22c55e','#2dd4bf','#14b8a6','#65a30d','#10b981'];
+  const TECH=[['Flutter','flutter'],['Dart','dart'],['Firebase','firebase'],['Supabase','supabase'],['Stripe','stripe'],['TypeScript','typescript'],['Next.js','nextdotjs'],['Figma','figma'],['GitHub','github'],['GitLab','gitlab'],['Kotlin','kotlin'],['Swift','swift'],['Maps','googlemaps']];
   const G=0.45,RE=0.72,FR=0.99,GF=0.86; let balls=[],raf=0,running=false;
   function build(){const W=box.clientWidth,H=box.clientHeight;
-    balls=TECH.map((name,i)=>{const sz=Math.max(48,Math.min(82,40+name.length*3.4));const el=document.createElement('div');el.className='ball';el.textContent=name;el.style.width=el.style.height=sz+'px';
-      const c=COL[i%COL.length];el.style.background='radial-gradient(circle at 35% 28%,'+c+',color-mix(in srgb,'+c+' 55%,#0a1f08))';
-      box.appendChild(el);const r=sz/2;const it={el,r,x:r+Math.random()*Math.max(1,W-sz),y:Math.random()*(H/2),vx:(Math.random()-.5)*5,vy:0,dr:false};drag(it);return it;});}
+    balls=TECH.map((tk,i)=>{const sz=56+Math.floor(Math.random()*16);const el=document.createElement('div');el.className='ball';el.style.width=el.style.height=sz+'px';
+      const img=document.createElement('img');img.src='https://cdn.simpleicons.org/'+tk[1];img.alt=tk[0];img.loading='lazy';img.referrerPolicy='no-referrer';
+      img.onerror=()=>{el.innerHTML='';const s=document.createElement('span');s.className='lbl';s.textContent=tk[0];el.appendChild(s);};
+      el.appendChild(img);box.appendChild(el);
+      const r=sz/2;const it={el,r,x:r+Math.random()*Math.max(1,W-sz),y:Math.random()*(H/2),vx:(Math.random()-.5)*5,vy:0,dr:false};drag(it);return it;});}
   function drag(it){let lx,ly;it.el.addEventListener('pointerdown',e=>{e.preventDefault();it.dr=true;it.vx=it.vy=0;try{it.el.setPointerCapture(e.pointerId);}catch(_){}lx=e.clientX;ly=e.clientY;});
     it.el.addEventListener('pointermove',e=>{if(!it.dr)return;const rc=box.getBoundingClientRect();it.x=e.clientX-rc.left-it.r;it.y=e.clientY-rc.top-it.r;it.vx=(e.clientX-lx)*.9;it.vy=(e.clientY-ly)*.9;lx=e.clientX;ly=e.clientY;it.el.style.transform='translate('+it.x+'px,'+it.y+'px)';});
     const up=()=>it.dr=false;it.el.addEventListener('pointerup',up);it.el.addEventListener('pointercancel',up);}
