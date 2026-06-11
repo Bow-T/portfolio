@@ -781,7 +781,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   document.querySelectorAll('.stat .n[data-to]').forEach(el=>io.observe(el));
 })();
 
-// ===== music player: Local files (custom) + Vietnamese chill (native SoundCloud) =====
+// ===== music player: Local files (custom) + Vietnamese music (YouTube) =====
 (function(){
   const btn=document.getElementById('music'); if(!btn) return;
   const TRACKS=[
@@ -789,18 +789,14 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
   const STATIONS=[
-    {name:'Chillies',url:'https://soundcloud.com/chillies'},
-    {name:'buitruonglinh',url:'https://soundcloud.com/buitruonglinh'},
-    {name:'Lofi Vietnam',url:'https://soundcloud.com/lofi-vietnam'},
-    {name:'Vũ.',url:'https://soundcloud.com/vuofficial'},
-    {name:'Thái Đinh',url:'https://soundcloud.com/thaidinh'},
-    {name:'GreyD',url:'https://soundcloud.com/grey-d'},
-    {name:'Noo (hạn chế)',url:'https://soundcloud.com/noophuocthinh'},
+    {name:'Noo Phước Thịnh',list:'UU7tPk1F9H5e2vGUmTDlz9nQ'},
+    {name:'Lofi Việt chill',list:'PLNR9rvN7h9UIcvW3230Q1F5ItY1Jgi1fu'},
+    {name:'Lofi Việt #2',list:'PL8GTuEEGsCIWl-yHQn1s5LsHOUW9YM0Ow'},
   ];
   let scStation=0;
   let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5,scBuilt=false;
   const p=document.createElement('div');p.className='player';
-  p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ Nhạc Việt</button></div>'
+  p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">📺 Nhạc Việt</button></div>'
     +'<div id="plocal">'
     +'<div class="cover" id="pcov"><span class="bdg">♫ now playing</span><span id="pemo">🌧️</span></div>'
     +'<div class="meta"><div class="ptitle" id="ptit">—</div><div class="partist" id="part">—</div></div>'
@@ -828,10 +824,10 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   function localPause(){if(cur)cur.pause();playing=false;onState();}
   function nextT(){loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx+1,true);}
   function prevT(){if(cur&&cur.currentTime>3){cur.currentTime=0;return;}loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx-1,true);}
-  function scFrame(url){return '<iframe width="100%" height="300" frameborder="0" allow="autoplay" loading="lazy" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23a3e635&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe>';}
+  function scFrame(s){return '<iframe width="100%" height="300" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" src="https://www.youtube.com/embed/videoseries?list='+s.list+'&rel=0&modestbranding=1"></iframe>';}
   function renderStations(){$('#scst').innerHTML=STATIONS.map((s,i)=>'<button class="scchip'+(i===scStation?' on':'')+'" data-i="'+i+'">'+s.name+'</button>').join('');
-    $('#scst').querySelectorAll('.scchip').forEach(b=>b.onclick=()=>{scStation=+b.dataset.i;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation].url);});}
-  function buildSC(){if(scBuilt)return;scBuilt=true;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation].url);}
+    $('#scst').querySelectorAll('.scchip').forEach(b=>b.onclick=()=>{scStation=+b.dataset.i;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation]);});}
+  function buildSC(){if(scBuilt)return;scBuilt=true;renderStations();$('#scmount').innerHTML=scFrame(STATIONS[scStation]);}
   function switchMode(m){if(m===mode)return;if(mode==='local'&&cur){cur.pause();playing=false;onState();}mode=m;
     p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
     $('#plocal').style.display=(m==='local')?'':'none';$('#psc').style.display=(m==='sc')?'':'none';if(m==='sc')buildSC();}
