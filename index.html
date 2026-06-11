@@ -359,6 +359,10 @@
   .player .psrc button{flex:1;border:1px solid var(--line);background:var(--chip);color:var(--muted);font:600 11.5px inherit;padding:6px;border-radius:9px;cursor:pointer;font-family:inherit;}
   .player .psrc button.on{background:var(--grad);color:#0a2009;border-color:transparent;}
   .player .cover{background-size:cover;background-position:center;}
+  .player #plocal{display:flex;flex-direction:column;}
+  .player .schint{font-size:12px;color:var(--muted);padding:12px 14px 8px;text-align:center;line-height:1.45;}
+  .player .schint b{color:var(--g2);}
+  .player #scmount iframe{display:block;border:0;border-bottom-left-radius:18px;border-bottom-right-radius:18px;}
 </style>
 </head>
 <body>
@@ -773,91 +777,58 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   document.querySelectorAll('.stat .n[data-to]').forEach(el=>io.observe(el));
 })();
 
-// ===== music player: Local files + SoundCloud (Widget API) =====
+// ===== music player: Local files (custom) + Vietnamese chill (native SoundCloud) =====
 (function(){
   const btn=document.getElementById('music'); if(!btn) return;
   const TRACKS=[
     {src:'assets/kiss-the-rain.mp3',title:'Kiss the Rain',artist:'Yiruma',emoji:'🌧️',g:'linear-gradient(135deg,#2dd4bf,#0d9488)'},
     {src:'assets/fox-rain.mp3',title:'Fox Rain · 여우비',artist:'Lee Sun-hee',emoji:'🦊',g:'linear-gradient(135deg,#a3e635,#4d7c0f)'},
   ];
-  const STATIONS=[
-    {name:'Noo Phước Thịnh',url:'https://soundcloud.com/noophuocthinh'},
-  ];
-  let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=true,repeat='all',vol=0.5;
-  let ac,gain, scLoaded=false,scReady=false,scWidget=null,scStation=0,scDur=0,scStarted=false;
-
+  const NOO='https://soundcloud.com/noophuocthinh';
+  let mode='local',idx=0,cur=null,playing=false,seeking=false,shuffle=false,repeat='all',vol=0.5,scBuilt=false;
   const p=document.createElement('div');p.className='player';
-  p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ SoundCloud</button></div>'
+  p.innerHTML='<div class="psrc"><button data-m="local" class="on">🎵 Local</button><button data-m="sc">☁️ Nhạc Việt</button></div>'
+    +'<div id="plocal">'
     +'<div class="cover" id="pcov"><span class="bdg">♫ now playing</span><span id="pemo">🌧️</span></div>'
     +'<div class="meta"><div class="ptitle" id="ptit">—</div><div class="partist" id="part">—</div></div>'
     +'<div class="seekrow"><span id="pct">0:00</span><input class="seek" id="pseek" type="range" min="0" max="1000" value="0"><span id="pdu">0:00</span></div>'
-    +'<div class="ctrls"><button class="tg on" id="pshuf" title="Shuffle">🔀</button><button id="pprev" title="Previous">⏮</button>'
-    +'<button class="pp" id="ppp" title="Play/Pause">▶</button><button id="pnext" title="Next">⏭</button><button class="tg on" id="prep" title="Repeat">🔁</button></div>'
+    +'<div class="ctrls"><button class="tg" id="pshuf" title="Shuffle">🔀</button><button id="pprev" title="Previous">⏮</button><button class="pp" id="ppp" title="Play/Pause">▶</button><button id="pnext" title="Next">⏭</button><button class="tg on" id="prep" title="Repeat">🔁</button></div>'
     +'<div class="volrow">🔉<input class="vol" id="pvol" type="range" min="0" max="100" value="50"></div>'
-    +'<div class="list" id="plist"></div>';
+    +'<div class="list" id="plist"></div>'
+    +'</div>'
+    +'<div id="psc" style="display:none"><div class="schint">Nhạc Việt chill · <b>Noo Phước Thịnh</b><br>bấm ▶ trên trình phát bên dưới</div><div id="scmount"></div></div>';
   document.body.appendChild(p);
   const $=id=>p.querySelector(id);
   const cov=$('#pcov'),emo=$('#pemo'),tit=$('#ptit'),art=$('#part'),seek=$('#pseek'),ctE=$('#pct'),duE=$('#pdu'),ppB=$('#ppp'),listE=$('#plist');
   function fmt(s){if(!s||!isFinite(s))return'0:00';s=s|0;return (s/60|0)+':'+('0'+(s%60)).slice(-2);}
-  function onState(){ppB.textContent=playing?'⏸':'▶';btn.classList.toggle('on',playing);btn.classList.toggle('spin',playing&&btn.classList.contains('hascover'));if(window.__rain)window.__rain(playing);renderList();}
-  function renderList(){
-    if(mode==='local'){listE.innerHTML=TRACKS.map((t,i)=>'<div class="li'+(i===idx?' cur':'')+'" data-i="'+i+'"><span class="ix">'+(i===idx&&playing?'♪':i+1)+'</span><span class="n">'+t.title+'</span><span class="a">'+t.artist+'</span></div>').join('');
-      listE.querySelectorAll('.li').forEach(li=>li.onclick=()=>loadLocal(+li.dataset.i,true));}
-    else{listE.innerHTML=STATIONS.map((s,i)=>'<div class="li'+(i===scStation?' cur':'')+'" data-i="'+i+'"><span class="ix">☁️</span><span class="n">'+s.name+'</span><span class="a">station</span></div>').join('');
-      listE.querySelectorAll('.li').forEach(li=>li.onclick=()=>scLoad(+li.dataset.i,true));}
-  }
-  // ---- local ----
-  function ensure(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();gain=ac.createGain();gain.gain.value=vol;gain.connect(ac.destination);}if(ac.state==='suspended')ac.resume();}
-  function localMeta(){const t=TRACKS[idx];cov.style.backgroundImage='none';cov.style.background=t.g;emo.style.display='';emo.textContent=t.emoji;tit.textContent=t.title;art.textContent=t.artist;btnCover(null);}
-  function loadLocal(i,auto){i=(i+TRACKS.length)%TRACKS.length;idx=i;if(cur){cur.pause();cur.src='';}
-    cur=new Audio(TRACKS[idx].src);cur.crossOrigin='anonymous';ensure();try{ac.createMediaElementSource(cur).connect(gain);}catch(_){}
-    cur.addEventListener('loadedmetadata',()=>{if(mode==='local')duE.textContent=fmt(cur.duration);});
-    cur.addEventListener('timeupdate',()=>{if(mode==='local'&&!seeking&&cur.duration){seek.value=cur.currentTime/cur.duration*1000;ctE.textContent=fmt(cur.currentTime);}});
-    cur.addEventListener('ended',()=>{if(mode!=='local')return;if(repeat==='one'){cur.currentTime=0;cur.play();}else if(repeat==='off'&&idx===TRACKS.length-1&&!shuffle){playing=false;onState();}else nextT();});
+  function onState(){ppB.textContent=playing?'⏸':'▶';btn.classList.toggle('on',playing);if(window.__rain)window.__rain(playing);renderList();}
+  function renderList(){listE.innerHTML=TRACKS.map((t,i)=>'<div class="li'+(i===idx?' cur':'')+'" data-i="'+i+'"><span class="ix">'+(i===idx&&playing?'♪':i+1)+'</span><span class="n">'+t.title+'</span><span class="a">'+t.artist+'</span></div>').join('');
+    listE.querySelectorAll('.li').forEach(li=>li.onclick=()=>loadLocal(+li.dataset.i,true));}
+  function localMeta(){const t=TRACKS[idx];cov.style.backgroundImage='none';cov.style.background=t.g;emo.style.display='';emo.textContent=t.emoji;tit.textContent=t.title;art.textContent=t.artist;}
+  function loadLocal(i,auto){i=(i+TRACKS.length)%TRACKS.length;idx=i;if(cur){cur.pause();}
+    cur=new Audio(TRACKS[idx].src);cur.volume=vol;
+    cur.addEventListener('loadedmetadata',()=>duE.textContent=fmt(cur.duration));
+    cur.addEventListener('timeupdate',()=>{if(!seeking&&cur.duration){seek.value=cur.currentTime/cur.duration*1000;ctE.textContent=fmt(cur.currentTime);}});
+    cur.addEventListener('ended',()=>{if(repeat==='one'){cur.currentTime=0;cur.play();}else if(repeat==='off'&&idx===TRACKS.length-1&&!shuffle){playing=false;onState();}else nextT();});
     localMeta();if(auto)localPlay();}
-  function localPlay(){ensure();if(ac.resume)ac.resume();cur.play().catch(()=>{});playing=true;onState();}
+  function localPlay(){if(!cur)loadLocal(idx,false);cur.play().catch(()=>{});playing=true;onState();}
   function localPause(){if(cur)cur.pause();playing=false;onState();}
   function nextT(){loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx+1,true);}
   function prevT(){if(cur&&cur.currentTime>3){cur.currentTime=0;return;}loadLocal(shuffle?(Math.random()*TRACKS.length|0):idx-1,true);}
-  // ---- soundcloud ----
-  function scInit(cb){
-    if(scReady){cb&&cb();return;}
-    if(scLoaded)return; scLoaded=true;
-    const f=document.createElement('iframe');f.id='scframe';f.allow='autoplay';f.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;border:0';
-    f.src='https://w.soundcloud.com/player/?url='+encodeURIComponent(STATIONS[0].url)+'&auto_play=false&visual=false&hide_related=true&show_comments=false&show_user=false&buying=false&sharing=false&download=false';
-    document.body.appendChild(f);
-    const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';
-    s.onload=()=>{scWidget=window.SC.Widget(f);
-      scWidget.bind(SC.Widget.Events.READY,()=>{scReady=true;scWidget.setVolume(vol*100);
-        scWidget.bind(SC.Widget.Events.PLAY,()=>{playing=true;onState();scMeta();});
-        scWidget.bind(SC.Widget.Events.PAUSE,()=>{playing=false;onState();});
-        scWidget.bind(SC.Widget.Events.PLAY_PROGRESS,ev=>{if(!seeking){seek.value=(ev.relativePosition||0)*1000;ctE.textContent=fmt((ev.currentPosition||0)/1000);}});
-        scWidget.bind(SC.Widget.Events.FINISH,()=>{if(shuffle&&mode==='sc')scPlayRandom();});
-        cb&&cb();});};
-    document.head.appendChild(s);
-  }
-  function btnCover(u){if(u){btn.style.backgroundImage='url('+u+')';btn.classList.add('hascover');}else{btn.style.backgroundImage='';btn.classList.remove('hascover');}btn.classList.toggle('spin',playing&&btn.classList.contains('hascover'));}
-  function scMeta(tries){if(!scWidget)return;tries=tries||0;scWidget.getCurrentSound(snd=>{if(!snd){if(tries<12)setTimeout(()=>scMeta(tries+1),300);return;}
-    tit.textContent=snd.title||'Noo Phước Thịnh';art.textContent=(snd.user&&snd.user.username)||'Noo Phước Thịnh';
-    let a=snd.artwork_url||(snd.user&&snd.user.avatar_url);if(a){a=a.replace('-large','-t300x300');cov.style.background='#0e150d';cov.style.backgroundImage='url('+a+')';emo.style.display='none';btnCover(a);}else{cov.style.backgroundImage='none';cov.style.background='linear-gradient(135deg,#84cc16,#2dd4bf)';emo.style.display='';emo.textContent='🎵';btnCover(null);}});
-    scWidget.getDuration(d=>{scDur=d;duE.textContent=fmt(d/1000);});}
-  function scPlayRandom(){if(!scWidget)return;scWidget.getSounds(l=>{var n=l?l.length:0;if(n>1)scWidget.skip(Math.random()*n|0);setTimeout(()=>scMeta(),500);});}
-  function scLoad(i,auto){scStation=i;renderList();scInit(()=>{scWidget.load(STATIONS[i].url,{auto_play:!!auto,visual:false,hide_related:true,show_comments:false,show_user:false,callback:()=>{scWidget.setVolume(vol*100);scStarted=true;scMeta();if(auto){playing=true;onState();if(shuffle)scWidget.getSounds(l=>{var n=l?l.length:0;if(n>1)scWidget.skip(Math.random()*n|0);setTimeout(()=>scMeta(),550);});}}});});}
-  // ---- mode + controls ----
-  function switchMode(m){if(m===mode)return;if(mode==='local'){if(cur)cur.pause();}else{if(scWidget)scWidget.pause();}mode=m;playing=false;
-    p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));seek.value=0;ctE.textContent='0:00';duE.textContent='0:00';
-    if(m==='local'){if(cur)loadLocal(idx,false);else localMeta();} else {scInit(()=>scMeta());} onState();}
+  function buildSC(){if(scBuilt)return;scBuilt=true;
+    $('#scmount').innerHTML='<iframe width="100%" height="300" frameborder="0" allow="autoplay" loading="lazy" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(NOO)+'&color=%23a3e635&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe>';}
+  function switchMode(m){if(m===mode)return;if(mode==='local'&&cur){cur.pause();playing=false;onState();}mode=m;
+    p.querySelectorAll('.psrc button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+    $('#plocal').style.display=(m==='local')?'':'none';$('#psc').style.display=(m==='sc')?'':'none';if(m==='sc')buildSC();}
   p.querySelectorAll('.psrc button').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.m)));
-  ppB.addEventListener('click',()=>{ if(mode==='local'){playing?localPause():(cur?localPlay():loadLocal(idx,true));}
-    else{ if(playing){if(scWidget)scWidget.pause();} else if(!scStarted){scLoad(scStation,true);} else {scInit(()=>{try{scWidget.play();}catch(e){scLoad(scStation,true);}setTimeout(()=>scMeta(),300);});} } });
-  $('#pprev').addEventListener('click',()=>{if(mode==='local'){prevT();}else if(scWidget&&scStarted){scWidget.prev();}});
-  $('#pnext').addEventListener('click',()=>{if(mode==='local'){nextT();}else if(!scStarted){scLoad(scStation,true);}else if(shuffle){scPlayRandom();}else{scWidget.next();}});
+  ppB.addEventListener('click',()=>{playing?localPause():localPlay();});
+  $('#pprev').addEventListener('click',prevT);$('#pnext').addEventListener('click',nextT);
   $('#pshuf').addEventListener('click',e=>{shuffle=!shuffle;e.target.classList.toggle('on',shuffle);});
   $('#prep').addEventListener('click',e=>{repeat=repeat==='all'?'one':repeat==='one'?'off':'all';e.target.textContent=repeat==='one'?'🔂':'🔁';e.target.classList.toggle('on',repeat!=='off');});
-  seek.addEventListener('input',()=>{seeking=true;const d=mode==='local'?(cur&&cur.duration*1000):scDur;if(d)ctE.textContent=fmt(seek.value/1000*d/1000);});
-  seek.addEventListener('change',()=>{if(mode==='local'){if(cur&&cur.duration)cur.currentTime=seek.value/1000*cur.duration;}else{if(scWidget&&scDur)scWidget.seekTo(seek.value/1000*scDur);}seeking=false;});
-  $('#pvol').addEventListener('input',e=>{vol=e.target.value/100;if(gain)gain.gain.value=vol;if(scWidget&&scReady)scWidget.setVolume(vol*100);});
-  btn.addEventListener('click',()=>{p.classList.toggle('open');if(p.classList.contains('open')&&mode==='local'&&!cur)localMeta();});
+  seek.addEventListener('input',()=>{seeking=true;if(cur&&cur.duration)ctE.textContent=fmt(seek.value/1000*cur.duration);});
+  seek.addEventListener('change',()=>{if(cur&&cur.duration)cur.currentTime=seek.value/1000*cur.duration;seeking=false;});
+  $('#pvol').addEventListener('input',e=>{vol=e.target.value/100;if(cur)cur.volume=vol;});
+  btn.addEventListener('click',()=>{p.classList.toggle('open');if(p.classList.contains('open')&&!cur)localMeta();});
   localMeta();renderList();
 })();
 
