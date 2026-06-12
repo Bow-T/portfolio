@@ -150,6 +150,12 @@
   .plinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;}
   .plink{font-size:12.5px;font-weight:600;border:1px solid var(--cardb);padding:7px 12px;border-radius:9px;transition:.18s;color:var(--text);}
   .plink:hover{color:#0a2009;background:var(--grad);border-color:transparent;}
+  .plink.world{display:inline-flex;align-items:center;gap:6px;font-weight:700;border-color:transparent;
+    background:linear-gradient(120deg,rgba(190,242,100,.16),rgba(45,212,191,.16));
+    box-shadow:inset 0 0 0 1px rgba(120,220,150,.4),0 0 14px rgba(74,222,128,.12);}
+  .plink.world svg{color:var(--g2);}
+  .plink.world:hover{color:#0a2009;background:var(--grad);box-shadow:0 6px 18px rgba(74,222,128,.35);transform:translateY(-1px);}
+  .plink.world:hover svg{color:#0a2009;}
   .nostore{font-size:12px;color:var(--soft);}
 
   .more{margin-top:38px;}
@@ -743,6 +749,7 @@ const FIGMA={
   // ví dụ:  "Ynstant": "https://www.figma.com/proto/XXXXXXXX/Ynstant?node-id=1-2",
 };
 const WEBAPP={ "Octopus":"octopus", "SecuMap":"secumap", "Carter":"carter", "ProtectU":"protectu", "Nila Sphere":"nila", "Docteur Sirop":"docteur", "Octopush":"octopush", "Mentalia":"mentalia", "Barberz":"barberz", "ard":"ard", "Let Share":"letshare", "Swy'Eat":"swyeat", "Live-streaming social":"socialclub" };
+const WORLD={ "Docteur Sirop":"world-docteur" };  // immersive story-world pages
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
@@ -751,7 +758,7 @@ function card(p){
   return `<article class="pcard" data-cat="${p.cat}">
     <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
     <div class="meta">${p.role}</div>${badge}
-    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Live preview</button>`:''}${links}</div>
+    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${WORLD[p.n]?`<a class="plink world" href="${WORLD[p.n]}" data-track="${p.n}: Enter world"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.9 5.6L19.5 9l-5.6 1.9L12 16l-1.9-5.1L4.5 9l5.6-1.4z"/></svg>Enter the world</a>`:''}${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Live preview</button>`:''}${links}</div>
   </article>`;
 }
 function bind(){ // spotlight + 3D tilt
