@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>Swy'eat · Web preview</title>
+<style>
+  :root{--orange:#f06449;--orange-d:#d94f36;--yellow:#fff36b;--ink:#101828;--mut:#667085;--line:#eef0f3;--bg:#fff;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:grid;place-items:center;padding:10px;background:radial-gradient(120% 80% at 50% 0%,#2a2220,#0a0807);}
+  .device{width:375px;max-width:100%;height:min(812px,94vh);background:#000;border-radius:44px;padding:11px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #222;position:relative;}
+  .screen{width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);position:relative;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
+  .status{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;flex:none;}.status .r{display:flex;gap:5px;}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:4px 18px 8px;}
+  .brand{font-size:22px;font-weight:900;color:var(--orange);} .brand span{color:var(--ink);}
+  .top .icons{display:flex;gap:14px;color:var(--ink);font-size:18px;}
+  .tabs{display:flex;gap:24px;padding:6px 18px 0;border-bottom:1px solid var(--line);}
+  .tab{border:none;background:none;font-family:inherit;font-size:14px;font-weight:800;color:var(--mut);padding:10px 0;cursor:pointer;position:relative;letter-spacing:.04em;}
+  .tab.on{color:var(--ink);} .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--orange);border-radius:3px;}
+  .scroll{flex:1;overflow:auto;padding:10px 14px 16px;}.scroll::-webkit-scrollbar{display:none;}
+  .resto{display:flex;gap:13px;padding:10px;border-radius:16px;margin-bottom:10px;align-items:center;position:relative;}
+  .resto:active{background:#fafafa;}
+  .ph{width:64px;height:64px;border-radius:14px;flex:none;display:grid;place-items:center;font-size:30px;}
+  .ri{flex:1;min-width:0;} .ri b{font-size:15px;font-weight:800;display:block;} .ri .cui{color:var(--orange);font-size:12px;font-weight:600;} .ri .loc{color:var(--mut);font-size:12px;margin-top:2px;}
+  .rate{display:flex;align-items:center;gap:3px;background:#fff3ec;color:var(--orange-d);font-weight:800;font-size:12px;padding:5px 9px;border-radius:20px;}
+  .badge{position:absolute;left:8px;top:8px;background:var(--yellow);color:#5a4a00;font-size:9px;font-weight:800;padding:3px 7px;border-radius:8px;}
+  .nav{flex:none;height:66px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:6px;position:relative;}
+  .nav button{flex:1;border:none;background:none;color:#b6bcc6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .nav button.on{color:var(--orange);} .nav svg{width:21px;height:21px;}
+  .nav .fab{flex:none;width:54px;height:54px;border-radius:50%;background:var(--orange);color:#fff;border:none;display:grid;place-items:center;font-size:26px;margin:0 6px;box-shadow:0 8px 20px rgba(240,100,73,.45);transform:translateY(-8px);cursor:pointer;}
+</style></head><body>
+<div class="device"><div class="screen"><div class="notch"></div>
+  <div class="status"><span>9:41</span><span class="r">📶 🛜 🔋</span></div>
+  <div class="top"><div class="brand">Swy<span>'eat</span></div><div class="icons">🔍 🔔</div></div>
+  <div class="tabs"><button class="tab on">RESTAURANTS</button><button class="tab">CLIENTS</button></div>
+  <div class="scroll" id="list"></div>
+  <nav class="nav">
+    <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Accueil</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/></svg>Carte</button>
+    <button class="fab">＋</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Événement</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Compte</button>
+  </nav>
+</div></div>
+<script>
+  const r=[['Le Coq au pot','Cuisine française','Paris, 75018','4.5','🍲','#ffe0b8',1],['Beijing Paradise','Cuisine chinoise','Paris, 75018','4.3','🥡','#ffd6d6',0],["Chick'n chips",'Cuisine anglaise','Paris, 75018','4.6','🍗','#ffeab8',1],['Pizza Napoli','Cuisine italienne','Paris, 75018','4.4','🍕','#ffd9c4',0],['Grills Beef & Beer','Steakhouse','Paris, 75018','4.7','🍔','#e8d4b8',0],['Sakura Sushi','Cuisine japonaise','Paris, 75011','4.8','🍣','#d6ecff',1],['Le Petit Marché','Bistrot','Paris, 75004','4.2','🥗','#d9f0d6',0]];
+  document.getElementById('list').innerHTML=r.map(x=>`<div class="resto">${x[6]?'<span class="badge">★ TOP DU TOP</span>':''}<div class="ph" style="background:${x[5]}">${x[4]}</div><div class="ri"><b>${x[0]}</b><div class="cui">${x[1]}</div><div class="loc">${x[2]}</div></div><span class="rate">★ ${x[3]}</span></div>`).join('');
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));});
+  document.querySelectorAll('.nav button:not(.fab)').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>{if(!x.classList.contains('fab'))x.classList.remove('on');});b.classList.add('on');});
+</script></body></html>
