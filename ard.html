@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>ARD · Web preview</title>
+<style>
+  :root{--green:#26be27;--green-d:#1f9c20;--ink:#2f3032;--mut:#8a8f92;--line:#eceeef;--bg:#fff;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:grid;place-items:center;padding:10px;background:radial-gradient(120% 80% at 50% 0%,#1c2a1c,#070b07);}
+  .device{width:375px;max-width:100%;height:min(812px,94vh);background:#000;border-radius:44px;padding:11px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #222;position:relative;}
+  .screen{width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);position:relative;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
+  .status{height:42px;display:flex;align-items:center;justify-content:flex-end;padding:0 22px;font-size:13px;gap:5px;flex:none;}
+  .head{display:flex;align-items:center;gap:14px;padding:6px 18px 14px;border-bottom:1px solid var(--line);}
+  .head .b{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;}
+  .head h1{font-size:18px;font-weight:800;}
+  .scroll{flex:1;overflow:auto;padding:16px 18px 12px;}.scroll::-webkit-scrollbar{display:none;}
+  .lead{font-size:14px;font-weight:700;margin-bottom:12px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+  .site{border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;}
+  .site .img{height:78px;display:grid;place-items:center;font-size:32px;}
+  .site .cap{padding:8px 10px;font-size:11.5px;color:var(--ink);line-height:1.35;font-weight:600;}
+  .site.sel{border-color:var(--green);box-shadow:0 0 0 2px rgba(38,190,39,.2);}
+  .site.sel .cap::after{content:" ✓";color:var(--green);}
+  .foot{flex:none;padding:14px 18px 18px;border-top:1px solid var(--line);}
+  .cont{width:100%;border:none;border-radius:14px;padding:15px;font-weight:800;font-size:15px;color:#fff;background:var(--green);cursor:pointer;box-shadow:0 12px 24px rgba(38,190,39,.32);}
+</style></head><body>
+<div class="device"><div class="screen"><div class="notch"></div>
+  <div class="status">📶 🛜 🔋</div>
+  <div class="head"><div class="b">←</div><h1>Add Breeding Sites</h1></div>
+  <div class="scroll">
+    <div class="lead">Potential breeding sites on the balcony</div>
+    <div class="grid" id="g1"></div>
+    <div class="lead">Structural spaces in the apartment</div>
+    <div class="grid" id="g2"></div>
+  </div>
+  <div class="foot"><button class="cont">Continue (<span id="n">3</span> selected)</button></div>
+</div></div>
+<script>
+  const a=[['🪴','#eaf4e6','Trays under flower pots',1],['🪣','#e6f0f4','Watering cans / buckets',1],['🌿','#eef4e6','Water basins not emptied',0],['🐦','#f4efe6','Animal feeders',1],['🫙','#e9eaf4','Vases with stagnant water',0],['🕳️','#f0e6e6','Hollow objects, plant pots',0]];
+  const b=[['🚰','#e7eef4','Clogged gutters / drains',0],['🧱','#efe9e6','Corners where water accumulates',0],['💧','#e6f4ef','Downpipe / drainage outlet',0],['🔩','#f4e6ea','Micro-cracks in the wall',0]];
+  const tpl=(d,gi)=>d.map((x,i)=>`<div class="site ${x[3]?'sel':''}" data-g="${gi}" data-i="${i}"><div class="img" style="background:${x[1]}">${x[0]}</div><div class="cap">${x[2]}</div></div>`).join('');
+  document.getElementById('g1').innerHTML=tpl(a,0); document.getElementById('g2').innerHTML=tpl(b,1);
+  function count(){document.getElementById('n').textContent=document.querySelectorAll('.site.sel').length;}
+  document.querySelectorAll('.site').forEach(s=>s.addEventListener('click',()=>{s.classList.toggle('sel');count();})); count();
+</script></body></html>

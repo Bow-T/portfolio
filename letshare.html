@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>LetShare · Web preview</title>
+<style>
+  :root{--bg:#0e1118;--card:#171b24;--cyan:#1bd9ee;--mint:#64edc8;--ink:#fff;--mut:#8a93a3;--line:#222836;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:grid;place-items:center;padding:10px;background:radial-gradient(120% 80% at 50% 0%,#10202a,#05080c);}
+  .device{width:393px;max-width:100%;height:min(852px,94vh);background:#000;border-radius:46px;padding:11px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #222;position:relative;}
+  .screen{width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);position:relative;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
+  .status{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;flex:none;}.status .r{display:flex;gap:5px;}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:6px 20px 12px;}
+  .logo{font-size:22px;font-weight:900;display:flex;align-items:center;gap:4px;} .logo .o{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--mint));display:grid;place-items:center;font-size:12px;color:#04121a;}
+  .scroll{flex:1;overflow:auto;padding:4px 20px 16px;}.scroll::-webkit-scrollbar{display:none;}
+  .hero{border-radius:22px;padding:22px;background:linear-gradient(135deg,#16323a,#0f1c24);border:1px solid #1e3a42;margin-bottom:20px;}
+  .hero b{font-size:20px;font-weight:900;display:block;} .hero b em{font-style:normal;color:var(--cyan);} .hero p{color:var(--mut);font-size:13px;margin-top:6px;line-height:1.5;}
+  .sh{font-size:16px;font-weight:800;margin:0 0 12px;}
+  .ints{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px;}
+  .int{border:1px solid var(--line);background:var(--card);border-radius:22px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;color:var(--mut);}
+  .int.on{background:linear-gradient(120deg,var(--cyan),var(--mint));color:#04121a;border-color:transparent;}
+  .people{display:flex;flex-direction:column;gap:12px;}
+  .person{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px;}
+  .person .pa{width:48px;height:48px;border-radius:50%;flex:none;}
+  .person .pn{flex:1;} .person .pn b{font-size:14.5px;} .person .pn small{color:var(--mut);font-size:12px;display:block;}
+  .person .con{border:none;background:linear-gradient(120deg,var(--cyan),var(--mint));color:#04121a;border-radius:18px;padding:8px 15px;font-weight:800;font-size:12.5px;cursor:pointer;}
+  .nav{flex:none;height:66px;background:#10141c;border-top:1px solid var(--line);display:flex;padding-bottom:6px;}
+  .nav button{flex:1;border:none;background:none;color:#5f6878;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .nav button.on{color:var(--cyan);} .nav svg{width:22px;height:22px;}
+</style></head><body>
+<div class="device"><div class="screen"><div class="notch"></div>
+  <div class="status"><span>9:41</span><span class="r">📶 🛜 🔋</span></div>
+  <div class="top"><div class="logo">Let<span class="o">↔</span>share</div><span style="color:var(--mut)">⚙</span></div>
+  <div class="scroll">
+    <div class="hero"><b>Discover people who <em>share</em> your vibe</b><p>Match on interests, swap skills, hang out — share more, together.</p></div>
+    <div class="sh">Your interests</div>
+    <div class="ints" id="ints"></div>
+    <div class="sh">People to connect</div>
+    <div class="people" id="people"></div>
+    <div style="height:6px"></div>
+  </div>
+  <nav class="nav">
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</button>
+    <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg>Discovery</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 4 17l5 1-1-5a9 9 0 0 0-8-13Z"/></svg>Events</button>
+    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.9A8.4 8.4 0 1 1 21 11.5Z"/></svg>Chat</button>
+  </nav>
+</div></div>
+<script>
+  const tags=['🎸 Music','⚽ Sports','📷 Photo','🍳 Cooking','✈️ Travel','🎮 Gaming','📚 Books','🏔️ Hiking'];
+  document.getElementById('ints').innerHTML=tags.map((t,i)=>`<button class="int ${i<3?'on':''}">${t}</button>`).join('');
+  document.querySelectorAll('.int').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+  const ppl=[['Léa','Photo · Travel · 2 km away','#1bd9ee,#0f8fa6'],['Marc','Music · Gaming · 5 km','#64edc8,#1f9c78'],['Sara','Cooking · Books · 1 km','#7d9bff,#3a5bd0'],['Tom','Sports · Hiking · 3 km','#ffb56b,#e67a30']];
+  document.getElementById('people').innerHTML=ppl.map(p=>`<div class="person"><div class="pa" style="background:linear-gradient(135deg,${p[2]})"></div><div class="pn"><b>${p[0]}</b><small>${p[1]}</small></div><button class="con">Connect</button></div>`).join('');
+</script></body></html>
