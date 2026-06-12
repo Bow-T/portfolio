@@ -10,123 +10,85 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <style>
-  :root{
-    --green:#3fb85c;--green-l:#9ed79a;--mint:#bde6b6;--cream:#fdf2ea;
-    --or:#ef8a3c;--gold:#ffce5c;--ink:#0c180f;--txt:#eaf5e7;--mut:#9fc3a6;
-  }
+  :root{--green:#3fb85c;--green-l:#9ed79a;--mint:#bde6b6;--cream:#fdf2ea;
+    --or:#ef8a3c;--gold:#ffce5c;--txt:#eaf5e7;--mut:#9fc3a6;}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
-  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--txt);
-    background:#091410;overflow-x:hidden;}
-  /* layered atmospheric background */
-  .bg{position:fixed;inset:0;z-index:-2;
-    background:
+  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--txt);background:#091410;overflow-x:hidden;}
+  .bg{position:fixed;inset:0;z-index:-2;background:
       radial-gradient(70% 50% at 50% -8%, #2a6b3c 0%, transparent 55%),
       radial-gradient(90% 60% at 80% 30%, rgba(70,150,90,.22), transparent 60%),
       radial-gradient(80% 60% at 12% 70%, rgba(239,138,60,.14), transparent 55%),
       linear-gradient(180deg,#0e2017 0%, #0b1711 45%, #081210 100%);}
   #motes{position:fixed;inset:0;z-index:-1;pointer-events:none;}
-
-  /* fixed UI */
-  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;
-    background:linear-gradient(90deg,var(--gold),var(--green),var(--mint));box-shadow:0 0 10px rgba(120,220,140,.6);}
-  .top-ui{position:fixed;top:16px;left:0;right:0;z-index:30;display:flex;justify-content:space-between;
-    align-items:center;padding:0 20px;pointer-events:none;}
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--gold),var(--green),var(--mint));box-shadow:0 0 10px rgba(120,220,140,.6);}
+  .top-ui{position:fixed;top:16px;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:0 20px;pointer-events:none;}
   .top-ui a,.top-ui button{pointer-events:auto;}
-  #back{display:inline-flex;align-items:center;gap:7px;color:var(--txt);text-decoration:none;font-weight:700;
-    font-size:14px;background:rgba(10,20,14,.5);backdrop-filter:blur(8px);padding:9px 15px;border-radius:30px;
-    border:1px solid rgba(255,255,255,.1);transition:transform .2s,background .2s;}
+  #back{display:inline-flex;align-items:center;gap:7px;color:var(--txt);text-decoration:none;font-weight:700;font-size:14px;background:rgba(10,20,14,.5);backdrop-filter:blur(8px);padding:9px 15px;border-radius:30px;border:1px solid rgba(255,255,255,.1);transition:transform .2s,background .2s;}
   #back:hover{transform:translateX(-3px);background:rgba(20,40,26,.7);}
-  .snd{display:inline-flex;align-items:center;gap:9px;background:rgba(10,20,14,.5);backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 14px;color:var(--txt);
-    font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .snd{display:inline-flex;align-items:center;gap:9px;background:rgba(10,20,14,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 14px;color:var(--txt);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
   .snd .eq{display:inline-flex;gap:2px;align-items:flex-end;height:13px;}
   .snd .eq i{width:3px;background:var(--mint);border-radius:2px;height:5px;}
   .snd.on .eq i{animation:eq 1s ease-in-out infinite;}
-  .snd.on .eq i:nth-child(2){animation-delay:.2s} .snd.on .eq i:nth-child(3){animation-delay:.4s} .snd.on .eq i:nth-child(4){animation-delay:.1s}
+  .snd.on .eq i:nth-child(2){animation-delay:.2s}.snd.on .eq i:nth-child(3){animation-delay:.4s}.snd.on .eq i:nth-child(4){animation-delay:.1s}
   @keyframes eq{0%,100%{height:4px}50%{height:13px}}
   .snd .lbl{opacity:.8;font-weight:600;}
 
   section{position:relative;}
   .wrap{max-width:980px;margin:0 auto;padding:0 26px;}
-
-  /* HERO */
-  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;overflow:hidden;padding:80px 20px 40px;}
-  .hero .scene{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(1100px,150%);
-    height:46%;background:url(assets/docteur/header_scene.png) bottom center/contain no-repeat;opacity:.9;z-index:0;}
-  .hero .moose{position:relative;z-index:2;height:min(280px,38vh);filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));
-    animation:bob 5s ease-in-out infinite;}
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:80px 20px 40px;}
+  .hero .scene{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(1100px,150%);height:46%;background:url(assets/docteur/header_scene.png) bottom center/contain no-repeat;opacity:.9;z-index:0;}
+  .hero .moose{position:relative;z-index:2;height:min(280px,38vh);filter:drop-shadow(0 18px 30px rgba(0,0,0,.45));animation:bob 5s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-  .hero .eyebrow{position:relative;z-index:2;margin-top:22px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
-    font-size:12px;color:var(--gold);}
-  .hero h1{position:relative;z-index:2;font-family:'Baloo 2';font-weight:800;font-size:clamp(44px,9vw,86px);
-    line-height:.98;margin-top:8px;color:#fff;text-shadow:0 6px 26px rgba(0,0,0,.4);}
+  .hero .eyebrow{position:relative;z-index:2;margin-top:22px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--gold);}
+  .hero h1{position:relative;z-index:2;font-family:'Baloo 2';font-weight:800;font-size:clamp(44px,9vw,86px);line-height:.98;margin-top:8px;color:#fff;text-shadow:0 6px 26px rgba(0,0,0,.4);}
   .hero h1 .a{color:var(--green-l);}
-  .hero .tag{position:relative;z-index:2;max-width:560px;margin:18px auto 0;font-size:clamp(16px,2.4vw,20px);
-    color:var(--mint);line-height:1.5;font-weight:600;}
-  .scrollhint{position:relative;z-index:2;margin-top:42px;color:var(--mut);font-size:13px;font-weight:700;
-    display:flex;flex-direction:column;align-items:center;gap:8px;animation:hbob 2s ease-in-out infinite;}
+  .hero .tag{position:relative;z-index:2;max-width:560px;margin:18px auto 0;font-size:clamp(16px,2.4vw,20px);color:var(--mint);line-height:1.5;font-weight:600;}
+  .scrollhint{position:relative;z-index:2;margin-top:42px;color:var(--mut);font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:8px;animation:hbob 2s ease-in-out infinite;}
   @keyframes hbob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(6px);opacity:1}}
   .scrollhint .m{width:24px;height:38px;border:2px solid var(--mut);border-radius:13px;position:relative;}
-  .scrollhint .m::after{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:4px;height:7px;
-    border-radius:3px;background:var(--mint);animation:wheel 1.6s ease-in-out infinite;}
+  .scrollhint .m::after{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:4px;height:7px;border-radius:3px;background:var(--mint);animation:wheel 1.6s ease-in-out infinite;}
   @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
 
-  /* story beats */
   .beat{padding:14vh 0;}
   .eyebrow2{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--or);margin-bottom:18px;}
   .lead{font-family:'Baloo 2';font-weight:700;font-size:clamp(28px,5vw,46px);line-height:1.12;color:#fff;max-width:18ch;}
   .lead .hl{color:var(--green-l);}
   .body{margin-top:22px;font-size:clamp(16px,2.3vw,19px);line-height:1.7;color:#cfe3d2;max-width:60ch;font-weight:600;}
   .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;}
-  .chips span{background:rgba(63,184,92,.12);border:1px solid rgba(120,220,150,.28);color:#bfe9c6;
-    border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;}
-
+  .chips span{background:rgba(63,184,92,.12);border:1px solid rgba(120,220,150,.28);color:#bfe9c6;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;}
   .cards{display:flex;gap:18px;flex-wrap:wrap;margin-top:40px;}
-  .wcard{flex:1 1 220px;background:linear-gradient(170deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:22px;position:relative;overflow:hidden;}
+  .wcard{flex:1 1 220px;background:linear-gradient(170deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:22px;position:relative;overflow:hidden;}
   .wcard img{height:96px;display:block;margin:0 auto 6px;filter:drop-shadow(0 10px 16px rgba(0,0,0,.4));}
   .wcard b{font-family:'Baloo 2';font-weight:700;font-size:19px;color:#fff;display:block;text-align:center;}
   .wcard p{margin-top:6px;font-size:14px;color:#bfd3c4;text-align:center;line-height:1.45;font-weight:600;}
   .wcard .blob{position:absolute;inset:auto -30px -40px auto;width:130px;height:130px;border-radius:50%;filter:blur(8px);opacity:.5;z-index:-1;}
 
-  /* live stage */
   .stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 20px;text-align:center;}
   .stage .eyebrow2{color:var(--gold);}
   .stage h2{font-family:'Baloo 2';font-weight:700;font-size:clamp(26px,4.6vw,40px);color:#fff;max-width:20ch;margin:0 auto;}
   .stage .sub{margin-top:12px;color:var(--mint);font-size:16px;font-weight:600;}
-  .phone{position:relative;margin-top:38px;width:min(312px,82vw);aspect-ratio:390/844;background:#0a0a0a;
-    border-radius:42px;padding:9px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #1c2a1e,0 0 70px rgba(80,200,120,.25);}
-  .phone::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);width:120px;height:22px;
-    background:#0a0a0a;border-radius:0 0 16px 16px;z-index:3;}
+  .phone{position:relative;margin-top:38px;width:min(312px,82vw);aspect-ratio:390/844;background:#0a0a0a;border-radius:42px;padding:9px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #1c2a1e,0 0 70px rgba(80,200,120,.25);}
   .phone iframe{width:100%;height:100%;border:0;border-radius:34px;display:block;background:#fff;}
-  .phone .ring{position:absolute;inset:-14px;border-radius:54px;border:1px dashed rgba(120,220,150,.3);
-    animation:spin 26s linear infinite;pointer-events:none;}
+  .phone .ring{position:absolute;inset:-14px;border-radius:54px;border:1px dashed rgba(120,220,150,.3);animation:spin 26s linear infinite;pointer-events:none;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* impact / outro */
   .outro{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12vh 24px;}
   .outro .big{font-family:'Baloo 2';font-weight:800;font-size:clamp(30px,5.5vw,52px);line-height:1.1;color:#fff;max-width:16ch;}
   .outro .big .hl{color:var(--gold);}
-  .outro p{margin-top:20px;font-size:18px;color:#cfe3d2;max-width:52ch;line-height:1.6;font-weight:600;}
+  .outro p{margin-top:20px;font-size:18px;color:#cfe3d2;max-width:54ch;line-height:1.6;font-weight:600;}
   .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
-  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:14px 24px;font-weight:800;
-    font-size:15px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;transition:transform .18s,box-shadow .18s;}
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:14px 24px;font-weight:800;font-size:15px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;transition:transform .18s;}
   .btn.p{background:linear-gradient(120deg,var(--green),#2f9a4a);color:#fff;box-shadow:0 14px 30px rgba(47,154,74,.35);}
   .btn.g{background:rgba(255,255,255,.07);color:#eaf5e7;border:1px solid rgba(255,255,255,.16);}
   .btn:hover{transform:translateY(-3px);}
   .foot{padding:40px 20px 60px;text-align:center;color:#6f8a76;font-size:13px;}
   .foot b{color:var(--mint);}
 
-  /* reveal */
   [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);}
   [data-reveal].in{opacity:1;transform:none;}
-  @media (prefers-reduced-motion:reduce){
-    [data-reveal]{opacity:1!important;transform:none!important;}
-    .hero .moose,.phone .ring,.scrollhint,.snd.on .eq i{animation:none!important;}
-    html{scroll-behavior:auto;}
-  }
+  @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important;transform:none!important;}
+    .hero .moose,.phone .ring,.scrollhint,.snd.on .eq i{animation:none!important;}html{scroll-behavior:auto;}}
 </style>
 </head>
 <body>
@@ -138,39 +100,35 @@
   <button class="snd" id="snd" aria-label="Toggle sound"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="lbl">Lullaby for Sirop</span></button>
 </div>
 
-<!-- HERO -->
 <section class="hero">
   <div class="scene" data-px="0.12"></div>
   <img class="moose" src="assets/docteur/hero.png" alt="Docteur Sirop">
   <div class="eyebrow">A project, told as a world · 01</div>
   <h1>Docteur <span class="a">Sirop</span></h1>
-  <p class="tag">A doctor who speaks softly — so a hospital feels a little less frightening to a child.</p>
+  <p class="tag">Fun health missions that help children heal themselves — through play.</p>
   <div class="scrollhint"><span class="m"></span>scroll to begin</div>
 </section>
 
-<!-- BEAT 1 — the problem -->
 <section class="beat"><div class="wrap">
   <div class="eyebrow2" data-reveal>The problem</div>
-  <div class="lead" data-reveal>For a hospitalized child, the scariest part is rarely the <span class="hl">illness</span>.</div>
-  <p class="body" data-reveal style="transition-delay:.1s">It's the waiting. The strange machines. The grown-ups who talk <em>over</em> them instead of <em>to</em> them. A fear that no one quite takes the time to explain away — until a small patient stops asking, and simply goes quiet.</p>
+  <div class="lead" data-reveal>A hospital is a confusing place to be <span class="hl">small</span> in.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">Unfamiliar rooms. Unfamiliar faces. Procedures that no one quite pauses to explain. The child understands they're unwell — but rarely <em>where they are</em>, <em>who all these people are</em>, or <em>what happens next</em>. So they go quiet, and treatment becomes something that happens <em>to</em> them.</p>
 </div></section>
 
-<!-- BEAT 2 — the journey -->
 <section class="beat"><div class="wrap">
   <div class="eyebrow2" data-reveal>The journey</div>
-  <div class="lead" data-reveal>So we built a <span class="hl">companion</span> — not another form to fill in.</div>
-  <p class="body" data-reveal style="transition-delay:.1s">Sirop is a deer in a white coat the child can actually <b>talk to, out loud, in real time</b>. Every day starts with a gentle mood check-in. When things get heavy there's an <em>espace zen</em> to breathe. And the lessons are adventures, not pamphlets — the child's own body becomes the world they explore.</p>
+  <div class="lead" data-reveal>So we made the stay something a child can <span class="hl">read</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">Docteur Sirop helps a hospitalised child understand their environment and the people caring for them. It keeps learning going — intellectual and educational continuity — through play, and opens a quiet space for well-being to breathe. Most of all, it <b>rewards the child for taking part in their own care</b>, so a patient becomes a participant. Underneath, it's also a bridge to the healthcare team.</p>
   <div class="cards">
-    <div class="wcard" data-reveal><span class="blob" style="background:#a6deac"></span><img src="assets/docteur/cortex.png" alt=""><b>Super Cortex</b><p>The powers hidden inside your own body — explained as a quest.</p></div>
-    <div class="wcard" data-reveal style="transition-delay:.12s"><span class="blob" style="background:#d3c4e5"></span><img src="assets/docteur/courage.png" alt=""><b>Super Courage</b><p>Bravery, rewarded — turning every hard moment into a win.</p></div>
-    <div class="wcard" data-reveal style="transition-delay:.24s"><span class="blob" style="background:#ffd9a8"></span><img src="assets/docteur/zen.png" alt=""><b>Place Zen</b><p>A calm corner to slow down, breathe, and just feel better.</p></div>
+    <div class="wcard" data-reveal><span class="blob" style="background:#a6deac"></span><img src="assets/docteur/cortex.png" alt=""><b>Understand</b><p>The body, the ward, the people — explained as a quest, not a pamphlet.</p></div>
+    <div class="wcard" data-reveal style="transition-delay:.12s"><span class="blob" style="background:#d3c4e5"></span><img src="assets/docteur/courage.png" alt=""><b>Be rewarded</b><p>Every brave moment of care earns a win — the child stays involved.</p></div>
+    <div class="wcard" data-reveal style="transition-delay:.24s"><span class="blob" style="background:#ffd9a8"></span><img src="assets/docteur/zen.png" alt=""><b>Feel better</b><p>An <em>espace zen</em> to slow down, breathe, and just be okay.</p></div>
   </div>
   <div class="chips" data-reveal style="transition-delay:.1s">
     <span>Flutter</span><span>OpenAI Realtime · live voice</span><span>Unity 3D characters</span><span>speech-to-text</span><span>reward system</span>
   </div>
 </div></section>
 
-<!-- LIVE STAGE -->
 <section class="stage">
   <div class="eyebrow2" data-reveal>Step inside</div>
   <h2 data-reveal>This is the app, running. Say hello to Dr. Sirop.</h2>
@@ -178,99 +136,27 @@
   <div class="phone" data-reveal style="transition-delay:.12s"><span class="ring"></span><iframe src="docteur.html" loading="lazy" title="Docteur Sirop live preview"></iframe></div>
 </section>
 
-<!-- OUTRO — impact -->
 <section class="outro">
   <div class="big" data-reveal>The patient becomes the <span class="hl">hero</span> of their own care.</div>
-  <p data-reveal style="transition-delay:.1s">Live on Google Play. Children stop being passengers in their treatment — and start being the ones holding the map.</p>
+  <p data-reveal style="transition-delay:.1s">A child fully involved in their hospitalisation — oriented, rewarded, and a little less afraid. Live on Google Play.</p>
   <div class="cta" data-reveal style="transition-delay:.18s">
     <a class="btn p" href="https://play.google.com/store/apps/details?id=com.doctorsyrup.app" target="_blank" rel="noopener">View on Google Play ↗</a>
     <a class="btn g" href="./#projects">← Back to the other worlds</a>
   </div>
 </section>
 
-<div class="foot">A world built by <b>Bow</b> · one of several. Sound is generated live in your browser.</div>
+<div class="foot">A world built by <b>Bow</b> · one of several. Sound is composed live in your browser.</div>
 
+<script src="assets/worldkit.js"></script>
 <script>
-/* ---------- fireflies / motes ---------- */
-(function(){
-  var c=document.getElementById('motes'), x=c.getContext('2d'), W,H,P;
-  function sz(){W=c.width=innerWidth;H=c.height=innerHeight;}
-  sz(); addEventListener('resize',sz);
-  var cols=['rgba(160,224,170,','rgba(255,206,92,','rgba(189,230,182,'];
-  P=Array.from({length:46},function(){return{
-    x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.4,
-    vy:-(.15+Math.random()*.4),vx:(Math.random()-.5)*.25,
-    a:.2+Math.random()*.5,tw:Math.random()*Math.PI*2,c:cols[(Math.random()*cols.length)|0]};});
-  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  (function loop(){
-    x.clearRect(0,0,W,H);
-    for(var p of P){
-      if(!reduce){p.y+=p.vy;p.x+=p.vx;p.tw+=.03;}
-      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;}
-      var fl=p.a*(.6+.4*Math.sin(p.tw));
-      x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fillStyle=p.c+fl+')';
-      x.shadowBlur=10;x.shadowColor=p.c+'.7)';x.fill();
-    }
-    x.shadowBlur=0;requestAnimationFrame(loop);
-  })();
-})();
-
-/* ---------- scroll: reveal, progress, parallax ---------- */
-(function(){
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.18});
-  document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el);});
-  var prog=document.getElementById('prog'), px=document.querySelectorAll('[data-px]'), raf=0;
-  function f(){raf=0;var m=document.body.scrollHeight-innerHeight;var p=m>0?scrollY/m:0;
-    prog.style.width=(p*100)+'%';
-    px.forEach(function(el){el.style.transform='translateX(-50%) translateY('+(scrollY*parseFloat(el.dataset.px))+'px)';});}
-  addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(f);},{passive:true});f();
-})();
-
-/* ---------- generative lullaby (Web Audio) ---------- */
-(function(){
-  var btn=document.getElementById('snd'), started=false, ac, master, chordTimer, bellTimer, wantOn=true;
-  var prog=[ [261.63,329.63,392.00], [220,261.63,329.63], [174.61,220,261.63], [196,246.94,293.66] ]; // C Am F G
-  var penta=[523.25,587.33,659.25,784.00,880.00], ci=0;
-  function now(){return ac.currentTime;}
-  function pad(freqs){
-    var t=now(), g=ac.createGain(); g.connect(master);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.16,t+2); g.gain.linearRampToValueAtTime(.12,t+4.5);
-    g.gain.linearRampToValueAtTime(0,t+6.4);
-    freqs.forEach(function(fr,i){
-      var o=ac.createOscillator(); o.type='triangle'; o.frequency.value=fr;
-      var d=ac.createGain(); d.gain.value=i===0?.6:.4; o.connect(d); d.connect(g);
-      o.start(t); o.stop(t+6.6);
-      var o2=ac.createOscillator(); o2.type='sine'; o2.frequency.value=fr*2.001; o2.connect(d); o2.start(t);o2.stop(t+6.6);
-    });
-  }
-  function bell(){
-    var t=now(), fr=penta[(Math.random()*penta.length)|0]*(Math.random()<.3?2:1);
-    var o=ac.createOscillator(); o.type='sine'; o.frequency.value=fr;
-    var g=ac.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01);
-    g.gain.exponentialRampToValueAtTime(.0008,t+1.7);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t+1.8);
-  }
-  function start(){
-    if(started) return; started=true;
-    ac=new (window.AudioContext||window.webkitAudioContext)();
-    master=ac.createGain(); master.gain.value=0; master.connect(ac.destination);
-    master.gain.linearRampToValueAtTime(.5, ac.currentTime+2);
-    pad(prog[ci]); ci=(ci+1)%prog.length;
-    chordTimer=setInterval(function(){ pad(prog[ci]); ci=(ci+1)%prog.length; },6000);
-    function schedBell(){ bellTimer=setTimeout(function(){ if(Math.random()<.8) bell(); schedBell(); }, 1400+Math.random()*2400); }
-    schedBell();
-    btn.classList.add('on');
-  }
-  function setOn(v){ wantOn=v; if(!started){ if(v) start(); return; }
-    master.gain.cancelScheduledValues(ac.currentTime);
-    master.gain.linearRampToValueAtTime(v?.5:0, ac.currentTime+.5);
-    btn.classList.toggle('on',v);
-  }
-  // start on first interaction (audio needs a gesture)
-  function kick(){ if(!started && wantOn) start(); removeEventListener('pointerdown',kick);removeEventListener('keydown',kick);removeEventListener('scroll',kick); }
-  addEventListener('pointerdown',kick); addEventListener('keydown',kick); addEventListener('scroll',kick,{passive:true});
-  btn.addEventListener('click',function(e){ e.stopPropagation(); setOn(!(started? btn.classList.contains('on'):wantOn)); });
-})();
+  Worldkit.motes(['rgba(160,224,170,','rgba(255,206,92,','rgba(189,230,182,']);
+  Worldkit.scroll();
+  Worldkit.sound('snd',{
+    chords:[[261.63,329.63,392.00],[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66]], // C Am F G
+    scale:[329.63,392,440,523.25,587.33,659.25,784,880],  // C-major pentatonic, music-box range
+    bar:7, step:430, density:0.56, noteDur:1.5, leadType:'sine',
+    pad:0.05, lead:0.085, bass:true, bassVol:0.10, delay:0.30, fb:0.30, wet:0.46, vol:0.55
+  });
 </script>
 </body>
 </html>
