@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>SecuMap · Web preview</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{--green:#31a623;--green-d:#27851c;--red:#ed3438;--blue:#3966cf;--orange:#ef9245;
+    --ink:#18181b;--g700:#3f3f46;--g500:#71717a;--g400:#a1a1aa;--line:#e7e7ea;--bg:#f5f5f5;--white:#fff;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;display:grid;place-items:center;padding:18px;
+    background:radial-gradient(120% 80% at 50% 0%,#162013,#0a0f0a);}
+  /* phone frame */
+  .device{width:375px;max-width:100%;height:min(812px,94vh);background:#000;border-radius:44px;padding:11px;
+    box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #1d1d22;position:relative;}
+  .screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
+  .status{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;color:var(--ink);z-index:50;}
+  .status .r{display:flex;gap:6px;align-items:center;}
+  .stage{position:relative;flex:1;overflow:hidden;}
+  .view{position:absolute;inset:0;overflow:auto;display:none;}
+  .view.on{display:block;}
+  /* ===== MAP ===== */
+  #map{position:absolute;inset:0;background:#e8ede6;}
+  .searchbar{position:absolute;top:12px;left:14px;right:14px;z-index:500;background:var(--white);border-radius:30px;
+    box-shadow:0 6px 20px rgba(0,0,0,.14);display:flex;align-items:center;gap:10px;padding:13px 16px;}
+  .searchbar svg{flex:none;color:var(--green);} .searchbar span{color:var(--g500);font-size:14.5px;}
+  .fab{position:absolute;z-index:500;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.28);}
+  .fab.dir{left:16px;bottom:16px;background:var(--blue);}
+  .fab.report{right:16px;bottom:16px;background:var(--red);}
+  .fab:active{transform:scale(.94);}
+  /* ===== generic screen ===== */
+  .head{background:var(--white);padding:22px 20px 16px;border-bottom:1px solid var(--line);}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 20px 18px;background:var(--white);}
+  .brand .logo{width:54px;height:54px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:#fff;box-shadow:0 8px 18px rgba(49,166,35,.35);}
+  .brand .tag{font-size:15px;font-weight:700;color:var(--ink);text-align:center;line-height:1.35;max-width:240px;}
+  .sect{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--g400);padding:18px 20px 6px;}
+  .list{background:var(--white);}
+  .row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;}
+  .row:active{background:#fafafa;}
+  .row .ic{width:30px;height:30px;flex:none;display:grid;place-items:center;color:var(--g700);}
+  .row .tx{flex:1;min-width:0;} .row .tx b{display:block;font-size:14.5px;color:var(--ink);font-weight:600;}
+  .row .tx small{font-size:12px;color:var(--g400);}
+  .row .star{color:var(--green);} .row .chev{color:var(--g400);}
+  .toggle{width:42px;height:25px;border-radius:20px;background:#d4d4d8;position:relative;flex:none;transition:.2s;}
+  .toggle i{position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .toggle.on{background:var(--green);} .toggle.on i{left:19px;}
+  /* training */
+  .hero{margin:16px 16px 6px;border-radius:18px;padding:20px;color:#fff;background:linear-gradient(135deg,var(--green),var(--green-d));box-shadow:0 12px 26px rgba(49,166,35,.3);}
+  .hero h2{font-size:19px;font-weight:800;margin-bottom:6px;} .hero p{font-size:13px;opacity:.92;line-height:1.45;}
+  .tcards{padding:6px 16px 16px;display:flex;flex-direction:column;gap:12px;}
+  .tcard{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;}
+  .tcard:active{transform:scale(.99);}
+  .tcard .tn{width:46px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center;background:#eaf6e7;color:var(--green);}
+  .tcard .tt{flex:1;} .tcard .tt b{display:block;font-size:14.5px;color:var(--ink);} .tcard .tt small{font-size:12px;color:var(--g500);}
+  .tcard .dur{font-size:11px;color:var(--g400);font-weight:600;white-space:nowrap;}
+  .sos{margin:4px 16px 20px;background:#fdecec;border:1px solid #f6c9c8;border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:14px;}
+  .sos .si{width:44px;height:44px;border-radius:50%;background:var(--red);display:grid;place-items:center;color:#fff;flex:none;}
+  .sos b{display:block;font-size:14.5px;color:var(--ink);} .sos small{font-size:12px;color:var(--g500);}
+  .sos .call{margin-left:auto;background:var(--red);color:#fff;border:none;border-radius:20px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer;}
+  .pad{height:14px;}
+  /* ===== tab bar ===== */
+  .tabbar{flex:none;height:64px;background:var(--white);border-top:1px solid var(--line);display:flex;padding-bottom:6px;z-index:600;}
+  .tab{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--g400);font-size:11px;font-weight:600;font-family:inherit;}
+  .tab.on{color:var(--green);}
+  .tab svg{width:23px;height:23px;}
+  .leaflet-control-attribution{font-size:8px;}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="screen">
+    <div class="notch"></div>
+    <div class="status"><span>9:41</span><span class="r">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.2 0 4.2.9 5.7 2.3l1.1-1.2A10 10 0 0 0 8 .8 10 10 0 0 0 1.2 3.6l1.1 1.2A8 8 0 0 1 8 2.5zM8 6c1.1 0 2.1.4 2.9 1.2l1.1-1.2A6 6 0 0 0 8 4.2 6 6 0 0 0 4 6l1.1 1.2A4 4 0 0 1 8 6zm0 3.5L9.6 8A2.3 2.3 0 0 0 8 7.3 2.3 2.3 0 0 0 6.4 8L8 9.5z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="currentColor" stroke-opacity=".4"/><rect x="2.5" y="2.5" width="15" height="7" rx="1" fill="currentColor"/><rect x="22.5" y="4" width="1.5" height="4" rx="1" fill="currentColor" fill-opacity=".4"/></svg>
+    </span></div>
+
+    <div class="stage">
+      <!-- MAP -->
+      <section class="view on" id="v-map">
+        <div class="searchbar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Where do you want to go?</span>
+        </div>
+        <div id="map"></div>
+        <button class="fab dir" title="Directions"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></button>
+        <button class="fab report" title="Report danger"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+      </section>
+
+      <!-- SETTINGS (menu) -->
+      <section class="view" id="v-settings">
+        <div class="brand">
+          <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></div>
+          <div class="tag">La sécurité de chacun est entre nos mains</div>
+        </div>
+        <div class="sect">Information</div>
+        <div class="list">
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><div class="tx"><b>My profile</b></div><span class="chev">›</span></div>
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span><div class="tx"><b>Residence</b><small>Set address and go there</small></div><span class="chev">›</span></div>
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><div class="tx"><b>Workplace</b><small>Set address and go there</small></div><span class="chev">›</span></div>
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg></span><div class="tx"><b>Saved places</b></div><span class="chev">›</span></div>
+          <div class="row" data-go="training"><span class="ic star"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span><div class="tx"><b>Train in self-defense</b></div><span class="star">★</span></div>
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 21a6.5 6.5 0 0 1 13 0"/><path d="M18 8v6M21 11h-6"/></svg></span><div class="tx"><b>Invite your friend</b></div><span class="chev">›</span></div>
+          <div class="row" id="darkrow"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></span><div class="tx"><b>Dark mode</b></div><span class="toggle" id="dark"><i></i></span></div>
+        </div>
+        <div class="sect">More</div>
+        <div class="list">
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 16 0v5a2 2 0 0 1-2 2h-2v-6h4M4 13h4v6H6a2 2 0 0 1-2-2Z"/></svg></span><div class="tx"><b>Support</b></div><span class="chev">›</span></div>
+          <div class="row"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.7-2.5 2-2.5 3.5"/><path d="M12 17h.01"/></svg></span><div class="tx"><b>FAQs | Help Center</b></div><span class="chev">›</span></div>
+        </div>
+        <div class="pad"></div>
+      </section>
+
+      <!-- TRAINING -->
+      <section class="view" id="v-training">
+        <div class="hero">
+          <h2>Train in self-defense 🛡️</h2>
+          <p>Short, practical lessons to stay safe and confident. Learn the moves, trust your instincts.</p>
+        </div>
+        <div class="tcards">
+          <div class="tcard"><span class="tn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="6" r="3"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span><div class="tt"><b>Ready stance &amp; awareness</b><small>Stand balanced, scan your surroundings</small></div><span class="dur">3 min</span></div>
+          <div class="tcard"><span class="tn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 12h12M12 6v12"/></svg></span><div class="tt"><b>Wrist release</b><small>Break free from a grab in one move</small></div><span class="dur">2 min</span></div>
+          <div class="tcard"><span class="tn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m13 2-3 7h5l-3 9"/></svg></span><div class="tt"><b>Palm strike &amp; elbow</b><small>Create distance and escape fast</small></div><span class="dur">4 min</span></div>
+          <div class="tcard"><span class="tn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg></span><div class="tt"><b>Use your voice</b><small>Shout to attract help &amp; deter</small></div><span class="dur">1 min</span></div>
+        </div>
+        <div class="sos">
+          <span class="si"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+          <div><b>Emergency</b><small>Call the police — 17 (FR) / 112 (EU)</small></div>
+          <button class="call">Call</button>
+        </div>
+        <div class="pad"></div>
+      </section>
+    </div>
+
+    <nav class="tabbar">
+      <button class="tab" data-t="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1A2 2 0 1 1 7 4.6l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg><span>Settings</span></button>
+      <button class="tab" data-t="training"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg><span>Training</span></button>
+      <button class="tab on" data-t="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg><span>Map</span></button>
+    </nav>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // tab switching
+  const views={map:document.getElementById('v-map'),settings:document.getElementById('v-settings'),training:document.getElementById('v-training')};
+  let mapInited=false, leafmap=null;
+  function go(t){
+    Object.keys(views).forEach(k=>views[k].classList.toggle('on',k===t));
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+    if(t==='map'){ initMap(); if(leafmap) setTimeout(()=>leafmap.invalidateSize(),60); }
+  }
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>go(b.dataset.t)));
+  document.querySelectorAll('[data-go]').forEach(r=>r.addEventListener('click',()=>go(r.getAttribute('data-go'))));
+  // dark toggle (demo)
+  document.getElementById('dark').addEventListener('click',function(){ this.classList.toggle('on'); });
+  document.getElementById('darkrow').addEventListener('click',e=>{ if(!e.target.closest('.toggle')) document.getElementById('dark').classList.toggle('on'); });
+
+  function pin(color){ return L.divIcon({className:'',iconSize:[22,22],iconAnchor:[11,22],
+    html:'<svg width="22" height="30" viewBox="0 0 22 30"><path d="M11 0a11 11 0 0 0-11 11c0 7 11 19 11 19s11-12 11-19A11 11 0 0 0 11 0Z" fill="'+color+'"/><circle cx="11" cy="11" r="4" fill="#fff"/></svg>'}); }
+  function initMap(){
+    if(mapInited||!window.L) return; mapInited=true;
+    leafmap=L.map('map',{zoomControl:false,attributionControl:true}).setView([48.8566,2.3486],14);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap, © CARTO'}).addTo(leafmap);
+    L.marker([48.8566,2.3486],{icon:pin('#31a623')}).addTo(leafmap).bindPopup('You are here');
+    [[48.860,2.341,'#ed3438','Assault reported'],[48.853,2.355,'#ef9245','Suspicious individual'],[48.8625,2.352,'#ed3438','Pickpocket'],[48.851,2.343,'#ef9245','Demonstration'],[48.8585,2.337,'#ed3438','Aggression']]
+      .forEach(m=>L.marker([m[0],m[1]],{icon:pin(m[2])}).addTo(leafmap).bindPopup(m[3]));
+  }
+  // map tab is default-active
+  initMap();
+</script>
+</body>
+</html>
