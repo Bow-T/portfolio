@@ -3,28 +3,26 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
 <title>Octopush · Web preview</title>
 <style>
-  :root{--green:#67b142;--green-d:#52963a;--ink:#1d1f22;--mut:#9aa0a6;--line:#ececec;--bg:#fff;}
+  :root{--ink:#1a1a1a;--mut:#9a9a9a;--card:#f4f4f4;--bg:#fff;}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:grid;place-items:center;padding:10px;background:radial-gradient(120% 80% at 50% 0%,#2a2a2a,#0a0a0a);}
   .device{aspect-ratio:375/812;height:min(812px,94vh);width:auto;max-width:94vw;background:#000;border-radius:44px;padding:11px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #222;position:relative;}
-  .screen{width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);position:relative;}
+  .screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);}
   .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
-  .status{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;flex:none;}
-  .status .r{display:flex;gap:5px;}
-  .scroll{flex:1;overflow:auto;padding:6px 18px 16px;}.scroll::-webkit-scrollbar{display:none;}
-  h1{color:var(--green);font-size:28px;font-weight:900;margin:6px 0 16px;}
-  .bar{display:flex;gap:10px;margin-bottom:18px;}
-  .bar .test{flex:1;border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center;font-weight:700;font-size:13.5px;color:#555;background:#fff;}
-  .bar .ic{width:46px;height:46px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;color:#777;flex:none;}
-  .chat{display:flex;gap:13px;background:#f4f5f6;border-radius:16px;padding:14px;margin-bottom:12px;align-items:flex-start;}
-  .ava{width:50px;height:50px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;}
-  .cc{flex:1;min-width:0;} .cc .t{display:flex;justify-content:space-between;align-items:baseline;}
-  .cc b{font-size:15px;} .cc .time{color:var(--mut);font-size:12px;}
-  .cc p{color:#6b7177;font-size:13px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .cc p.un{color:var(--ink);font-weight:600;}
-  .end{text-align:center;color:var(--mut);font-size:12.5px;padding:14px;}
-  .fab{position:absolute;right:18px;bottom:20px;width:56px;height:56px;border-radius:50%;background:var(--green);border:none;color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(103,177,66,.45);cursor:pointer;}
-</style><script>if(window.self!==window.top)document.documentElement.classList.add('embed');</script>
+
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px;flex:none;}
+  .hdr .ic{color:#3a3a3a;}.hdr .ic svg{width:24px;height:24px;}
+  .hdr h1{font-size:22px;font-weight:700;color:var(--ink);}
+
+  .scroll{flex:1;overflow:auto;padding:6px 14px 16px;}.scroll::-webkit-scrollbar{display:none;}
+  .conv{background:var(--card);border-radius:16px;padding:15px 16px;margin-bottom:12px;}
+  .conv .top{display:flex;align-items:flex-start;gap:13px;}
+  .conv .av{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-size:15px;font-weight:600;}
+  .conv .nm{flex:1;min-width:0;} .conv .nm b{font-size:17px;font-weight:700;color:var(--ink);display:block;} .conv .nm small{font-size:14px;color:var(--mut);}
+  .conv .date{font-size:13px;color:var(--mut);white-space:nowrap;}
+  .conv .msg{font-size:15px;color:#6f6f6f;margin-top:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+</style>
+<script>if(window.self!==window.top)document.documentElement.classList.add('embed');</script>
 <style>
 html.embed,html.embed body{margin:0;padding:0;height:100%;background:#000;}
 html.embed body{display:block;}
@@ -34,16 +32,22 @@ html.embed .notch{display:none;}
 </style>
 </head><body>
 <div class="device"><div class="screen"><div class="notch"></div>
-  <div class="status"></div>
-  <div class="scroll">
-    <h1>Chat par SMS</h1>
-    <div class="bar"><div class="test">Testez sur N° partagé</div><div class="ic">⚙</div><div class="ic">⋯</div></div>
-    <div id="list"></div>
-    <div class="end">Plus aucun message</div>
+  <div class="hdr">
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 12 4l9 7M5 9.5V20h14V9.5"/></svg></span>
+    <h1>Conversations</h1>
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2.2"/><circle cx="8" cy="16" r="2.2"/></svg></span>
   </div>
-  <button class="fab"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+  <div class="scroll" id="list"></div>
 </div></div>
 <script>
-  const cs=[['LE','Leïla','#9bcf7e','Merci c\'est noté',0],['CA','Camille','#5b6b75','Parfait, rdv jeudi 15 à 16h.',1],['TH','Thomas','#9aa7b0','Wow, quelle étape importante !',1],['NI','Nicolas','#9bcf7e','Excellent! C\'est merveilleux de faire partie d\'un…',0],['QU','Quentin','#67b142','Célébrons cette réussite et continuons à avan…',0],['MA','Marie','#7d9bd6','À bientôt 👋',0]];
-  document.getElementById('list').innerHTML=cs.map(c=>`<div class="chat"><div class="ava" style="background:${c[2]}">${c[0]}</div><div class="cc"><div class="t"><b>${c[1]}</b><span class="time">22/06/2023, 17:38</span></div><p class="${c[4]?'un':''}">${c[3]}</p></div></div>`).join('');
-</script></body></html>
+  var c=[
+   ['Leïla','LE','#a8d5a2',"Merci c'est noté"],
+   ['Camille','CA','#3e5266',"Parfait, rdv jeudi 15 à 16h."],
+   ['Thomas','TH','#9fb0bd',"Wow, quelle étape importante !"],
+   ['Nicolas','NI','#82c98a',"Excellent! C'est merveilleux de faire partie…"],
+   ['Quentin','QU','#dcc279',"Célébrons cette réussite et continuons à a…"],
+   ['Jenny','JE','#a8d5a2',"Excellent! C'est merveilleux de faire partie…"],
+   ['Hugo','HU','#c79bd1',"D'accord, je m'en occupe tout de suite."]];
+  document.getElementById('list').innerHTML=c.map(function(x){return '<div class="conv"><div class="top"><div class="av" style="background:'+x[2]+'">'+x[1]+'</div><div class="nm"><b>'+x[0]+'</b><small>+33 028 203</small></div><span class="date">22/06/2023, 17:38</span></div><div class="msg">'+x[3]+'</div></div>';}).join('');
+</script>
+</body></html>
