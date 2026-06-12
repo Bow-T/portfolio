@@ -1,82 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Docteur Sirop · Web preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--green:#2faa4a;--green2:#42bb5d;--green3:#59d474;--orange:#dc5126;--orange2:#e67a30;--yellow:#fcbc0c;
-    --navy:#273430;--ink:#1f2a26;--mut:#7d8a85;--line:#e7efe9;--bg:#f3f9f4;}
+  :root{
+    --green:#2faa4a;--head1:#9ed79a;--head2:#d7f0d1;--sky:#cfeecb;
+    --hill:#8ccc85;--hill2:#bde3b9;--bldg1:#eab374;--bldg2:#f2c591;
+    --cream:#fdf2ea;--gold1:#f2e2b9;--gold2:#ffd394;--brown:#673716;
+    --or1:#e67a30;--or2:#ff9d00;--slate:#383d4b;--slate2:#414553;--mut:#9ea0a7;
+    --cg:#cceac9;--cl:#e4dbfb;--cc:#fff3d0;--bg:#fff;
+  }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Comic Sans MS",sans-serif;min-height:100vh;
+  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;
     display:grid;place-items:center;padding:10px;background:radial-gradient(120% 80% at 50% 0%,#1d3024,#06120b);}
   .device{aspect-ratio:390/844;height:min(844px,94vh);width:auto;max-width:94vw;background:#000;border-radius:46px;padding:11px;
     box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #222;position:relative;}
-  .screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);}
+  .screen{position:relative;width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;color:var(--slate);}
   .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:26px;background:#000;border-radius:0 0 18px 18px;z-index:60;}
-  .head{background:linear-gradient(170deg,var(--green3),var(--green));color:#fff;padding:44px 20px 26px;border-radius:0 0 26px 26px;}
-  .head .row{display:flex;align-items:flex-start;}
-  .head .hi{flex:1;} .head .hi small{font-size:13px;opacity:.95;} .head .hi b{display:block;font-size:21px;font-weight:900;}
-  .stats{display:flex;gap:8px;}
-  .stat{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.16);border-radius:20px;padding:6px 11px;font-weight:800;font-size:13px;}
-  .scroll{flex:1;overflow:auto;padding:16px 18px;} .scroll::-webkit-scrollbar{display:none;}
-  .chat{background:#fff;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 28px rgba(40,90,55,.1);margin-bottom:8px;margin-top:-44px;position:relative;z-index:2;}
-  .chat .tx{flex:1;} .chat .tx b{font-size:14.5px;font-weight:800;display:block;} .chat .tx p{font-size:13px;color:var(--mut);}
-  .chat .deer{font-size:40px;}
-  .talk{display:block;width:100%;margin:12px 0 22px;border:none;border-radius:16px;padding:14px;font-weight:800;font-size:15px;color:#fff;
-    background:linear-gradient(120deg,var(--orange2),var(--orange));cursor:pointer;box-shadow:0 12px 24px rgba(220,81,38,.3);}
-  h2.sec{font-size:19px;font-weight:900;margin-bottom:14px;}
-  .act{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--green2);border-radius:18px;padding:16px;margin-bottom:14px;cursor:pointer;}
-  .act.o{border-color:var(--orange2);} .act.n{border-color:var(--navy);}
-  .act .tt{flex:1;} .act .tt b{font-size:16px;font-weight:900;display:block;} .act .tt p{font-size:13px;color:var(--mut);margin-top:4px;line-height:1.4;}
-  .act .face{font-size:42px;}
-  .nav-bottom{flex:none;height:66px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;padding-bottom:6px;}
-  .nav-bottom button{flex:1;border:none;background:none;color:#b3c2b8;display:grid;place-items:center;cursor:pointer;}
-  .nav-bottom button.on{color:var(--green);}
-  .nav-bottom button.mascot{color:var(--green);} .nav-bottom button.mascot .m{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--green3),var(--green));display:grid;place-items:center;font-size:22px;box-shadow:0 6px 16px rgba(47,170,74,.4);}
-  .nav-bottom svg{width:26px;height:26px;}
+  .scroll{flex:1;overflow:auto;}.scroll::-webkit-scrollbar{display:none;}
+
+  /* ---------- header ---------- */
+  .header{position:relative;background:linear-gradient(180deg,var(--head1) 0%,#bfe7b9 50%,var(--head2) 100%);
+    padding:44px 18px 0;border-radius:0 0 30px 30px;overflow:hidden;}
+  .status{height:20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;color:#2a3b2e;}
+  .status .r{display:flex;gap:6px;align-items:center;font-size:12px;}
+  .topbar{display:flex;align-items:center;gap:11px;margin-top:14px;position:relative;z-index:4;}
+  .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(160deg,var(--gold1),var(--gold2));
+    display:grid;place-items:center;font-size:22px;box-shadow:0 4px 10px rgba(120,80,20,.25);position:relative;flex:none;}
+  .avatar .star{position:absolute;right:-3px;top:-3px;font-size:12px;}
+  .topbar .name{flex:1;font-family:'Baloo 2';font-weight:700;font-size:19px;color:#2c3a30;}
+  .pills{display:flex;gap:8px;}
+  .pill{display:flex;align-items:center;gap:6px;background:linear-gradient(160deg,var(--gold1),var(--gold2));
+    border-radius:30px;padding:4px 11px 4px 4px;box-shadow:0 3px 8px rgba(120,80,20,.2);}
+  .pill .ic{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--or1),var(--or2));
+    display:grid;place-items:center;font-size:14px;}
+  .pill b{font-family:'Baloo 2';font-weight:800;font-size:15px;color:var(--brown);}
+
+  .hero{position:relative;height:168px;margin-top:6px;}
+  .cloud{position:absolute;background:#fbfffb;border-radius:50%;opacity:.9;filter:blur(.3px);}
+  .c1{width:54px;height:22px;left:24px;top:18px;box-shadow:26px 4px 0 -4px #fbfffb,52px -2px 0 -7px #fbfffb;}
+  .c2{width:40px;height:18px;right:30px;top:8px;box-shadow:20px 3px 0 -4px #fbfffb;}
+  .skyline{position:absolute;left:0;right:0;bottom:34px;height:96px;display:flex;align-items:flex-end;gap:5px;padding:0 6px;opacity:.95;}
+  .bld{flex:1;border-radius:5px 5px 0 0;background:var(--bldg1);position:relative;}
+  .bld::after{content:"";position:absolute;inset:6px 5px auto 5px;height:60%;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.5) 0 4px,transparent 4px 11px),
+               repeating-linear-gradient(90deg,rgba(255,255,255,.5) 0 4px,transparent 4px 12px);
+    background-blend-mode:lighten;border-radius:3px;opacity:.5;}
+  .hills{position:absolute;left:-10px;right:-10px;bottom:0;height:54px;background:var(--hill2);
+    border-radius:50% 50% 0 0/100% 100% 0 0;}
+  .hills::before{content:"";position:absolute;left:-20px;right:30%;bottom:0;height:42px;background:var(--hill);
+    border-radius:50% 50% 0 0/100% 100% 0 0;}
+  .moose{position:absolute;right:18px;bottom:8px;z-index:3;width:118px;height:140px;}
+  .moose .cape{position:absolute;left:50%;top:30px;width:78px;height:96px;transform:translateX(-50%);
+    background:linear-gradient(160deg,#e63d33,#b8261d);border-radius:40% 40% 50% 50%/30% 30% 100% 100%;
+    box-shadow:0 8px 16px rgba(180,40,30,.35);}
+  .moose .body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);font-size:96px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.15));}
+
+  /* ---------- mood card ---------- */
+  .mood{margin:-22px 16px 0;position:relative;z-index:5;background:linear-gradient(180deg,#fff,var(--cream));
+    border-radius:22px;padding:16px;box-shadow:0 16px 34px rgba(60,90,55,.14);}
+  .mood .top{display:flex;align-items:center;gap:13px;}
+  .mood .face{width:48px;height:48px;border-radius:15px;background:linear-gradient(150deg,#ffb45c,#d24940);
+    display:grid;place-items:center;font-size:27px;flex:none;box-shadow:0 6px 14px rgba(210,73,64,.3);}
+  .mood .tx b{font-family:'Baloo 2';font-weight:700;font-size:19px;color:var(--slate);display:block;line-height:1.15;}
+  .mood .tx p{font-size:13.5px;font-weight:700;color:#616570;margin-top:3px;line-height:1.35;}
+  .talk{display:block;width:100%;margin-top:14px;border:none;border-radius:24px;padding:13px;cursor:pointer;
+    font-family:'Baloo 2';font-weight:600;font-size:16px;color:#fff;
+    background:linear-gradient(95deg,var(--or1),var(--or2));box-shadow:0 12px 22px rgba(230,122,48,.34);}
+
+  /* ---------- activities ---------- */
+  .sec{display:flex;align-items:center;gap:9px;font-family:'Baloo 2';font-weight:700;font-size:24px;color:#272c3b;
+    padding:22px 20px 4px;}
+  .sec .fire{font-size:22px;}
+  .acts{padding:8px 16px 14px;}
+  .act{position:relative;display:flex;align-items:center;min-height:150px;border-radius:28px;padding:22px;margin-bottom:16px;overflow:hidden;}
+  .act .tt{position:relative;z-index:2;max-width:60%;}
+  .act .tt b{font-family:'Baloo 2';font-weight:700;font-size:24px;color:var(--slate);display:block;line-height:1.1;}
+  .act .tt p{font-weight:700;font-size:15px;color:var(--slate2);margin-top:8px;line-height:1.32;}
+  .act .blob{position:absolute;right:-30px;bottom:-30px;width:165px;height:165px;border-radius:50%;}
+  .act .em{position:absolute;right:18px;bottom:14px;font-size:64px;line-height:1;filter:drop-shadow(0 5px 7px rgba(0,0,0,.12));}
+  .act .deco{position:absolute;font-size:22px;}
+  .a1{background:var(--cg);} .a1 .blob{background:#a6deac;} .a1 .d1{right:96px;bottom:96px;} .a1 .d2{right:18px;bottom:92px;}
+  .a2{background:var(--cl);} .a2 .blob{background:#d3c4e5;} .a2 .d1{right:96px;bottom:30px;} .a2 .d2{right:20px;bottom:96px;}
+  .a3{background:var(--cc);} .a3 .blob{background:#ffe3a8;} .a3 .d1{right:90px;bottom:96px;} .a3 .d2{right:22px;bottom:18px;}
+
+  /* ---------- bottom nav ---------- */
+  .nav{flex:none;position:relative;height:74px;background:#fff;border-top:1px solid #eef2ee;
+    display:flex;align-items:flex-start;padding:9px 4px 6px;box-shadow:0 -6px 20px rgba(0,0,0,.05);}
+  .nav button{flex:1;border:none;background:none;cursor:pointer;font-family:'Nunito';color:var(--mut);
+    display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:800;}
+  .nav button.on{color:var(--or1);}
+  .nav svg{width:24px;height:24px;}
+  .nav .mascot{flex:none;width:64px;}
+  .nav .mascot .m{width:58px;height:58px;border-radius:50%;background:linear-gradient(160deg,var(--gold1),#ffb581);
+    display:grid;place-items:center;font-size:30px;margin-top:-26px;box-shadow:0 8px 18px rgba(200,130,60,.4),0 0 0 5px #fff;position:relative;}
+  .nav .mascot .m .badge{position:absolute;right:-2px;top:-2px;width:18px;height:18px;border-radius:50%;
+    background:var(--or1);border:2px solid #fff;}
 </style>
 </head>
 <body>
-<div class="device"><div class="screen">
-  <div class="notch"></div>
-  <div class="head">
-    <div class="row">
-      <div class="hi"><small>Hello There,</small><b>Agent Marcus</b></div>
-      <div class="stats"><span class="stat">💎 300</span><span class="stat" style="background:var(--yellow);color:#5a3c00">🔥 7</span></div>
-    </div>
-  </div>
-
+<div class="device"><div class="screen"><div class="notch"></div>
   <div class="scroll">
-    <div class="chat">
-      <div class="tx"><b>You felt OK 😐</b><p>do you want to chat</p></div>
-      <span class="deer">🦌</span>
-    </div>
-    <button class="talk">Talk with Dr. Sirop</button>
 
-    <h2 class="sec">Super Activities</h2>
-    <div class="act"><div class="tt"><b>Super Cortex</b><p>Discover the amazing powers inside your body</p></div><span class="face">🌱</span></div>
-    <div class="act o"><div class="tt"><b>Super Heart</b><p>Learn how your heart keeps you strong</p></div><span class="face">🫀</span></div>
-    <div class="act n"><div class="tt"><b>Super Lungs</b><p>Breathe deep and power up your body</p></div><span class="face">🌬️</span></div>
-    <div class="act"><div class="tt"><b>Super Bones</b><p>Build a strong and healthy skeleton</p></div><span class="face">🦴</span></div>
-    <div style="height:6px"></div>
+    <div class="header">
+      <div class="status"><span>9:41</span><span class="r">📶 🛜 🔋</span></div>
+      <div class="topbar">
+        <div class="avatar">🦌<span class="star">⭐</span></div>
+        <div class="name">Agent Marcus</div>
+        <div class="pills">
+          <div class="pill"><span class="ic">💎</span><b>300</b></div>
+          <div class="pill"><span class="ic">🔥</span><b>30</b></div>
+        </div>
+      </div>
+      <div class="hero">
+        <div class="cloud c1"></div><div class="cloud c2"></div>
+        <div class="skyline">
+          <div class="bld" style="height:46%;background:var(--bldg2)"></div>
+          <div class="bld" style="height:74%"></div>
+          <div class="bld" style="height:58%;background:var(--bldg2)"></div>
+          <div class="bld" style="height:88%"></div>
+          <div class="bld" style="height:52%;background:var(--bldg2)"></div>
+          <div class="bld" style="height:70%"></div>
+          <div class="bld" style="height:42%;background:var(--bldg2)"></div>
+        </div>
+        <div class="hills"></div>
+        <div class="moose"><div class="cape"></div><div class="body">🦌</div></div>
+      </div>
+    </div>
+
+    <div class="mood">
+      <div class="top">
+        <div class="face">😍</div>
+        <div class="tx">
+          <b>Tu es heureux</b>
+          <p>Tu as beaucoup souri aujourd'hui&nbsp;! Qu'est-ce qui t'as rendu si heureux&nbsp;?</p>
+        </div>
+      </div>
+      <button class="talk">Parles avec Docteur Sirop</button>
+    </div>
+
+    <div class="sec"><span class="fire">🔥</span>Super activités</div>
+    <div class="acts">
+      <div class="act a1">
+        <div class="tt"><b>Super cortex</b><p>Découvre les pouvoirs incroyables à l'intérieur de ton corps</p></div>
+        <span class="blob"></span><span class="deco d1">🧠</span><span class="deco d2">💡</span><span class="em">🦌</span>
+      </div>
+      <div class="act a2">
+        <div class="tt"><b>Super courage</b><p>Sois récompensé pour ton courage après tes missions</p></div>
+        <span class="blob"></span><span class="deco d1">💪</span><span class="deco d2">✨</span><span class="em">🫀</span>
+      </div>
+      <div class="act a3">
+        <div class="tt"><b>Place zen</b><p>Un espace calme pour te détendre, respirer et te sentir mieux.</p></div>
+        <span class="blob"></span><span class="deco d1">⛱️</span><span class="deco d2">🌴</span><span class="em">🏖️</span>
+      </div>
+    </div>
+
   </div>
 
-  <nav class="nav-bottom">
-    <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 9v12h7v-7h6v7h7V9L12 3Z"/></svg></button>
-    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></button>
-    <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M5 5H3v2a3 3 0 0 0 3 3M19 5h2v2a3 3 0 0 1-3 3M9 14v3h6v-3M8 21h8"/></svg></button>
-    <button class="mascot"><span class="m">🐸</span></button>
+  <nav class="nav">
+    <button class="on">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>Home</button>
+    <button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M9 3a4 4 0 0 0-3 6.6A4 4 0 0 0 8 17h.5A3.5 3.5 0 0 0 12 20.5V4.5A3.5 3.5 0 0 0 9 3Z"/><path d="M12 4.5A3.5 3.5 0 0 1 15 3a4 4 0 0 1 3 6.6A4 4 0 0 1 16 17h-.5A3.5 3.5 0 0 1 12 20.5"/></svg>Super Cortex</button>
+    <button class="mascot"><span class="m">🦌<span class="badge"></span></span></button>
+    <button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4 3 6.5 7 9 4-2.5 7-5 7-9V6l-7-3Z"/><path d="M12 8v6M9 11h6"/></svg>Super Courage</button>
+    <button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Notifications</button>
   </nav>
 </div></div>
-
 <script>
-  document.querySelectorAll('.nav-bottom button').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-bottom button').forEach(x=>{ if(!x.classList.contains('mascot')) x.classList.remove('on'); });
-    if(!b.classList.contains('mascot')) b.classList.add('on');
+  document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{
+    if(b.classList.contains('mascot'))return;
+    document.querySelectorAll('.nav button').forEach(x=>{if(!x.classList.contains('mascot'))x.classList.remove('on');});
+    b.classList.add('on');
   }));
-  document.querySelector('.talk').addEventListener('click',function(){ this.textContent='💬 Dr. Sirop is typing…'; setTimeout(()=>this.textContent='Talk with Dr. Sirop',1500); });
+  document.querySelector('.talk').addEventListener('click',function(){
+    var t=this.textContent;this.textContent='💬 Docteur Sirop écrit…';
+    setTimeout(()=>this.textContent=t,1500);
+  });
 </script>
 </body>
 </html>
