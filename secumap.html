@@ -166,10 +166,10 @@
     html:'<svg width="22" height="30" viewBox="0 0 22 30"><path d="M11 0a11 11 0 0 0-11 11c0 7 11 19 11 19s11-12 11-19A11 11 0 0 0 11 0Z" fill="'+color+'"/><circle cx="11" cy="11" r="4" fill="#fff"/></svg>'}); }
   function initMap(){
     if(mapInited||!window.L) return; mapInited=true;
-    leafmap=L.map('map',{zoomControl:false,attributionControl:true}).setView([48.8566,2.3486],14);
+    leafmap=L.map('map',{zoomControl:false,attributionControl:true}).setView([16.0600,108.2210],14);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap, © CARTO'}).addTo(leafmap);
-    L.marker([48.8566,2.3486],{icon:pin('#31a623')}).addTo(leafmap).bindPopup('You are here');
-    [[48.860,2.341,'#ed3438','Assault reported'],[48.853,2.355,'#ef9245','Suspicious individual'],[48.8625,2.352,'#ed3438','Pickpocket'],[48.851,2.343,'#ef9245','Demonstration'],[48.8585,2.337,'#ed3438','Aggression']]
+    L.marker([16.0600,108.2210],{icon:pin('#31a623')}).addTo(leafmap).bindPopup('You are here');
+    [[16.0625,108.2270,'#ed3438','Assault reported'],[16.0540,108.2360,'#ef9245','Suspicious individual'],[16.0700,108.2230,'#ed3438','Pickpocket'],[16.0470,108.2150,'#ef9245','Demonstration'],[16.0665,108.2150,'#ed3438','Aggression']]
       .forEach(m=>L.marker([m[0],m[1]],{icon:pin(m[2])}).addTo(leafmap).bindPopup(m[3]));
   }
   // map tab is default-active
