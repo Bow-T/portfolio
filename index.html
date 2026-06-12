@@ -407,6 +407,29 @@
   .figpv-body{position:absolute;inset:0;background:#0a0f0a;}
   .figpv-body iframe{width:100%;height:100%;border:0;display:block;}
   .figpv-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;z-index:1;}
+
+  /* ---- Cupid's arrow: trail extends down on scroll, cupid reveals at the end ---- */
+  .brand .wm .la{transition:opacity .3s;}
+  #bowtrail{position:absolute;top:0;left:0;pointer-events:none;z-index:3;overflow:visible;}
+  #bowtrail .tl{fill:none;stroke:url(#btg);stroke-width:2.4;stroke-linecap:round;opacity:.5;
+    filter:drop-shadow(0 0 5px rgba(74,222,128,.5));}
+  #bowtrail .ah{fill:none;stroke:url(#btg);stroke-width:3.6;stroke-linecap:round;stroke-linejoin:round;
+    filter:drop-shadow(0 0 7px rgba(74,222,128,.9));}
+  #cupid{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);z-index:60;pointer-events:none;
+    opacity:0;transition:opacity .55s ease, transform .7s cubic-bezier(.18,.9,.25,1);
+    filter:drop-shadow(0 8px 18px rgba(244,114,182,.5));}
+  #cupid.show{opacity:1;transform:translate(-50%,0);}
+  #cupid .glow{position:absolute;left:50%;top:50%;width:120px;height:120px;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(244,114,182,.35),transparent 65%);}
+  #cupid .fig{position:relative;font-size:48px;line-height:1;display:inline-block;animation:cupfloat 3.2s ease-in-out infinite;}
+  #cupid .hearts{position:absolute;left:0;right:0;top:6px;height:0;}
+  #cupid .hearts i{position:absolute;left:50%;font-size:15px;opacity:0;}
+  #cupid.show .hearts i:nth-child(1){animation:cuph 2.4s ease-out .1s infinite;--dx:-16px;}
+  #cupid.show .hearts i:nth-child(2){animation:cuph 2.6s ease-out .9s infinite;--dx:14px;}
+  #cupid.show .hearts i:nth-child(3){animation:cuph 2.2s ease-out 1.5s infinite;--dx:0px;}
+  @keyframes cupfloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+  @keyframes cuph{0%{opacity:0;transform:translate(-50%,0) scale(.5)}25%{opacity:.95}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-52px) scale(1.15)}}
+  @media(prefers-reduced-motion:reduce){#bowtrail,#cupid{display:none!important;}}
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
@@ -487,7 +510,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".55" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
+    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".55" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><g class="la"><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/></g><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
@@ -1134,5 +1157,69 @@ setLang(localStorage.getItem('lang')||'en');
 })();
 </script>
 
+<svg id="bowtrail" aria-hidden="true"><defs><linearGradient id="btg" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#bef264"/><stop offset=".5" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><path class="tl"/><path class="ah"/></svg>
+<div id="cupid" aria-hidden="true"><span class="glow"></span><div class="hearts"><i>💗</i><i>💕</i><i>💘</i></div><span class="fig">👼</span></div>
+<script>
+/* Cupid's-arrow scroll trail: the logo arrow leaves the bow and extends down a
+   wavy (randomised each descent) path; reaching the page end reveals Cupid. */
+(function(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var svg=document.getElementById('bowtrail'),
+      tl=svg.querySelector('.tl'), ah=svg.querySelector('.ah'),
+      cupid=document.getElementById('cupid'),
+      la=document.querySelector('.brand .wm .la');
+  var plen=0, docH=0, armed=false, raf=0;
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function build(){
+    svg.style.height='0px';                       // don't let the overlay inflate scrollHeight
+    docH=Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, innerHeight+1);
+    var W=innerWidth;
+    svg.setAttribute('width',W); svg.setAttribute('height',docH);
+    svg.setAttribute('viewBox','0 0 '+W+' '+docH);
+    svg.style.height=docH+'px'; svg.style.width=W+'px';
+    var sx=Math.min(84,W*0.2), sy=44;          // start: the logo's arrow
+    var ex=W/2, ey=docH-92;                      // end: bottom-centre, where cupid sits
+    var segs=Math.max(4,Math.round((ey-sy)/Math.max(340,innerHeight*0.55)));
+    var d='M '+sx.toFixed(1)+' '+sy, px=sx, py=sy;
+    var mL=W*0.14, mR=W*0.86;
+    for(var i=1;i<=segs;i++){
+      var ny=sy+(ey-sy)*(i/segs);
+      var nx=(i===segs)?ex:rnd(mL,mR);
+      var my=(py+ny)/2;
+      d+=' C '+(px+rnd(-1,1)*W*0.13).toFixed(1)+' '+my.toFixed(1)+', '
+            +(nx+rnd(-1,1)*W*0.13).toFixed(1)+' '+my.toFixed(1)+', '
+            +nx.toFixed(1)+' '+ny.toFixed(1);
+      px=nx; py=ny;
+    }
+    tl.setAttribute('d',d);
+    ah.setAttribute('d','M -10 -6 L 0 0 L -10 6');
+    plen=tl.getTotalLength();
+    tl.style.strokeDasharray=plen;
+  }
+  function frame(){
+    raf=0;
+    var max=docH-innerHeight; if(max<=0) max=1;
+    var prog=Math.min(1,Math.max(0,(window.scrollY||window.pageYOffset)/max));
+    if(prog<0.012){ armed=true; }                 // back at top → arm a fresh wave
+    else if(armed){ build(); armed=false; }        // first descent → new random wave
+    var reveal=plen*prog;
+    tl.style.strokeDashoffset=(plen-reveal);
+    if(plen>1){
+      var p=tl.getPointAtLength(reveal), q=tl.getPointAtLength(Math.max(0,reveal-2));
+      var ang=Math.atan2(p.y-q.y,p.x-q.x)*180/Math.PI;
+      ah.setAttribute('transform','translate('+p.x.toFixed(1)+' '+p.y.toFixed(1)+') rotate('+ang.toFixed(1)+')');
+      ah.style.opacity=prog>0.012?'1':'0';
+    }
+    if(la) la.style.opacity=String(Math.max(0,1-prog*4));   // arrow leaves the bow
+    cupid.classList.toggle('show', prog>0.9);
+  }
+  function onScroll(){ if(!raf) raf=requestAnimationFrame(frame); }
+  build(); frame();
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){ build(); onScroll(); });
+  setTimeout(function(){build();frame();},900);
+  setTimeout(function(){build();frame();},2200);
+})();
+</script>
 </body>
 </html>
