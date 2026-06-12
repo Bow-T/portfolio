@@ -577,20 +577,20 @@
     <h2 class="sec" data-i18n-html="skills.title">Tools of the trade</h2>
     <p class="sec-sub" data-i18n="skills.sub">Deep in Flutter, with the surrounding stack I reach for to ship complete, real-time, payment-enabled apps.</p>
     <div class="skillgrid">
-      <div class="skillcard"><h4 class="gtext">Mobile &amp; Languages</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext" data-i18n="sk.c1">Mobile &amp; Languages</h4><div class="chips">
         <span class="chip">Flutter</span><span class="chip">Dart</span>
         <span class="chip">Kotlin / Swift channels</span><span class="chip">Material / Cupertino</span><span class="chip">Lottie</span>
       </div></div>
-      <div class="skillcard"><h4 class="gtext">Architecture &amp; State</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext" data-i18n="sk.c2">Architecture &amp; State</h4><div class="chips">
         <span class="chip">MVVM</span><span class="chip">Clean Architecture</span><span class="chip">Provider</span>
         <span class="chip">GetX</span><span class="chip">BLoC</span><span class="chip">Stacked</span>
         <span class="chip">get_it</span><span class="chip">auto_route</span><span class="chip">build_runner</span>
       </div></div>
-      <div class="skillcard"><h4 class="gtext">Realtime, Maps &amp; AI</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext" data-i18n="sk.c3">Realtime, Maps &amp; AI</h4><div class="chips">
         <span class="chip">Agora RTC/RTM/Chat</span><span class="chip">SignalR</span><span class="chip">Socket.IO</span>
         <span class="chip">OpenAI Realtime voice</span><span class="chip">Unity 3D embed</span><span class="chip">Google Maps</span>
       </div></div>
-      <div class="skillcard"><h4 class="gtext">Backend, Payments &amp; Ops</h4><div class="chips">
+      <div class="skillcard"><h4 class="gtext" data-i18n="sk.c4">Backend, Payments &amp; Ops</h4><div class="chips">
         <span class="chip">Firebase</span><span class="chip">Supabase</span><span class="chip">dio + retrofit</span>
         <span class="chip">Stripe</span><span class="chip">PayPal</span><span class="chip">RevenueCat</span>
         <span class="chip">Fastlane CI/CD</span><span class="chip">Codemagic</span><span class="chip">Store release</span>
@@ -607,7 +607,7 @@
     <div class="filters" id="filters"></div>
     <div class="grid" id="grid"></div>
     <div class="more">
-      <h4>+ more apps I've built</h4>
+      <h4 data-i18n="more.heading">+ more apps I've built</h4>
       <div class="morewrap" id="more"></div>
     </div>
   </div>
@@ -619,19 +619,19 @@
     <h2 class="sec" data-i18n-html="experience.title">The journey so far</h2>
     <div class="timeline">
       <div class="titem">
-        <div class="role">Flutter / Mobile Developer — Digital Unicorn</div>
-        <div class="when">2022 — Present · mobile &amp; web agency (FR / VN)</div>
-        <p>Lead developer of the DUOCT &ldquo;Octopus&rdquo; super-app (Flutter + Next.js + Supabase). Sole or lead developer on 25+ production apps, several published to the stores. Authored the company's shared Flutter base architecture adopted by 20+ apps.</p>
+        <div class="role" data-i18n="exp.r1">Flutter / Mobile Developer — Digital Unicorn</div>
+        <div class="when" data-i18n="exp.w1">2022 — Present · mobile &amp; web agency (FR / VN)</div>
+        <p data-i18n-html="exp.p1">Lead developer of the DUOCT &ldquo;Octopus&rdquo; super-app (Flutter + Next.js + Supabase). Sole or lead developer on 25+ production apps, several published to the stores. Authored the company's shared Flutter base architecture adopted by 20+ apps.</p>
       </div>
       <div class="titem">
-        <div class="role">Flutter Developer — Freelance / Independent</div>
-        <div class="when">2020 — 2022</div>
-        <p>Built mobile apps as independent projects — including a medical / clinic management app — and a range of Flutter prototypes, while establishing the MVVM base architecture later reused at scale.</p>
+        <div class="role" data-i18n="exp.r2">Flutter Developer — Freelance / Independent</div>
+        <div class="when" data-i18n="exp.w2">2020 — 2022</div>
+        <p data-i18n-html="exp.p2">Built mobile apps as independent projects — including a medical / clinic management app — and a range of Flutter prototypes, while establishing the MVVM base architecture later reused at scale.</p>
       </div>
       <div class="titem">
-        <div class="role">B.Eng, Software Engineering — Duy Tan University</div>
-        <div class="when">2015 — 2019 · Da Nang, Vietnam</div>
-        <p>Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.</p>
+        <div class="role" data-i18n="exp.r3">B.Eng, Software Engineering — Duy Tan University</div>
+        <div class="when" data-i18n="exp.w3">2015 — 2019 · Da Nang, Vietnam</div>
+        <p data-i18n-html="exp.p3">Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.</p>
       </div>
     </div>
   </div>
@@ -750,15 +750,57 @@ const FIGMA={
 };
 const WEBAPP={ "Octopus":"octopus", "SecuMap":"secumap", "Carter":"carter", "ProtectU":"protectu", "Nila Sphere":"nila", "Docteur Sirop":"docteur", "Octopush":"octopush", "Mentalia":"mentalia", "Barberz":"barberz", "ard":"ard", "Let Share":"letshare", "Swy'Eat":"swyeat", "Live-streaming social":"socialclub" };
 const WORLD={ "Docteur Sirop":"world-docteur", "SecuMap":"world-secumap" };  // immersive story-world pages
+/* ===== i18n for JS-rendered content (cards, filters, more) ===== */
+function Lx(){return document.documentElement.lang||'en';}
+const CATL={All:{vi:'Tất cả',fr:'Tout'},Mobility:{vi:'Di chuyển',fr:'Mobilité'},Safety:{vi:'An toàn',fr:'Sécurité'},'Health & AI':{vi:'Sức khỏe & AI',fr:'Santé & IA'},Sports:{vi:'Thể thao',fr:'Sport'},Social:{vi:'Mạng xã hội',fr:'Social'},Marketplace:{vi:'Thương mại',fr:'Marketplace'},Lifestyle:{vi:'Đời sống',fr:'Style de vie'}};
+function tcat(c){var l=Lx();return l==='en'?c:((CATL[c]&&CATL[c][l])||c);}
+const UIL={preview:{en:'Live preview',vi:'Xem thử',fr:'Aperçu'},world:{en:'Enter the world',vi:'Vào thế giới',fr:'Entrer'},b2b:{en:'B2B / internal — not on public stores',vi:'B2B / nội bộ — không lên store công khai',fr:'B2B / interne — pas sur les stores'}};
+function ui(k){return UIL[k][Lx()]||UIL[k].en;}
+const PROJL={
+ "Octopus":{role:{vi:'Lead dev mobile · 2026–nay',fr:'Lead dév mobile · 2026–présent'},d:{vi:'Super-app đa dịch vụ: đặt xe, giao hàng hỏa tốc nhiều ngành (đồ ăn, hoa, công nghệ, dịch vụ tại nhà) và điều phối tài xế — app khách & app tài xế riêng, thu nhập/đối soát và gói premium.',fr:'Super-app multiservices : VTC, livraison express multi-catégories (food, fleurs, high-tech, services à domicile) et dispatch coursier — apps client & chauffeur séparées, revenus/versements et abonnements premium.'}},
+ "Ynstant":{role:{vi:'Dev Flutter · 2023',fr:'Dév Flutter · 2023'},d:{vi:'App đi chung xe hằng ngày tại Pháp, 0% phí dịch vụ: đăng chuyến dưới 30s, nhận đặt từ hành khách đã xác minh, đặt tức thì / tạo cảnh báo chuyến. Ghép chuyến real-time, nhắn tin trong app, tính giá theo quãng đường.',fr:'Covoiturage quotidien en France, 0 % de frais : publiez un trajet en moins de 30 s, recevez des réservations de passagers vérifiés, réservez en un clic / créez des alertes. Matching en temps réel, messagerie intégrée et tarif au kilomètre.'}},
+ "SecuMap":{role:{vi:'Dev duy nhất · 2023–2025',fr:'Seul dév · 2023–2025'},d:{vi:'GPS an toàn 100% của Pháp: bản đồ nguy hiểm cộng đồng cập nhật real-time, tự định tuyến lại để né các điểm nguy hiểm. Báo sự cố ẩn danh, lưu địa chỉ — được báo chí Pháp đưa tin (Le JDD).',fr:"GPS sécurité 100 % français : carte des dangers collaborative en temps réel qui recalcule l’itinéraire pour éviter les risques signalés. Signalement anonyme, adresses enregistrées — couvert par la presse nationale (Le JDD)."}},
+ "Docteur Sirop":{role:{vi:'Dev duy nhất · 2025–2026',fr:'Seul dév · 2025–2026'},d:{vi:'Bạn đồng hành AI cho trẻ nằm viện: trò chuyện bằng giọng nói real-time với bác sĩ AI, theo dõi tâm trạng mỗi ngày, “espace zen” thư giãn, truyện tương tác và hệ thưởng giúp trẻ chủ động tham gia điều trị.',fr:'Compagnon santé IA pour enfants hospitalisés : conversations vocales en temps réel avec un docteur IA, check-in d’humeur quotidien, un « espace zen », des histoires interactives et un système de récompenses qui rend l’enfant acteur de ses soins.'}},
+ "Carter":{role:{vi:'Lead dev · 2022–2024',fr:'Lead dév · 2022–2024'},d:{vi:'App CLB bóng rổ cho quản lý, HLV và cầu thủ: danh sách & vị trí, sự kiện và buổi tập, điểm danh và bảng xếp hạng, thư viện bài tập và bảng chiến thuật, kèm hệ thưởng play-to-earn.',fr:'App de club de basket pour managers, coachs et joueurs : effectifs & postes, événements et entraînements, présences et classements, bibliothèque d’exercices et tableaux tactiques, plus un système de récompenses play-to-earn.'}},
+ "KEYM":{role:{vi:'Dev Flutter · 2023',fr:'Dév Flutter · 2023'},d:{vi:'Mạng xã hội âm nhạc “của nghệ sĩ, vì nghệ sĩ” — kết nối nhạc công, ca sĩ, producer và kỹ sư âm thanh, dựng portfolio đa định dạng (audio + hình ảnh), tìm tài năng theo kỹ năng và phong cách nghệ thuật.',fr:'Réseau social musical « par les artistes, pour les artistes » — connectez musiciens, chanteurs, producteurs et ingénieurs du son, créez un portfolio multi-format (audio + visuel) et cherchez des talents par compétences et univers artistique.'}},
+ "Spaurt":{role:{vi:'Dev duy nhất · 2025–2026',fr:'Seul dév · 2025–2026'},d:{vi:'App tập luyện thể thao hybrid với huấn luyện cá nhân hóa quanh 4 trụ cột: bài tập theo số rep và thời gian, thư viện routine, theo dõi 1-rep-max & PR, bài test thể lực, mục tiêu, thống kê và lịch tập.',fr:'App d’entraînement sportif hybride avec coaching personnalisé autour de quatre piliers : routines au nombre de reps et au temps, bibliothèque de routines, suivi 1-rep-max & PR, tests physiques, objectifs, statistiques et planning.'}},
+ "ProtectU":{role:{vi:'Dev duy nhất · 2025',fr:'Seul dév · 2025'},d:{vi:'App an toàn công dân (Pháp) để thấy, hiểu và hành động trước tình huống nguy hiểm real-time: bản đồ sự cố tương tác, dẫn tới nơi an toàn gần nhất, chia sẻ vị trí trực tiếp và nhắn tin bảo mật cho người thân tin cậy.',fr:'App de sécurité citoyenne (France) pour voir, comprendre et agir face aux situations à risque en temps réel : carte d’incidents interactive, orientation vers les lieux sûrs proches, partage de position en direct et messagerie sécurisée vers des contacts de confiance.'}},
+ "Mentalia":{role:{vi:'Lead dev · 2023–2024',fr:'Lead dév · 2023–2024'},d:{vi:'App chuẩn bị tinh thần & sức khỏe tâm lý dùng AI: trò chuyện với coach ảo AI tận tâm, theo luồng câu hỏi gợi ý nội dung audio / PDF / video, với đề xuất AI tạo sinh tiến hóa theo tiến trình của bạn.',fr:'App de préparation mentale & bien-être propulsée par l’IA : échangez avec un coach virtuel IA bienveillant, suivez un parcours par questions qui suggère du contenu audio / PDF / vidéo, avec des recommandations d’IA générative qui évoluent avec vos progrès.'}},
+ "Nila Sphere":{role:{vi:'Dev duy nhất · 2026',fr:'Seul dév · 2026'},d:{vi:'App dấu chân carbon hướng tới trung hòa carbon: đo tác động CO₂ của việc hằng ngày, theo dõi phát thải tuần và điểm carbon, hoàn thành thử thách xanh để nhận quà từ đối tác, và chia sẻ thành tích xanh lên feed.',fr:'App d’empreinte carbone pour la neutralité carbone : mesurez l’impact CO₂ des tâches du quotidien, suivez vos émissions hebdo et un score carbone, relevez des défis verts pour gagner des cadeaux partenaires et partagez vos exploits éco sur un fil social.'}},
+ "Beauty Squad":{role:{vi:'Dev duy nhất · 2024–2025',fr:'Seul dév · 2024–2025'},d:{vi:'Marketplace làm đẹp tại nhà theo yêu cầu (khách + salon): đặt chuyên gia tóc, trang điểm, da, massage, nail và hơn nữa — đặt & thanh toán nhiều bước (Stripe / PayPal / ví), thư viện ảnh và chat trong app.',fr:'Marketplace beauté à domicile à la demande (client + salon) : réservez des pros pour coiffure, maquillage, soins, massage, ongles et plus — réservation & paiement multi-étapes (Stripe / PayPal / wallet), galeries et chat intégré.'}},
+ "Octopush":{role:{vi:'Lead dev · 2024–2026',fr:'Lead dév · 2024–2026'},d:{vi:'Messenger hội thoại khách hàng cho nền tảng đa kênh/SMS Octopush (Marseille): cả team xử lý mọi hội thoại khách và live chat trong một app, có push notification.',fr:'Messagerie de conversations clients pour la plateforme multicanal/SMS Octopush (Marseille) : l’équipe gère toutes les conversations clients et le live chat depuis une seule app, avec notifications push.'}}
+};
+function prole(p){var l=Lx(),t=PROJL[p.n];return (l!=='en'&&t&&t.role&&t.role[l])||p.role;}
+function pdesc(p){var l=Lx(),t=PROJL[p.n];return (l!=='en'&&t&&t.d&&t.d[l])||p.d;}
+const MOREL={
+ "Live-streaming social":{vi:'Agora · cộng đồng · video trực tiếp',fr:'Agora · communautés · vidéo live'},
+ "Swy’Eat":{vi:'mạng xã hội đánh giá nhà hàng',fr:'réseau social d’avis resto'},
+ "Kimia":{vi:'marketplace deal du lịch P2P',fr:'marketplace de bons plans voyage P2P'},
+ "UAVLog":{vi:'nhật ký bay drone · offline',fr:'carnet de vol drone · hors-ligne'},
+ "Arage":{vi:'sự kiện địa phương trên bản đồ',fr:'événements locaux sur une carte'},
+ "Let Share":{vi:'chia sẻ dự án sinh viên (vuốt)',fr:'partage de projets étudiants (swipe)'},
+ "Âmes Sœurs":{vi:'hẹn hò địa phương · gom cụm bản đồ',fr:'rencontres locales · clustering carte'},
+ "Barberz":{vi:'đặt lịch barber (khách + thợ)',fr:'réservation barbier (client + pro)'},
+ "ShapeUp":{vi:'đặt thợ làm tóc theo yêu cầu',fr:'réservation coiffeur à la demande'},
+ "ard":{vi:'giám sát muỗi / y tế công cộng',fr:'surveillance moustiques / santé publique'},
+ "Event":{vi:'quản lý sự kiện · thư viện ảnh',fr:'gestion d’événements · galeries'},
+ "Adress":{vi:'app khách · quét QR & giấy tờ',fr:'app visiteurs · scan QR & pièce d’identité'},
+ "Dear":{vi:'app cho cặp đôi',fr:'app pour couples'},
+ "Sentinelle":{vi:'an toàn / giám sát',fr:'sécurité / surveillance'},
+ "Flutter Base":{vi:'kiến trúc nội bộ · 20+ app',fr:'architecture maison · 20+ apps'},
+ "Medical clinic":{vi:'quản lý phòng khám (độc lập)',fr:'gestion de clinique (indépendant)'}
+};
+function mdesc(name,en){var l=Lx(),t=MOREL[name];return (l!=='en'&&t&&t[l])||en;}
+
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
   const links=p.links.length?p.links.map(l=>`<a class="plink" href="${l[1]}" target="_blank" rel="noopener" data-track="${p.n}: ${l[0]}">${l[0]} ↗</a>`).join('')
-    :'<span class="nostore">B2B / internal — not on public stores</span>';
+    :`<span class="nostore">${ui('b2b')}</span>`;
   return `<article class="pcard" data-cat="${p.cat}">
-    <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
-    <div class="meta">${p.role}</div>${badge}
-    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${WORLD[p.n]?`<a class="plink world" href="${WORLD[p.n]}" data-track="${p.n}: Enter world"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.9 5.6L19.5 9l-5.6 1.9L12 16l-1.9-5.1L4.5 9l5.6-1.4z"/></svg>Enter the world</a>`:''}${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Live preview</button>`:''}${links}</div>
+    <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${tcat(p.cat)}</span></div></div>
+    <div class="meta">${prole(p)}</div>${badge}
+    <p>${pdesc(p)}</p><div class="ptech">${tech}</div><div class="plinks">${WORLD[p.n]?`<a class="plink world" href="${WORLD[p.n]}" data-track="${p.n}: Enter world"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.9 5.6L19.5 9l-5.6 1.9L12 16l-1.9-5.1L4.5 9l5.6-1.4z"/></svg>${ui('world')}</a>`:''}${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>${ui('preview')}</button>`:''}${links}</div>
   </article>`;
 }
 function bind(){ // spotlight + 3D tilt
@@ -772,15 +814,18 @@ function bind(){ // spotlight + 3D tilt
     c.addEventListener('mouseleave',()=>{c.style.transition='transform .55s cubic-bezier(.2,.8,.25,1)';c.style.transform='';});
   });
 }
-function render(cat){grid.innerHTML=PROJECTS.filter(p=>cat==='All'||p.cat===cat).map(card).join('');bind();}
+let activeCat='All';
+function render(cat){activeCat=cat;grid.innerHTML=PROJECTS.filter(p=>cat==='All'||p.cat===cat).map(card).join('');bind();}
 const fbox=document.getElementById('filters');
-fbox.innerHTML=CATS.map((c,i)=>`<button class="filt ${i===0?'active':''}" data-c="${c}">${c}</button>`).join('');
+function renderFilters(){fbox.innerHTML=CATS.map(c=>`<button class="filt ${c===activeCat?'active':''}" data-c="${c}">${tcat(c)}</button>`).join('');}
 fbox.addEventListener('click',e=>{const b=e.target.closest('.filt');if(!b)return;
   fbox.querySelectorAll('.filt').forEach(x=>x.classList.remove('active'));b.classList.add('active');render(b.dataset.c);});
-render('All');
-document.getElementById('more').innerHTML=MORE.map(m=>{var w=WEBAPP[m[0]];
-  return w?`<span class="mpill figbtn live" data-fig="${m[0]}" data-track="More: ${m[0]}"><b>${m[0]}</b> <span>— ${m[1]}</span><svg class="meye" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>`
-       :`<span class="mpill"><b>${m[0]}</b> <span>— ${m[1]}</span></span>`;}).join('');
+const moreBox=document.getElementById('more');
+function renderMore(){moreBox.innerHTML=MORE.map(m=>{var w=WEBAPP[m[0]];var d=mdesc(m[0],m[1]);
+  return w?`<span class="mpill figbtn live" data-fig="${m[0]}" data-track="More: ${m[0]}"><b>${m[0]}</b> <span>— ${d}</span><svg class="meye" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>`
+       :`<span class="mpill"><b>${m[0]}</b> <span>— ${d}</span></span>`;}).join('');}
+function renderWork(){renderFilters();render(activeCat);renderMore();}
+renderWork();
 document.getElementById('yr').textContent=new Date().getFullYear();
 
 // theme toggle
@@ -1051,10 +1096,27 @@ if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceW
 
 // ===== i18n EN/VI/FR =====
 const I18N={"nav.sayhi": {"en": "Say hi", "vi": "Chào nhé", "fr": "Dis bonjour"}, "nav.about": {"en": "About", "vi": "Giới thiệu", "fr": "À propos"}, "nav.play": {"en": "Play", "vi": "Chơi", "fr": "Jouer"}, "nav.skills": {"en": "Skills", "vi": "Kỹ năng", "fr": "Compétences"}, "nav.work": {"en": "Work", "vi": "Dự án", "fr": "Projets"}, "nav.experience": {"en": "Experience", "vi": "Kinh nghiệm", "fr": "Parcours"}, "nav.activity": {"en": "Activity", "vi": "Hoạt động", "fr": "Activité"}, "nav.game": {"en": "🎮 Game", "vi": "🎮 Game", "fr": "🎮 Jeu"}, "nav.contact": {"en": "Contact", "vi": "Liên hệ", "fr": "Contact"}, "hero.hello": {"en": "<span class=\"wave\">👋</span> &nbsp;Hey, I'm <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>", "vi": "<span class=\"wave\">👋</span> &nbsp;Chào, mình là <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>", "fr": "<span class=\"wave\">👋</span> &nbsp;Salut, moi c'est <b>Bow</b> &mdash; <span class=\"mono\">Tuan&nbsp;Nguyen</span>"}, "hero.h1": {"en": "I make Flutter apps<br>people <span class=\"gtext\">actually use</span>.", "vi": "Mình làm app Flutter<br>mà người ta <span class=\"gtext\">thật sự dùng</span>.", "fr": "Je fais des apps Flutter<br>que les gens <span class=\"gtext\">utilisent vraiment</span>."}, "hero.lead": {"en": "Flutter / Mobile dev, 6+ years, mostly shipping real apps end-to-end — architecture, UI, the annoying store stuff, all of it. <strong>30+ apps</strong> out there; one of them (a carpooling app) crossed <strong>500K+ downloads</strong>.", "vi": "Dev Flutter / Mobile, 6+ năm, chủ yếu làm app thật từ đầu đến cuối — kiến trúc, UI, mấy thứ lằng nhằng lên store, tất tần tật. <strong>30+ app</strong> ngoài kia; một cái (app đi chung xe) đã vượt <strong>500K+ lượt tải</strong>.", "fr": "Dev Flutter / mobile, 6+ ans, surtout à livrer de vraies apps de A à Z — archi, UI, les corvées de store, tout. <strong>30+ apps</strong> publiées ; l'une d'elles (covoiturage) a dépassé <strong>500K+ téléchargements</strong>."}, "hero.avail": {"en": "Available for work · Da Nang / Remote", "vi": "Sẵn sàng nhận việc · Đà Nẵng / Remote", "fr": "Disponible · Da Nang / à distance"}, "stat.apps": {"en": "Apps shipped", "vi": "App đã ship", "fr": "Apps livrées"}, "stat.dl": {"en": "Downloads (top app)", "vi": "Lượt tải (app top)", "fr": "Téléchargements (top)"}, "stat.yrs": {"en": "Years experience", "vi": "Năm kinh nghiệm", "fr": "Ans d'expérience"}, "stat.live": {"en": "Live on App Store / Play", "vi": "Có trên App Store / Play", "fr": "Sur App Store / Play"}, "cta.work": {"en": "See the work ↓", "vi": "Xem dự án ↓", "fr": "Voir les projets ↓"}, "cta.cv": {"en": "📄 Résumé", "vi": "📄 CV", "fr": "📄 CV"}, "about.title": {"en": "About me — the short version", "vi": "Đôi dòng về mình", "fr": "Moi, en bref"}, "about.p1": {"en": "I'm a Flutter / Mobile developer based in <strong>Da Nang, Vietnam</strong>. For 6+ years I've been the <strong>lead or sole developer</strong> on 30+ production apps — ride-hailing, delivery, food, health, safety, beauty, sports, social… a bit of everything, honestly.", "vi": "Mình là dev Flutter / Mobile ở <strong>Đà Nẵng, Việt Nam</strong>. Suốt 6+ năm, mình là <strong>lead hoặc dev duy nhất</strong> của 30+ app production — đặt xe, giao hàng, ẩm thực, y tế, an toàn, làm đẹp, thể thao, mạng xã hội… nói thật là đủ thể loại.", "fr": "Développeur Flutter / mobile basé à <strong>Da Nang, Vietnam</strong>. Depuis 6+ ans, je suis <strong>lead ou seul développeur</strong> sur 30+ apps en production — VTC, livraison, food, santé, sécurité, beauté, sport, social… un peu de tout, franchement."}, "about.p2": {"en": "At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT &ldquo;Octopus&rdquo; super-app, and I <strong>wrote the shared Flutter base</strong> that 20+ of our apps are built on — which turned &ldquo;a few weeks of setup&rdquo; into &ldquo;start today.&rdquo;", "vi": "Tại <strong>Digital Unicorn</strong>, mình dẫn mảng mobile của super-app DUOCT &ldquo;Octopus&rdquo;, và <strong>tự viết bộ base Flutter dùng chung</strong> mà 20+ app của bọn mình fork từ đó — biến &ldquo;vài tuần dựng dự án&rdquo; thành &ldquo;bắt đầu ngay hôm nay.&rdquo;", "fr": "Chez <strong>Digital Unicorn</strong>, je pilote le mobile du super-app DUOCT &ldquo;Octopus&rdquo;, et j'ai <strong>écrit la base Flutter partagée</strong> dont héritent 20+ de nos apps — &laquo;&nbsp;quelques semaines de setup&nbsp;&raquo; devenues &laquo;&nbsp;on commence aujourd'hui.&nbsp;&raquo;"}, "about.p3": {"en": "I'm not a fan of over-engineering. I'd rather ship something that works, feels right, and won't be a nightmare to maintain in six months. The unglamorous parts matter too — clean MVVM, real-time that doesn't stutter, payments that don't break, builds that hit the store on time.", "vi": "Mình không thích over-engineering. Thà ship thứ chạy được, dùng đã tay, và sáu tháng sau không thành ác mộng bảo trì. Mấy phần &ldquo;không hào nhoáng&rdquo; cũng quan trọng — MVVM gọn, real-time không giật, thanh toán không lỗi, build lên store đúng hẹn.", "fr": "Je ne suis pas fan du sur-engineering. Je préfère livrer ce qui marche, fait du bien, et ne sera pas un cauchemar à maintenir dans six mois. Le &laquo;&nbsp;pas glamour&nbsp;&raquo; compte aussi — MVVM propre, temps réel sans accroc, paiements fiables, builds livrés à temps."}, "skills.title": {"en": "My stack", "vi": "Bộ đồ nghề", "fr": "Ma stack"}, "skills.sub": {"en": "The stuff I actually reach for day to day — not a buzzword checklist.", "vi": "Những thứ mình dùng thật mỗi ngày — không phải danh sách buzzword cho oai.", "fr": "Ce que j'utilise vraiment au quotidien — pas une checklist de buzzwords."}, "work.title": {"en": "Stuff I've shipped", "vi": "Mình đã ship gì", "fr": "Ce que j'ai livré"}, "work.sub": {"en": "A chunk of the 30+ apps I've worked on. Most are live — tap one and judge for yourself.", "vi": "Một phần trong 30+ app mình từng làm. Đa số đang sống — bấm vào thử và tự đánh giá nhé.", "fr": "Une partie des 30+ apps sur lesquelles j'ai bossé. La plupart sont en ligne — testez et jugez."}, "activity.title": {"en": "I commit. A lot.", "vi": "Mình commit. Khá nhiều.", "fr": "Je commite. Beaucoup."}, "activity.sub": {"en": "Real activity from my team's GitLab over the last year — pushes, merge requests, reviews, issues, comments. Nothing padded.", "vi": "Hoạt động thật trên GitLab của team năm qua — push, merge request, review, issue, comment. Không độn.", "fr": "Activité réelle sur le GitLab de l'équipe sur un an — commits, merge requests, revues, issues, commentaires. Rien de gonflé."}, "play.title": {"en": "No reason. Just fun.", "vi": "Chẳng vì gì. Cho vui thôi.", "fr": "Sans raison. Juste pour le fun."}, "play.sub": {"en": "An app is a thousand small things stuck together. So is this — drag your cursor through it.", "vi": "Một cái app là cả nghìn thứ nhỏ ghép lại. Cái này cũng vậy — rê chuột qua thử đi.", "fr": "Une app, c'est mille petites choses assemblées. Ceci aussi — passez le curseur dessus."}, "experience.title": {"en": "Where I've worked", "vi": "Mình đã làm ở đâu", "fr": "Où j'ai travaillé"}, "contact.title": {"en": "Want to work together? <span class=\"gtext\">Let's talk.</span>", "vi": "Muốn làm việc cùng nhau? <span class=\"gtext\">Nhắn mình nhé.</span>", "fr": "Envie de bosser ensemble ? <span class=\"gtext\">Écrivez-moi.</span>"}, "contact.p": {"en": "Open to Flutter / mobile roles and the odd freelance project. Email's the fastest way — I usually reply within a day (faster if I'm avoiding a bug).", "vi": "Mình mở cho vị trí Flutter / mobile và thi thoảng freelance. Email là nhanh nhất — thường trả lời trong ngày (nhanh hơn nếu đang trốn một con bug).", "fr": "Ouvert aux postes Flutter / mobile et à un freelance de temps en temps. L'e-mail est le plus rapide — je réponds sous 24 h (plus vite si je fuis un bug)."}};
+Object.assign(I18N,{
+ "more.heading":{en:"+ more apps I’ve built",vi:"+ app khác mình từng làm",fr:"+ d’autres apps que j’ai faites"},
+ "sk.c1":{en:"Mobile & Languages",vi:"Mobile & Ngôn ngữ",fr:"Mobile & Langages"},
+ "sk.c2":{en:"Architecture & State",vi:"Kiến trúc & State",fr:"Architecture & State"},
+ "sk.c3":{en:"Realtime, Maps & AI",vi:"Real-time, Bản đồ & AI",fr:"Temps réel, Cartes & IA"},
+ "sk.c4":{en:"Backend, Payments & Ops",vi:"Backend, Thanh toán & Ops",fr:"Backend, Paiements & Ops"},
+ "exp.r1":{en:"Flutter / Mobile Developer — Digital Unicorn",vi:"Dev Flutter / Mobile — Digital Unicorn",fr:"Développeur Flutter / mobile — Digital Unicorn"},
+ "exp.w1":{en:"2022 — Present · mobile & web agency (FR / VN)",vi:"2022 — nay · agency mobile & web (FR / VN)",fr:"2022 — présent · agence mobile & web (FR / VN)"},
+ "exp.p1":{en:'Lead developer of the DUOCT &ldquo;Octopus&rdquo; super-app (Flutter + Next.js + Supabase). Sole or lead developer on 25+ production apps, several published to the stores. Authored the company\'s shared Flutter base architecture adopted by 20+ apps.',vi:'Lead dev của super-app DUOCT &ldquo;Octopus&rdquo; (Flutter + Next.js + Supabase). Dev duy nhất hoặc lead trên 25+ app production, nhiều app đã lên store. Tự viết bộ base Flutter dùng chung của công ty, 20+ app áp dụng.',fr:'Lead développeur du super-app DUOCT &laquo;&nbsp;Octopus&nbsp;&raquo; (Flutter + Next.js + Supabase). Seul ou lead développeur sur 25+ apps en production, plusieurs publiées sur les stores. Auteur de la base Flutter partagée de l\'entreprise, adoptée par 20+ apps.'},
+ "exp.r2":{en:"Flutter Developer — Freelance / Independent",vi:"Dev Flutter — Freelance / Tự do",fr:"Développeur Flutter — Freelance / indépendant"},
+ "exp.w2":{en:"2020 — 2022",vi:"2020 — 2022",fr:"2020 — 2022"},
+ "exp.p2":{en:'Built mobile apps as independent projects — including a medical / clinic management app — and a range of Flutter prototypes, while establishing the MVVM base architecture later reused at scale.',vi:'Làm app mobile theo dự án độc lập — gồm một app quản lý phòng khám / y tế — và nhiều prototype Flutter, đồng thời dựng kiến trúc base MVVM sau này tái dùng ở quy mô lớn.',fr:'Développement d\'apps mobiles en projets indépendants — dont une app de gestion médicale / clinique — et divers prototypes Flutter, tout en posant l\'architecture de base MVVM réutilisée plus tard à grande échelle.'},
+ "exp.r3":{en:"B.Eng, Software Engineering — Duy Tan University",vi:"Kỹ sư phần mềm — ĐH Duy Tân",fr:"Ingénieur logiciel — Université Duy Tan"},
+ "exp.w3":{en:"2015 — 2019 · Da Nang, Vietnam",vi:"2015 — 2019 · Đà Nẵng, Việt Nam",fr:"2015 — 2019 · Da Nang, Vietnam"},
+ "exp.p3":{en:'Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.',vi:'Bằng kỹ sư phần mềm; bắt đầu làm app Flutter và các pattern MVVM định hình sự nghiệp của mình.',fr:'Diplôme d\'ingénieur logiciel ; premiers pas avec Flutter et les patterns MVVM qui ont façonné ma carrière.'}
+});
 function setLang(l){localStorage.setItem('lang',l);document.documentElement.lang=l;
   document.querySelectorAll('[data-i18n]').forEach(e=>{const t=I18N[e.dataset.i18n];if(t&&t[l]!=null)e.textContent=t[l];});
   document.querySelectorAll('[data-i18n-html]').forEach(e=>{const t=I18N[e.dataset.i18nHtml];if(t&&t[l]!=null)e.innerHTML=t[l];});
-  document.querySelectorAll('#langsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));}
+  document.querySelectorAll('#langsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  if(typeof renderWork==='function')renderWork();}
 document.getElementById('langsel').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setLang(b.dataset.l);});
 setLang(localStorage.getItem('lang')||'en');
 
