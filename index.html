@@ -394,6 +394,18 @@
   .chip{display:inline-flex;align-items:center;gap:6px;transition:transform .16s,box-shadow .16s,border-color .16s,color .16s;}
   .chip .cico{width:14px;height:14px;object-fit:contain;flex:none;}
   .chip:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3);}
+  /* figma UI preview */
+  .plink.figbtn{background:var(--grad);color:#0a2009;border:none;font-weight:700;cursor:pointer;font-family:inherit;}
+  .figpv{position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,5,.8);backdrop-filter:blur(6px);}
+  .figpv.open{display:flex;animation:gfade .25s;}
+  .figpv-card{background:var(--card);border:1px solid var(--cardb);border-radius:18px;overflow:hidden;width:min(480px,94vw);box-shadow:0 30px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;}
+  .figpv-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);}
+  .figpv-t{font-weight:700;font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .figpv-open{font-size:12px;color:var(--g2);text-decoration:none;border:1px solid var(--cardb);padding:6px 11px;border-radius:9px;white-space:nowrap;}
+  .figpv-x{border:none;background:var(--chip);color:var(--text);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:14px;}
+  .figpv-body{position:relative;height:80vh;max-height:840px;background:var(--bg2);}
+  .figpv-body iframe{width:100%;height:100%;border:0;display:block;}
+  .figpv-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;}
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
@@ -437,6 +449,25 @@
     var sec=el.closest('section'); var area = sec ? (sec.id||'section') : (el.closest('nav')?'nav':'page');
     window.track('ui_click', {label: label||'(empty)', target_type:type, area:area, link_url:(''+href).slice(0,100)}); try{ addDoc(collection(db,'events'),{ ts:serverTimestamp(), label:(label||'(empty)').slice(0,80), area:area, page:location.pathname, link:(''+href).slice(0,120) }); }catch(_){ }
   }, true);
+
+// ===== Figma UI preview =====
+(function(){
+  const m=document.createElement('div'); m.id='figpv'; m.className='figpv';
+  m.innerHTML='<div class="figpv-card"><div class="figpv-head"><span class="figpv-t" id="figpv-t">Preview</span><a class="figpv-open" id="figpv-open" target="_blank" rel="noopener">Mở Figma ↗</a><button class="figpv-x" id="figpv-x" aria-label="Close">✕</button></div><div class="figpv-body"><div class="figpv-load" id="figpv-load">Đang tải thiết kế…</div><iframe id="figpv-if" allowfullscreen loading="lazy"></iframe></div></div>';
+  document.body.appendChild(m);
+  const ifr=m.querySelector('#figpv-if'), load=m.querySelector('#figpv-load');
+  function close(){ m.classList.remove('open'); ifr.src='about:blank'; }
+  m.querySelector('#figpv-x').onclick=close;
+  m.addEventListener('click',e=>{ if(e.target===m) close(); });
+  addEventListener('keydown',e=>{ if(e.key==='Escape'&&m.classList.contains('open')) close(); });
+  ifr.addEventListener('load',()=>{ if(ifr.src && ifr.src.indexOf('figma')>-1) load.style.display='none'; });
+  document.addEventListener('click',function(e){ const b=e.target.closest&&e.target.closest('.figbtn'); if(!b) return;
+    const name=b.getAttribute('data-fig'); const url=(typeof FIGMA!=='undefined')&&FIGMA[name]; if(!url) return;
+    m.querySelector('#figpv-t').textContent=name; m.querySelector('#figpv-open').href=url;
+    load.style.display='grid'; ifr.src='https://www.figma.com/embed?embed_host=share&url='+encodeURIComponent(url);
+    m.classList.add('open');
+  });
+})();
 </script>
 </head>
 <body>
@@ -701,6 +732,10 @@ const CATS=["All","Mobility","Safety","Health & AI","Sports","Social","Marketpla
 
 const grid=document.getElementById('grid');
 const IMG={"Ynstant": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1b/cf/d6/1bcfd60b-4f0d-48d4-5b8b-72eb5bd70ccf/AppIcon-prod-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Carter": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/76/c1/7b/76c17b0d-1a78-d39a-ae43-b36b30703467/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/512x512bb.jpg", "ProtectU": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8c/a5/36/8ca5365a-fc98-3726-14f4-e312b27863f1/AppIcon-production-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Nila Sphere": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4b/2a/6b/4b2a6b64-150e-acef-8af6-fe486a185c7c/AppIcon-production-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg", "Spaurt": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/25/ff/33/25ff339a-79ef-dbee-5fb3-41e51d2f05c5/AppIcon-production-0-0-1x_U007emarketing-0-11-0-0-85-220.png/512x512bb.jpg", "Octopush": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/39/4f/1e/394f1ec9-fad7-492e-bbb1-5c272e438bd7/AppIcon-production-0-0-1x_U007emarketing-0-11-0-0-85-220.png/512x512bb.jpg", "SecuMap": "https://play-lh.googleusercontent.com/Xy5bWpEq0APHNdesM4QW2xLbw-CA0JbNwbRpee-wCqGjwcR0XUQyA1HKT4M4g7GHjfwWHYLBEd43glWqdCualQ", "Docteur Sirop": "https://play-lh.googleusercontent.com/VGCm61LfX89MaIQQ-9W6sakueDzYzjoUSzYjs3HmVxOxgwuIMc2FHRiYO9DMC0Zi-KimIofdSoyVK4a1hW5F", "Mentalia": "https://play-lh.googleusercontent.com/tlLU7smTubxVpb1KvxZFKGx-O2H3OHwbU6aKWJm6E297ZwDvt8yad1MMrDU4VZ9mS7de5AWdEWYFi3BzkmqV", "KEYM": "https://play-lh.googleusercontent.com/AaPVvKcWmlNcPyA7_2TvFz8ZbNzcI3U1ZaRtmKOKtWwu6gHFU5UABsF9q7Jg_U2Ysvo=s200", "Beauty Squad": "https://play-lh.googleusercontent.com/TTYwjVpzC0Qjntj9-wLSoqVUIqmQwz4LdhS1RtrYTMlGWL2fHW_b5FI82iLvQ-Dj7EE=s200"};
+const FIGMA={
+  // "Tên app (đúng như trong portfolio)": "link Figma share (Anyone with link can view)",
+  // ví dụ:  "Ynstant": "https://www.figma.com/proto/XXXXXXXX/Ynstant?node-id=1-2",
+};
 function card(p){
   const badge=p.badge?`<span class="badge ${p.flag?'flag':''}">${p.flag?'★ ':''}${p.badge}</span>`:'';
   const tech=p.tech.map(t=>`<span>${t}</span>`).join('');
@@ -709,7 +744,7 @@ function card(p){
   return `<article class="pcard" data-cat="${p.cat}">
     <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
     <div class="meta">${p.role}</div>${badge}
-    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${links}</div>
+    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${FIGMA[p.n]?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview">👁 Preview UI</button>`:''}${links}</div>
   </article>`;
 }
 function bind(){ // spotlight + 3D tilt
