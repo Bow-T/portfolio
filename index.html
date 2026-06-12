@@ -401,14 +401,12 @@
   .plink.figbtn{background:var(--grad);color:#0a2009;border:none;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
   .figpv{position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,5,.8);backdrop-filter:blur(6px);}
   .figpv.open{display:flex;animation:gfade .25s;}
-  .figpv-card{background:#0a0f0a;border:1px solid var(--cardb);border-radius:22px;overflow:hidden;width:min(412px,94vw);height:min(880px,93vh);box-shadow:0 30px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;}
-  .figpv-head{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);}
-  .figpv-t{font-weight:700;font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .figpv-open{font-size:12px;color:var(--g2);text-decoration:none;border:1px solid var(--cardb);padding:6px 11px;border-radius:9px;white-space:nowrap;}
-  .figpv-x{border:none;background:var(--chip);color:var(--text);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:14px;}
-  .figpv-body{position:relative;flex:1;min-height:0;background:#0a0f0a;}
+  .figpv-card{position:relative;background:#0a0f0a;border:1px solid var(--cardb);border-radius:28px;overflow:hidden;height:min(860px,92vh);aspect-ratio:0.462;max-width:94vw;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+  .figpv-open{position:absolute;top:12px;left:12px;z-index:3;font-size:11.5px;color:#fff;background:rgba(15,20,13,.66);backdrop-filter:blur(6px);padding:7px 12px;border-radius:20px;text-decoration:none;}
+  .figpv-x{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:none;background:rgba(15,20,13,.66);backdrop-filter:blur(6px);color:#fff;font-size:15px;cursor:pointer;}
+  .figpv-body{position:absolute;inset:0;background:#0a0f0a;}
   .figpv-body iframe{width:100%;height:100%;border:0;display:block;}
-  .figpv-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;}
+  .figpv-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;z-index:1;}
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
@@ -456,7 +454,7 @@
 // ===== Figma UI preview =====
 (function(){
   const m=document.createElement('div'); m.id='figpv'; m.className='figpv';
-  m.innerHTML='<div class="figpv-card"><div class="figpv-head"><span class="figpv-t" id="figpv-t">Preview</span><a class="figpv-open" id="figpv-open" target="_blank" rel="noopener">Mở Figma ↗</a><button class="figpv-x" id="figpv-x" aria-label="Close">✕</button></div><div class="figpv-body"><div class="figpv-load" id="figpv-load">Đang tải thiết kế…</div><iframe id="figpv-if" allowfullscreen loading="lazy"></iframe></div></div>';
+  m.innerHTML='<div class="figpv-card"><a class="figpv-open" id="figpv-open" target="_blank" rel="noopener">↗ Full</a><button class="figpv-x" id="figpv-x" aria-label="Close">✕</button><div class="figpv-body"><div class="figpv-load" id="figpv-load">Đang tải…</div><iframe id="figpv-if" allowfullscreen loading="lazy"></iframe></div></div>';
   document.body.appendChild(m);
   const ifr=m.querySelector('#figpv-if'), load=m.querySelector('#figpv-load');
   function close(){ m.classList.remove('open'); ifr.src='about:blank'; }
@@ -469,8 +467,7 @@
     const web=(typeof WEBAPP!=='undefined')&&WEBAPP[name];
     const fig=(typeof FIGMA!=='undefined')&&FIGMA[name];
     if(!web&&!fig) return;
-    m.querySelector('#figpv-t').textContent=name;
-    const op=m.querySelector('#figpv-open'); op.href=web?web:fig; op.textContent=web?'Mở tab mới ↗':'Mở Figma ↗';
+    const op=m.querySelector('#figpv-open'); op.href=web?web:fig; op.textContent=web?'↗ Full':'↗ Figma';
     load.style.display='grid';
     ifr.src=web?web:('https://www.figma.com/embed?embed_host=share&url='+encodeURIComponent(fig));
     m.classList.add('open');
