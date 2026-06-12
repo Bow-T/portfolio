@@ -67,7 +67,7 @@
   const db = getFirestore(app);
   let analytics=null; const q=[];
   window.track=(n,p)=>{ if(analytics) logEvent(analytics,n,p||{}); else q.push([n,p||{}]); };
-  addEventListener('keydown',function(e){ if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return; if(e.key&&e.key.length===1){ window.__ak=((window.__ak||'')+e.key.toLowerCase()).slice(-8); if(window.__ak.endsWith('admin')){ try{sessionStorage.setItem('adm','1');}catch(_){ } location.href='admin.html'; } } });
+  addEventListener('keydown',function(e){ if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return; if(e.key&&e.key.length===1){ window.__ak=((window.__ak||'')+e.key.toLowerCase()).slice(-8); if(window.__ak.endsWith('admin')){ try{sessionStorage.setItem('adm','1');}catch(_){ } location.href='admin'; } } });
   try{ if(!sessionStorage.getItem('vinfo')){ sessionStorage.setItem('vinfo','1');
   var base={ ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,120), path:location.pathname, ua:(navigator.userAgent||'').slice(0,180), lang:navigator.language||'', screen:(screen.width+'x'+screen.height) };
   try{ base.tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(_){ base.tz=''; }

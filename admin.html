@@ -70,7 +70,7 @@
     <span class="pill" id="hpill">Dashboard</span>
     <span class="grow"></span>
     <button class="ibtn hide" id="refresh">↻ Làm mới</button>
-    <a class="ibtn" href="index.html">← Trang chính</a>
+    <a class="ibtn" href="./">← Trang chính</a>
     <button class="ibtn hide" id="out">Đăng xuất</button>
   </header>
 
@@ -112,7 +112,7 @@
   E('out').onclick=()=>signOut(auth);
   E('refresh').onclick=()=>load();
   onAuthStateChanged(auth,user=>{ const inn=user&&user.email===ADMIN;
-    if(!inn && sessionStorage.getItem('adm')!=='1'){ location.replace('index.html'); return; }
+    if(!inn && sessionStorage.getItem('adm')!=='1'){ location.replace('./'); return; }
     E('login').classList.toggle('hide',inn);
     E('dash').classList.toggle('hide',!inn);
     E('out').classList.toggle('hide',!inn);

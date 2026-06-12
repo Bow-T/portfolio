@@ -413,7 +413,7 @@
   const db = getFirestore(app);
   let analytics=null; const q=[];
   window.track=(n,p)=>{ if(analytics) logEvent(analytics,n,p||{}); else q.push([n,p||{}]); };
-  addEventListener('keydown',function(e){ if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return; if(e.key&&e.key.length===1){ window.__ak=((window.__ak||'')+e.key.toLowerCase()).slice(-8); if(window.__ak.endsWith('admin')){ try{sessionStorage.setItem('adm','1');}catch(_){ } location.href='admin.html'; } } });
+  addEventListener('keydown',function(e){ if(/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return; if(e.key&&e.key.length===1){ window.__ak=((window.__ak||'')+e.key.toLowerCase()).slice(-8); if(window.__ak.endsWith('admin')){ try{sessionStorage.setItem('adm','1');}catch(_){ } location.href='admin'; } } });
   try{ if(!sessionStorage.getItem('vinfo')){ sessionStorage.setItem('vinfo','1');
   var base={ ref:(new URLSearchParams(location.search).get('ref'))||'', referrer:(document.referrer||'').slice(0,120), path:location.pathname, ua:(navigator.userAgent||'').slice(0,180), lang:navigator.language||'', screen:(screen.width+'x'+screen.height) };
   try{ base.tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(_){ base.tz=''; }
@@ -455,7 +455,7 @@
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
-      <a class="lnk" href="game.html" title="Offline runner game" data-track="Mở game offline" data-i18n="nav.game">🎮 Game</a>
+      <a class="lnk" href="game" title="Offline runner game" data-track="Mở game offline" data-i18n="nav.game">🎮 Game</a>
       <a class="lnk" href="#skills" data-i18n="nav.skills">Skills</a>
       <a class="lnk" href="#work" data-i18n="nav.work">Work</a>
       <a class="lnk" href="#experience" data-i18n="nav.experience">Experience</a>
@@ -477,7 +477,7 @@
     <p class="lead" data-i18n-html="hero.lead">A Flutter / Mobile developer with <strong>6+ years</strong> shipping production apps end-to-end — from architecture to the App&nbsp;Store. <strong>30+ apps</strong> across mobility, safety, health and social, including a carpooling app with <strong>500,000+ downloads</strong>.</p>
     <div class="cta">
       <a href="#work" class="btn" data-track="CTA: Xem dự án" data-i18n="cta.work">View my work ↓</a>
-      <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-track="CTA: Tải CV" data-i18n="cta.cv">📄 Résumé</a>
+      <a href="resume" target="_blank" rel="noopener" class="btn ghost" data-track="CTA: Tải CV" data-i18n="cta.cv">📄 Résumé</a>
       <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost" data-track="GitHub">GitHub ↗</a>
     </div>
     <div class="socials">
@@ -623,7 +623,7 @@
       <p data-i18n="contact.p">I'm open to Flutter / mobile roles and freelance projects. The fastest way to reach me is email — I usually reply within a day.</p>
       <div class="cbtns">
         <a href="mailto:nguyenvantuan4034@gmail.com" class="btn" data-track="Email"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> nguyenvantuan4034@gmail.com</a>
-        <a href="resume.html" target="_blank" rel="noopener" class="btn ghost" data-track="Tải CV (contact)">📄 Résumé</a>
+        <a href="resume" target="_blank" rel="noopener" class="btn ghost" data-track="Tải CV (contact)">📄 Résumé</a>
         <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener" class="btn ghost" data-track="LinkedIn">LinkedIn ↗</a>
         <a href="https://github.com/Bow-T" target="_blank" rel="noopener" class="btn ghost" data-track="GitHub">GitHub ↗</a>
       </div>
@@ -633,7 +633,7 @@
 </section>
 
 <footer>
-  <div class="wrap">Hand-coded by <span class="gtext">Bow</span> · © <span id="yr"></span> Tuan Nguyen · no frameworks, no page builders — just vanilla JS &amp; too much coffee ☕ <a href="secret.html" style="opacity:.18;color:inherit;text-decoration:none" title="?">&middot;</a></div>
+  <div class="wrap">Hand-coded by <span class="gtext">Bow</span> · © <span id="yr"></span> Tuan Nguyen · no frameworks, no page builders — just vanilla JS &amp; too much coffee ☕ <a href="secret" style="opacity:.18;color:inherit;text-decoration:none" title="?">&middot;</a></div>
 </footer>
 
 <script>
@@ -954,7 +954,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       modal.innerHTML='<div class="gcard"><div class="ghead"><h3>🚀 Ship your apps</h3><button class="gx" aria-label="Close">✕</button></div>'
         +'<div class="gstats"><span class="gpill">Shipped <b id="gsc">0</b>/'+NAMES.length+'</span><span class="gpill">⏱ <b id="gtm">0.0s</b></span><div class="gbar"><i id="gbar"></i></div></div>'
         +'<div id="gz"><div class="gtarget" id="gt">🚀 fling apps here</div></div>'
-        +'<div class="ghint">drag an app and <b>fling it up</b> into the store · or <a href="game.html" style="color:var(--g2)">🐾 play the offline runner →</a></div></div>';
+        +'<div class="ghint">drag an app and <b>fling it up</b> into the store · or <a href="game" style="color:var(--g2)">🐾 play the offline runner →</a></div></div>';
       document.body.appendChild(modal);
       zone=modal.querySelector('#gz');target=modal.querySelector('#gt');bar=modal.querySelector('#gbar');sc=modal.querySelector('#gsc');tm=modal.querySelector('#gtm');
       modal.querySelector('.gx').addEventListener('click',close);
