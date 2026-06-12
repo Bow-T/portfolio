@@ -10,8 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green:#2faa4a;--head1:#9ed79a;--head2:#d7f0d1;--sky:#cfeecb;
-    --hill:#8ccc85;--hill2:#bde3b9;--bldg1:#eab374;--bldg2:#f2c591;
+    --head1:#9ed79a;--head2:#dcf2d6;
     --cream:#fdf2ea;--gold1:#f2e2b9;--gold2:#ffd394;--brown:#673716;
     --or1:#e67a30;--or2:#ff9d00;--slate:#383d4b;--slate2:#414553;--mut:#9ea0a7;
     --cg:#cceac9;--cl:#e4dbfb;--cc:#fff3d0;--bg:#fff;
@@ -26,14 +25,22 @@
   .scroll{flex:1;overflow:auto;}.scroll::-webkit-scrollbar{display:none;}
 
   /* ---------- header ---------- */
-  .header{position:relative;background:linear-gradient(180deg,var(--head1) 0%,#bfe7b9 50%,var(--head2) 100%);
+  .header{position:relative;height:262px;background:linear-gradient(180deg,var(--head1) 0%,#c4ebbe 55%,var(--head2) 100%);
     padding:44px 18px 0;border-radius:0 0 30px 30px;overflow:hidden;}
-  .status{height:20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;color:#2a3b2e;}
+  .scene{position:absolute;inset:0;z-index:1;
+    background:url(assets/docteur/header_scene.png) center bottom/100% auto no-repeat;pointer-events:none;}
+  .cloud{position:absolute;z-index:1;background:#fbfffb;border-radius:50%;opacity:.85;}
+  .c1{width:50px;height:20px;left:26px;top:96px;box-shadow:24px 4px 0 -4px #fbfffb,48px -1px 0 -7px #fbfffb;}
+  .c2{width:38px;height:16px;right:34px;top:84px;box-shadow:18px 3px 0 -4px #fbfffb;}
+  .hero{position:absolute;left:50%;bottom:-2px;transform:translateX(-38%);height:178px;z-index:2;
+    filter:drop-shadow(0 8px 10px rgba(0,0,0,.16));}
+
+  .status{position:relative;z-index:4;height:20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:700;color:#2a3b2e;}
   .status .r{display:flex;gap:6px;align-items:center;font-size:12px;}
-  .topbar{display:flex;align-items:center;gap:11px;margin-top:14px;position:relative;z-index:4;}
+  .topbar{position:relative;z-index:4;display:flex;align-items:center;gap:11px;margin-top:14px;}
   .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(160deg,var(--gold1),var(--gold2));
-    display:grid;place-items:center;font-size:22px;box-shadow:0 4px 10px rgba(120,80,20,.25);position:relative;flex:none;}
-  .avatar .star{position:absolute;right:-3px;top:-3px;font-size:12px;}
+    box-shadow:0 4px 10px rgba(120,80,20,.25);position:relative;flex:none;overflow:hidden;display:grid;place-items:center;}
+  .avatar img{width:118%;height:118%;object-fit:cover;}
   .topbar .name{flex:1;font-family:'Baloo 2';font-weight:700;font-size:19px;color:#2c3a30;}
   .pills{display:flex;gap:8px;}
   .pill{display:flex;align-items:center;gap:6px;background:linear-gradient(160deg,var(--gold1),var(--gold2));
@@ -42,29 +49,9 @@
     display:grid;place-items:center;font-size:14px;}
   .pill b{font-family:'Baloo 2';font-weight:800;font-size:15px;color:var(--brown);}
 
-  .hero{position:relative;height:168px;margin-top:6px;}
-  .cloud{position:absolute;background:#fbfffb;border-radius:50%;opacity:.9;filter:blur(.3px);}
-  .c1{width:54px;height:22px;left:24px;top:18px;box-shadow:26px 4px 0 -4px #fbfffb,52px -2px 0 -7px #fbfffb;}
-  .c2{width:40px;height:18px;right:30px;top:8px;box-shadow:20px 3px 0 -4px #fbfffb;}
-  .skyline{position:absolute;left:0;right:0;bottom:34px;height:96px;display:flex;align-items:flex-end;gap:5px;padding:0 6px;opacity:.95;}
-  .bld{flex:1;border-radius:5px 5px 0 0;background:var(--bldg1);position:relative;}
-  .bld::after{content:"";position:absolute;inset:6px 5px auto 5px;height:60%;
-    background:repeating-linear-gradient(180deg,rgba(255,255,255,.5) 0 4px,transparent 4px 11px),
-               repeating-linear-gradient(90deg,rgba(255,255,255,.5) 0 4px,transparent 4px 12px);
-    background-blend-mode:lighten;border-radius:3px;opacity:.5;}
-  .hills{position:absolute;left:-10px;right:-10px;bottom:0;height:54px;background:var(--hill2);
-    border-radius:50% 50% 0 0/100% 100% 0 0;}
-  .hills::before{content:"";position:absolute;left:-20px;right:30%;bottom:0;height:42px;background:var(--hill);
-    border-radius:50% 50% 0 0/100% 100% 0 0;}
-  .moose{position:absolute;right:18px;bottom:8px;z-index:3;width:118px;height:140px;}
-  .moose .cape{position:absolute;left:50%;top:30px;width:78px;height:96px;transform:translateX(-50%);
-    background:linear-gradient(160deg,#e63d33,#b8261d);border-radius:40% 40% 50% 50%/30% 30% 100% 100%;
-    box-shadow:0 8px 16px rgba(180,40,30,.35);}
-  .moose .body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);font-size:96px;line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.15));}
-
   /* ---------- mood card ---------- */
-  .mood{margin:-22px 16px 0;position:relative;z-index:5;background:linear-gradient(180deg,#fff,var(--cream));
-    border-radius:22px;padding:16px;box-shadow:0 16px 34px rgba(60,90,55,.14);}
+  .mood{margin:-26px 16px 0;position:relative;z-index:5;background:linear-gradient(180deg,#fff,var(--cream));
+    border-radius:22px;padding:16px;box-shadow:0 16px 34px rgba(60,90,55,.16);}
   .mood .top{display:flex;align-items:center;gap:13px;}
   .mood .face{width:48px;height:48px;border-radius:15px;background:linear-gradient(150deg,#ffb45c,#d24940);
     display:grid;place-items:center;font-size:27px;flex:none;box-shadow:0 6px 14px rgba(210,73,64,.3);}
@@ -75,33 +62,31 @@
     background:linear-gradient(95deg,var(--or1),var(--or2));box-shadow:0 12px 22px rgba(230,122,48,.34);}
 
   /* ---------- activities ---------- */
-  .sec{display:flex;align-items:center;gap:9px;font-family:'Baloo 2';font-weight:700;font-size:24px;color:#272c3b;
-    padding:22px 20px 4px;}
+  .sec{display:flex;align-items:center;gap:9px;font-family:'Baloo 2';font-weight:700;font-size:24px;color:#272c3b;padding:22px 20px 4px;}
   .sec .fire{font-size:22px;}
   .acts{padding:8px 16px 14px;}
-  .act{position:relative;display:flex;align-items:center;min-height:150px;border-radius:28px;padding:22px;margin-bottom:16px;overflow:hidden;}
-  .act .tt{position:relative;z-index:2;max-width:60%;}
+  .act{position:relative;display:flex;align-items:center;min-height:152px;border-radius:28px;padding:22px;margin-bottom:16px;overflow:hidden;}
+  .act .tt{position:relative;z-index:3;max-width:56%;}
   .act .tt b{font-family:'Baloo 2';font-weight:700;font-size:24px;color:var(--slate);display:block;line-height:1.1;}
   .act .tt p{font-weight:700;font-size:15px;color:var(--slate2);margin-top:8px;line-height:1.32;}
-  .act .blob{position:absolute;right:-30px;bottom:-30px;width:165px;height:165px;border-radius:50%;}
-  .act .em{position:absolute;right:18px;bottom:14px;font-size:64px;line-height:1;filter:drop-shadow(0 5px 7px rgba(0,0,0,.12));}
-  .act .deco{position:absolute;font-size:22px;}
-  .a1{background:var(--cg);} .a1 .blob{background:#a6deac;} .a1 .d1{right:96px;bottom:96px;} .a1 .d2{right:18px;bottom:92px;}
-  .a2{background:var(--cl);} .a2 .blob{background:#d3c4e5;} .a2 .d1{right:96px;bottom:30px;} .a2 .d2{right:20px;bottom:96px;}
-  .a3{background:var(--cc);} .a3 .blob{background:#ffe3a8;} .a3 .d1{right:90px;bottom:96px;} .a3 .d2{right:22px;bottom:18px;}
+  .act .blob{position:absolute;right:-26px;bottom:-34px;width:168px;height:168px;border-radius:50%;z-index:1;}
+  .act .ill{position:absolute;z-index:2;filter:drop-shadow(0 5px 7px rgba(0,0,0,.12));}
+  .a1{background:var(--cg);} .a1 .blob{background:#a6deac;} .a1 .ill{right:6px;bottom:-6px;height:152px;}
+  .a2{background:var(--cl);} .a2 .blob{background:#d3c4e5;} .a2 .ill{right:2px;bottom:14px;height:120px;}
+  .a3{background:var(--cc);} .a3 .blob{background:#ffe3a8;} .a3 .ill{right:0;bottom:8px;height:128px;}
 
   /* ---------- bottom nav ---------- */
-  .nav{flex:none;position:relative;height:74px;background:#fff;border-top:1px solid #eef2ee;
+  .nav{flex:none;position:relative;height:76px;background:#fff;border-top:1px solid #eef2ee;
     display:flex;align-items:flex-start;padding:9px 4px 6px;box-shadow:0 -6px 20px rgba(0,0,0,.05);}
   .nav button{flex:1;border:none;background:none;cursor:pointer;font-family:'Nunito';color:var(--mut);
     display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:800;}
   .nav button.on{color:var(--or1);}
   .nav svg{width:24px;height:24px;}
   .nav .mascot{flex:none;width:64px;}
-  .nav .mascot .m{width:58px;height:58px;border-radius:50%;background:linear-gradient(160deg,var(--gold1),#ffb581);
-    display:grid;place-items:center;font-size:30px;margin-top:-26px;box-shadow:0 8px 18px rgba(200,130,60,.4),0 0 0 5px #fff;position:relative;}
-  .nav .mascot .m .badge{position:absolute;right:-2px;top:-2px;width:18px;height:18px;border-radius:50%;
-    background:var(--or1);border:2px solid #fff;}
+  .nav .mascot .m{width:58px;height:58px;border-radius:50%;background:linear-gradient(160deg,var(--gold1),#ffcf94);
+    display:grid;place-items:end center;overflow:hidden;margin-top:-26px;
+    box-shadow:0 8px 18px rgba(200,130,60,.4),0 0 0 5px #fff;position:relative;}
+  .nav .mascot .m img{width:88%;margin-bottom:-2px;}
 </style>
 </head>
 <body>
@@ -109,28 +94,17 @@
   <div class="scroll">
 
     <div class="header">
+      <div class="scene"></div>
+      <div class="cloud c1"></div><div class="cloud c2"></div>
+      <img class="hero" src="assets/docteur/hero.png" alt="Docteur Sirop super-héros">
       <div class="status"><span>9:41</span><span class="r">📶 🛜 🔋</span></div>
       <div class="topbar">
-        <div class="avatar">🦌<span class="star">⭐</span></div>
+        <div class="avatar"><img src="assets/docteur/avatar.png" alt=""></div>
         <div class="name">Agent Marcus</div>
         <div class="pills">
           <div class="pill"><span class="ic">💎</span><b>300</b></div>
           <div class="pill"><span class="ic">🔥</span><b>30</b></div>
         </div>
-      </div>
-      <div class="hero">
-        <div class="cloud c1"></div><div class="cloud c2"></div>
-        <div class="skyline">
-          <div class="bld" style="height:46%;background:var(--bldg2)"></div>
-          <div class="bld" style="height:74%"></div>
-          <div class="bld" style="height:58%;background:var(--bldg2)"></div>
-          <div class="bld" style="height:88%"></div>
-          <div class="bld" style="height:52%;background:var(--bldg2)"></div>
-          <div class="bld" style="height:70%"></div>
-          <div class="bld" style="height:42%;background:var(--bldg2)"></div>
-        </div>
-        <div class="hills"></div>
-        <div class="moose"><div class="cape"></div><div class="body">🦌</div></div>
       </div>
     </div>
 
@@ -149,15 +123,15 @@
     <div class="acts">
       <div class="act a1">
         <div class="tt"><b>Super cortex</b><p>Découvre les pouvoirs incroyables à l'intérieur de ton corps</p></div>
-        <span class="blob"></span><span class="deco d1">🧠</span><span class="deco d2">💡</span><span class="em">🦌</span>
+        <span class="blob"></span><img class="ill" src="assets/docteur/cortex.png" alt="">
       </div>
       <div class="act a2">
         <div class="tt"><b>Super courage</b><p>Sois récompensé pour ton courage après tes missions</p></div>
-        <span class="blob"></span><span class="deco d1">💪</span><span class="deco d2">✨</span><span class="em">🫀</span>
+        <span class="blob"></span><img class="ill" src="assets/docteur/courage.png" alt="">
       </div>
       <div class="act a3">
         <div class="tt"><b>Place zen</b><p>Un espace calme pour te détendre, respirer et te sentir mieux.</p></div>
-        <span class="blob"></span><span class="deco d1">⛱️</span><span class="deco d2">🌴</span><span class="em">🏖️</span>
+        <span class="blob"></span><img class="ill" src="assets/docteur/zen.png" alt="">
       </div>
     </div>
 
@@ -167,10 +141,10 @@
     <button class="on">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>Home</button>
     <button>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M9 3a4 4 0 0 0-3 6.6A4 4 0 0 0 8 17h.5A3.5 3.5 0 0 0 12 20.5V4.5A3.5 3.5 0 0 0 9 3Z"/><path d="M12 4.5A3.5 3.5 0 0 1 15 3a4 4 0 0 1 3 6.6A4 4 0 0 1 16 17h-.5A3.5 3.5 0 0 1 12 20.5"/></svg>Super Cortex</button>
-    <button class="mascot"><span class="m">🦌<span class="badge"></span></span></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M3 5h13a2 2 0 0 1 2 2v9H5a2 2 0 0 1-2-2V5Z"/><path d="M18 8h3v8h-3M9 9h6M9 12h4"/></svg>Super Cortex</button>
+    <button class="mascot"><span class="m"><img src="assets/docteur/mascot.png" alt="Docteur Sirop"></span></button>
     <button>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4 3 6.5 7 9 4-2.5 7-5 7-9V6l-7-3Z"/><path d="M12 8v6M9 11h6"/></svg>Super Courage</button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M13 2 4 13h6l-1 9 9-13h-6l1-7Z"/></svg>Super Courage</button>
     <button>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Notifications</button>
   </nav>
