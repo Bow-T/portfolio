@@ -395,7 +395,7 @@
   .chip .cico{width:14px;height:14px;object-fit:contain;flex:none;}
   .chip:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3);}
   /* figma UI preview */
-  .plink.figbtn{background:var(--grad);color:#0a2009;border:none;font-weight:700;cursor:pointer;font-family:inherit;}
+  .plink.figbtn{background:var(--grad);color:#0a2009;border:none;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
   .figpv{position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,5,.8);backdrop-filter:blur(6px);}
   .figpv.open{display:flex;animation:gfade .25s;}
   .figpv-card{background:#0a0f0a;border:1px solid var(--cardb);border-radius:22px;overflow:hidden;width:min(412px,94vw);height:min(880px,93vh);box-shadow:0 30px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;}
@@ -750,7 +750,7 @@ function card(p){
   return `<article class="pcard" data-cat="${p.cat}">
     <div class="ptop"><div class="pic">${IMG[p.n]?`<img src="${IMG[p.n]}" loading="lazy" referrerpolicy="no-referrer" alt="${p.n}" onerror="this.style.display='none'">`:`<span class="picfb">${p.n[0]}</span>`}</div><div class="phead"><h3>${p.n}</h3><span class="cat gtext">${p.cat}</span></div></div>
     <div class="meta">${p.role}</div>${badge}
-    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview">👁 Preview UI</button>`:''}${links}</div>
+    <p>${p.d}</p><div class="ptech">${tech}</div><div class="plinks">${(FIGMA[p.n]||WEBAPP[p.n])?`<button class="plink figbtn" data-fig="${p.n}" data-track="${p.n}: Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Live preview</button>`:''}${links}</div>
   </article>`;
 }
 function bind(){ // spotlight + 3D tilt
