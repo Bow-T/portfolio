@@ -461,7 +461,7 @@
   m.querySelector('#figpv-x').onclick=close;
   m.addEventListener('click',e=>{ if(e.target===m) close(); });
   addEventListener('keydown',e=>{ if(e.key==='Escape'&&m.classList.contains('open')) close(); });
-  ifr.addEventListener('load',()=>{ if(ifr.src && ifr.src.indexOf('figma')>-1) load.style.display='none'; });
+  ifr.addEventListener('load',()=>{ if(ifr.src && ifr.src!=='about:blank') load.style.display='none'; });
   document.addEventListener('click',function(e){ const b=e.target.closest&&e.target.closest('.figbtn'); if(!b) return;
     const name=b.getAttribute('data-fig');
     const web=(typeof WEBAPP!=='undefined')&&WEBAPP[name];
