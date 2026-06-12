@@ -408,31 +408,6 @@
   .figpv-body iframe{width:100%;height:100%;border:0;display:block;}
   .figpv-load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;pointer-events:none;z-index:1;}
 
-  /* ---- Cupid's arrow: submerged trail sinks down the page, 3D Cupid pops at the end ---- */
-  .brand .wm .la{transition:opacity .35s;}
-  #bowtrail{position:absolute;top:0;left:0;pointer-events:none;z-index:0;overflow:visible;filter:blur(.6px);opacity:.5;}
-  #bowtrail .tl{fill:none;stroke:url(#btg);stroke-width:3;stroke-linecap:round;}
-  #bowtrail .ah{fill:url(#btg);stroke:none;filter:drop-shadow(0 0 6px rgba(74,222,128,.7));}
-  #cupid{position:fixed;left:50%;bottom:18px;margin-left:-66px;width:132px;height:152px;z-index:60;pointer-events:none;
-    opacity:0;transform:translateY(48px) scale(.34);transform-origin:50% 100%;}
-  #cupid.show{animation:cupop .72s cubic-bezier(.18,1.55,.4,1) forwards;}
-  #cupid .cwrap{display:block;transform-origin:50% 84%;animation:cufloat 3.6s ease-in-out infinite;}
-  #cupid .wl{transform-box:fill-box;transform-origin:90% 50%;animation:cuflap 1.5s ease-in-out infinite;}
-  #cupid .wr{transform-box:fill-box;transform-origin:10% 50%;animation:cuflap 1.5s ease-in-out infinite;}
-  #cupid .burst{position:absolute;inset:0;}
-  #cupid .burst i{position:absolute;left:50%;top:12%;font-size:17px;opacity:0;}
-  #cupid.show .burst i:nth-child(1){animation:cubur 1s ease-out .12s 2;--dx:-32px;}
-  #cupid.show .burst i:nth-child(2){animation:cubur 1.1s ease-out .22s 2;--dx:28px;}
-  #cupid.show .burst i:nth-child(3){animation:cubur .9s ease-out .04s 2;--dx:-4px;}
-  @keyframes cupop{0%{opacity:0;transform:translateY(48px) scale(.3) rotate(-10deg)}
-    52%{opacity:1;transform:translateY(-13px) scale(1.2) rotate(5deg)}
-    70%{transform:translateY(3px) scale(.93) rotate(-3deg)}
-    86%{transform:translateY(0) scale(1.05) rotate(1deg)}
-    100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
-  @keyframes cufloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-  @keyframes cuflap{0%,100%{transform:rotate(0)}50%{transform:rotate(-17deg)}}
-  @keyframes cubur{0%{opacity:0;transform:translate(-50%,0) scale(.4)}30%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-60px) scale(1.2)}}
-  @media(prefers-reduced-motion:reduce){#bowtrail,#cupid{display:none!important;}}
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
@@ -513,7 +488,7 @@
 
 <nav>
   <div class="wrap">
-    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".55" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><g class="la"><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/></g><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
+    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".55" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
@@ -1157,110 +1132,6 @@ setLang(localStorage.getItem('lang')||'en');
   const M={'flutter':'flutter','dart':'dart','firebase':'firebase','supabase':'supabase','stripe':'stripe','paypal':'paypal','figma':'figma','google maps':'googlemaps','socket.io':'socketdotio','kotlin':'kotlin','swift':'swift','fastlane':'fastlane','codemagic':'codemagic','revenuecat':'revenuecat'};
   document.querySelectorAll('.skillcard .chip').forEach(ch=>{const t=ch.textContent.toLowerCase();
     for(const k in M){if(t.indexOf(k)>=0){const img=document.createElement('img');img.className='cico';img.src='https://cdn.simpleicons.org/'+M[k];img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();ch.prepend(img);break;}}});
-})();
-</script>
-
-<svg id="bowtrail" aria-hidden="true"><defs><linearGradient id="btg" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#bef264"/><stop offset=".5" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><path class="tl"/><path class="ah"/></svg>
-<div id="cupid" aria-hidden="true">
-  <div class="burst"><i>💗</i><i>💕</i><i>💖</i></div>
-  <svg class="cwrap" viewBox="0 0 132 152" width="132" height="152" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="cuSkin" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="#ffe7cd"/><stop offset=".55" stop-color="#fcc193"/><stop offset="1" stop-color="#e6975f"/></radialGradient>
-      <radialGradient id="cuWing" cx="50%" cy="32%" r="85%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ccd8f4"/></radialGradient>
-      <radialGradient id="cuHeart" cx="34%" cy="28%" r="82%"><stop offset="0" stop-color="#ffb6c9"/><stop offset=".5" stop-color="#ff5d85"/><stop offset="1" stop-color="#dd2459"/></radialGradient>
-      <linearGradient id="cuCloth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dde5f0"/></linearGradient>
-      <linearGradient id="cuHalo" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe79a"/><stop offset="1" stop-color="#f3b53d"/></linearGradient>
-      <radialGradient id="cuGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffa6c4" stop-opacity=".5"/><stop offset="1" stop-color="#ffa6c4" stop-opacity="0"/></radialGradient>
-    </defs>
-    <ellipse cx="66" cy="86" rx="62" ry="60" fill="url(#cuGlow)"/>
-    <path class="wl" d="M64 70 C42 50 12 56 8 84 C22 78 31 83 37 90 C28 92 26 101 33 107 C45 98 56 90 64 88 Z" fill="url(#cuWing)" stroke="#e7edf8" stroke-width="1"/>
-    <path class="wr" d="M68 70 C90 50 120 56 124 84 C110 78 101 83 95 90 C104 92 106 101 99 107 C87 98 76 90 68 88 Z" fill="url(#cuWing)" stroke="#e7edf8" stroke-width="1"/>
-    <ellipse cx="57" cy="126" rx="8" ry="11" fill="url(#cuSkin)"/><ellipse cx="75" cy="126" rx="8" ry="11" fill="url(#cuSkin)"/>
-    <ellipse cx="54" cy="135" rx="7" ry="4.5" fill="url(#cuSkin)"/><ellipse cx="78" cy="135" rx="7" ry="4.5" fill="url(#cuSkin)"/>
-    <ellipse cx="66" cy="100" rx="23" ry="24" fill="url(#cuSkin)"/>
-    <path d="M45 102 Q66 92 87 102 Q90 120 66 124 Q42 120 45 102 Z" fill="url(#cuCloth)"/>
-    <path d="M49 92 Q42 101 57 99" stroke="url(#cuSkin)" stroke-width="9" fill="none" stroke-linecap="round"/>
-    <path d="M83 92 Q90 101 75 99" stroke="url(#cuSkin)" stroke-width="9" fill="none" stroke-linecap="round"/>
-    <path d="M66 111 C49 99 48 83 60 82 C65 81.5 66 87 66 89 C66 87 67 81.5 72 82 C84 83 83 99 66 111 Z" fill="url(#cuHeart)"/>
-    <ellipse cx="58" cy="90" rx="3.6" ry="5" fill="#ffffff" opacity=".4"/>
-    <circle cx="56" cy="98" r="5.5" fill="url(#cuSkin)"/><circle cx="76" cy="98" r="5.5" fill="url(#cuSkin)"/>
-    <circle cx="41" cy="54" r="5" fill="url(#cuSkin)"/><circle cx="91" cy="54" r="5" fill="url(#cuSkin)"/>
-    <circle cx="66" cy="52" r="26" fill="url(#cuSkin)"/>
-    <ellipse cx="56" cy="42" rx="9" ry="7" fill="#ffffff" opacity=".22"/>
-    <path d="M42 46 Q43 29 55 35 Q59 24 67 33 Q75 25 80 37 Q89 32 90 47 Q81 41 73 45 Q66 39 59 45 Q50 41 42 46 Z" fill="#7a4a24"/>
-    <path d="M42 46 Q50 42 59 45 Q66 40 73 45 Q81 42 90 47" stroke="#5f3a1c" stroke-width="1.4" fill="none" opacity=".5"/>
-    <ellipse cx="57" cy="53" rx="3" ry="4" fill="#3a2a28"/><ellipse cx="75" cy="53" rx="3" ry="4" fill="#3a2a28"/>
-    <circle cx="58" cy="51.4" r="1" fill="#fff"/><circle cx="76" cy="51.4" r="1" fill="#fff"/>
-    <circle cx="48" cy="61" r="5.5" fill="#ff8fa3" opacity=".55"/><circle cx="84" cy="61" r="5.5" fill="#ff8fa3" opacity=".55"/>
-    <circle cx="66" cy="59" r="2" fill="#e89a6e"/>
-    <path d="M59 63 Q66 70 73 63" stroke="#c33e5e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <ellipse cx="66" cy="20" rx="15" ry="4.6" fill="none" stroke="url(#cuHalo)" stroke-width="3.5" style="filter:drop-shadow(0 0 4px rgba(244,183,64,.8))"/>
-  </svg>
-</div>
-<script>
-/* Cupid's-arrow scroll trail: the logo arrow leaves the bow and extends down a
-   wavy (randomised each descent) path; reaching the page end reveals Cupid. */
-(function(){
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var svg=document.getElementById('bowtrail'),
-      tl=svg.querySelector('.tl'), ah=svg.querySelector('.ah'),
-      cupid=document.getElementById('cupid'),
-      la=document.querySelector('.brand .wm .la');
-  var plen=0, docH=0, eyG=0, armed=false, shown=false, raf=0, SY=78;
-  function rnd(a,b){return a+Math.random()*(b-a);}
-  function build(){
-    svg.style.height='0px';                       // don't let the overlay inflate scrollHeight
-    docH=Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, innerHeight+1);
-    var W=innerWidth;
-    svg.setAttribute('width',W); svg.setAttribute('height',docH);
-    svg.setAttribute('viewBox','0 0 '+W+' '+docH);
-    svg.style.height=docH+'px'; svg.style.width=W+'px';
-    var sx=Math.min(86,W*0.2), sy=SY;         // start: the logo's arrow
-    var ex=W/2, ey=eyG=Math.round(docH*0.66);                      // end: bottom-centre, where cupid sits
-    var segs=Math.max(4,Math.round((ey-sy)/Math.max(340,innerHeight*0.55)));
-    var d='M '+sx.toFixed(1)+' '+sy, px=sx, py=sy;
-    var mL=W*0.14, mR=W*0.86;
-    for(var i=1;i<=segs;i++){
-      var ny=sy+(ey-sy)*(i/segs);
-      var nx=(i===segs)?ex:rnd(mL,mR);
-      var my=(py+ny)/2;
-      d+=' C '+(px+rnd(-1,1)*W*0.13).toFixed(1)+' '+my.toFixed(1)+', '
-            +(nx+rnd(-1,1)*W*0.13).toFixed(1)+' '+my.toFixed(1)+', '
-            +nx.toFixed(1)+' '+ny.toFixed(1);
-      px=nx; py=ny;
-    }
-    tl.setAttribute('d',d);
-    ah.setAttribute('d','M 3 0 L -17 -8 L -11 0 L -17 8 Z');
-    plen=tl.getTotalLength();
-    tl.style.strokeDasharray=plen;
-  }
-  function frame(){
-    raf=0;
-    var max=docH-innerHeight; if(max<=0) max=1;
-    var prog=Math.min(1,Math.max(0,(window.scrollY||window.pageYOffset)/max));
-    if(prog<0.012){ armed=true; }                 // back at top → arm a fresh wave
-    else if(armed){ build(); armed=false; }        // first descent → new random wave
-    var sc=(window.scrollY||window.pageYOffset);
-    var targetY=Math.min(sc+innerHeight*0.80, eyG);
-    var frac=Math.max(0,Math.min(1,(targetY-SY)/((eyG-SY)||1)));
-    var reveal=plen*frac;
-    tl.style.strokeDashoffset=(plen-reveal);
-    if(plen>1){
-      var p=tl.getPointAtLength(reveal), q=tl.getPointAtLength(Math.max(0,reveal-2));
-      var ang=Math.atan2(p.y-q.y,p.x-q.x)*180/Math.PI;
-      ah.setAttribute('transform','translate('+p.x.toFixed(1)+' '+p.y.toFixed(1)+') rotate('+ang.toFixed(1)+')');
-      ah.style.opacity=frac>0.01?'1':'0';
-    }
-    if(la) la.style.opacity=String(Math.max(0,1-prog*6));   // arrow leaves the bow
-    if(prog>0.9 && !shown){ shown=true; cupid.classList.add('show'); }
-    else if(prog<0.78 && shown){ shown=false; cupid.classList.remove('show'); }
-  }
-  function onScroll(){ if(!raf) raf=requestAnimationFrame(frame); }
-  build(); frame();
-  addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',function(){ build(); onScroll(); });
-  setTimeout(function(){build();frame();},900);
-  setTimeout(function(){build();frame();},2200);
 })();
 </script>
 </body>
