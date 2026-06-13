@@ -462,36 +462,40 @@
   .pop.acc{flex-direction:row;gap:9px;padding:11px 12px;min-width:0;align-items:center;}
 
   /* ===== corner digital clock — clock_app UI: layered shade panels + falling leaves + white 7-seg glow ===== */
-  #clock{position:fixed;left:24px;bottom:80px;z-index:69;display:none;padding:28px 32px;border-radius:34px;overflow:hidden;
+  #clock{position:fixed;left:24px;bottom:80px;z-index:69;display:none;padding:26px 30px;border-radius:34px;overflow:hidden;cursor:grab;touch-action:none;
     background:var(--c1);border:1px solid color-mix(in srgb,var(--c5) 38%,transparent);
     box-shadow:0 28px 70px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--c5) 14%,transparent),0 0 60px -10px color-mix(in srgb,var(--clk) 55%,transparent);}
   #clock.show{display:block;animation:clkin .6s cubic-bezier(.2,1.5,.35,1);}
+  #clock.drag{cursor:grabbing;animation:none;box-shadow:0 36px 90px rgba(0,0,0,.6),0 0 80px -6px color-mix(in srgb,var(--clk) 65%,transparent);}
   @keyframes clkin{from{opacity:0;transform:translateY(26px) scale(.78) rotate(-3deg);}to{opacity:1;transform:none;}}
-  .clk-band{position:absolute;top:0;bottom:0;left:0;border-radius:0 90px 90px 0;pointer-events:none;}
+  /* layered shade panels — each glows its own dark shadow at the rounded edge, like the source */
+  .clk-band{position:absolute;top:0;bottom:0;left:0;border-radius:0 90px 90px 0;pointer-events:none;box-shadow:0 0 26px 2px color-mix(in srgb,var(--c1) 72%,transparent);}
   .clk-b2{width:82%;background:var(--c2);} .clk-b3{width:62%;background:var(--c3);}
   .clk-b4{width:44%;background:var(--c4);} .clk-b5{width:26%;background:var(--c5);}
-  .clk-leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4;}
-  .clk-leaf{position:absolute;top:-30px;color:rgba(255,255,255,.5);opacity:0;animation:leaffall linear infinite;}
-  .clk-leaf svg{width:100%;height:100%;display:block;}
-  @keyframes leaffall{0%{transform:translateY(-30px) translateX(0) rotate(-10deg);opacity:0}12%{opacity:.6}85%{opacity:.48}100%{transform:translateY(340px) translateX(26px) rotate(240deg);opacity:0}}
-  #clock .clk-face{position:relative;z-index:5;display:flex;flex-direction:column;gap:12px;}
-  #clock .clk-row{display:flex;gap:12px;justify-content:center;}
+  /* per-theme falling icons (green→leaf · blue→snow · fuchsia→ring · valentine→heart) */
+  .clk-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4;}
+  .clk-ic{position:absolute;top:-32px;color:#fff;opacity:0;animation:icfall linear infinite;}
+  .clk-ic svg{width:100%;height:100%;display:block;}
+  @keyframes icfall{0%{transform:translateY(-32px) rotate(-12deg);opacity:0}14%{opacity:var(--mo,.5)}84%{opacity:calc(var(--mo,.5)*.8)}100%{transform:translateY(360px) rotate(220deg);opacity:0}}
+  #clock .clk-face{position:relative;z-index:5;display:flex;flex-direction:column;gap:5px;pointer-events:none;}
+  #clock .clk-row{display:flex;gap:7px;justify-content:center;}
   #clock .clk-ctrls{position:absolute;top:12px;right:12px;z-index:6;display:flex;gap:6px;}
   #clock .clk-ctrls button{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.42);background:rgba(0,0,0,.22);color:#fff;font-size:12px;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:.85;transition:.15s;padding:0;}
   #clock .clk-ctrls button:hover{opacity:1;background:rgba(0,0,0,.4);transform:scale(1.12);}
-  .dig{position:relative;width:33px;height:60px;}
-  .dig .s{position:absolute;background:#fff;border-radius:7px;opacity:0;box-shadow:0 0 8px #fff,0 0 20px var(--clk),0 0 36px var(--clk);transition:opacity .3s ease,transform .46s cubic-bezier(.3,1.5,.5,1);}
-  .dig .top,.dig .mid,.dig .bot{height:6px;width:23px;left:50%;transform:translateX(-50%) scaleX(.16);}
-  .dig .top{top:0;} .dig .mid{top:50%;margin-top:-3px;} .dig .bot{bottom:0;}
-  .dig .top.on,.dig .mid.on,.dig .bot.on{transform:translateX(-50%) scaleX(1);}
-  .dig .tl,.dig .tr,.dig .bl,.dig .br,.dig .ct,.dig .cb{width:6px;height:22px;}
-  .dig .tl{left:0;top:5px;transform:scaleY(.16);} .dig .tr{right:0;top:5px;transform:scaleY(.16);}
-  .dig .bl{left:0;bottom:5px;transform:scaleY(.16);} .dig .br{right:0;bottom:5px;transform:scaleY(.16);}
-  .dig .ct{left:50%;margin-left:-3px;top:5px;transform:scaleY(.16);} .dig .cb{left:50%;margin-left:-3px;bottom:5px;transform:scaleY(.16);}
+  /* bold blocky 7-seg: full-width bars, thick edge verticals, white gradient + accent glow */
+  .dig{position:relative;width:40px;height:66px;}
+  .dig .s{position:absolute;border-radius:7px;opacity:0;background:linear-gradient(180deg,#fff,rgba(255,255,255,.6));box-shadow:0 0 7px rgba(255,255,255,.9),0 0 17px var(--clk),0 0 30px var(--clk);transition:opacity .3s ease,transform .46s cubic-bezier(.34,1.56,.5,1);}
+  .dig .top,.dig .mid,.dig .bot{height:11px;width:40px;left:0;transform:scaleX(.15);}
+  .dig .top{top:0;} .dig .mid{top:50%;margin-top:-5.5px;} .dig .bot{bottom:0;}
+  .dig .top.on,.dig .mid.on,.dig .bot.on{transform:scaleX(1);}
+  .dig .tl,.dig .tr,.dig .bl,.dig .br,.dig .ct,.dig .cb{width:11px;height:33px;transform:scaleY(.15);}
+  .dig .tl{left:0;top:0;transform-origin:top;} .dig .tr{right:0;top:0;transform-origin:top;}
+  .dig .bl{left:0;bottom:0;transform-origin:bottom;} .dig .br{right:0;bottom:0;transform-origin:bottom;}
+  .dig .ct{left:50%;margin-left:-5.5px;top:0;transform-origin:top;} .dig .cb{left:50%;margin-left:-5.5px;bottom:0;transform-origin:bottom;}
   .dig .tl.on,.dig .tr.on,.dig .bl.on,.dig .br.on,.dig .ct.on,.dig .cb.on{transform:scaleY(1);}
   .dig .s.on{opacity:1;}
-  @media(max-width:560px){#clock{left:14px;bottom:74px;transform:scale(.92);transform-origin:left bottom;}}
-  @media(prefers-reduced-motion:reduce){.dig .s{transition:opacity .2s;}.clk-leaf{animation:none;opacity:.4;}}
+  @media(max-width:560px){#clock{left:14px;bottom:74px;padding:20px 22px;}.dig{width:32px;height:54px;}.dig .top,.dig .mid,.dig .bot{height:9px;width:32px;}.dig .mid{margin-top:-4.5px;}.dig .tl,.dig .tr,.dig .bl,.dig .br,.dig .ct,.dig .cb{width:9px;height:27px;}.dig .ct,.dig .cb{margin-left:-4.5px;}}
+  @media(prefers-reduced-motion:reduce){.dig .s{transition:opacity .2s;}.clk-ic{animation:none;opacity:.35;}}
 
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
@@ -1324,10 +1328,13 @@ setLang(localStorage.getItem('lang')||'en');
 /* accent palette picker (clock_app themes) + corner 7-segment clock */
 (function(){
   var root=document.documentElement, box=document.getElementById('accent');
+  var curAccent='lime';
   function setAccent(a){
+    curAccent=a;
     if(a==='lime'){root.removeAttribute('data-accent');} else {root.setAttribute('data-accent',a);}
     try{localStorage.setItem('accent',a);}catch(e){}
     box.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.ac===a);});
+    buildIcons();   // each theme drops a different background icon
   }
   box.addEventListener('click',function(e){var b=e.target.closest('button');if(b){setAccent(b.dataset.ac);var p=b.closest('.pop');if(p)p.classList.remove('open');}});
   var saved='lime';try{saved=localStorage.getItem('accent')||'lime';}catch(e){}
@@ -1348,18 +1355,54 @@ setLang(localStorage.getItem('lang')||'en');
   function mkDig(){var d=document.createElement('div');d.className='dig';SEGS.forEach(function(s){var e=document.createElement('span');e.className='s '+s;d.appendChild(e);});return d;}
   /* layered shade panels behind the face (brightest, narrowest in front, left-aligned) */
   ['clk-b2','clk-b3','clk-b4','clk-b5'].forEach(function(c){var b=document.createElement('div');b.className='clk-band '+c;clock.insertBefore(b,face);});
-  /* drifting leaves */
-  var lv=document.createElement('div');lv.className='clk-leaves';clock.insertBefore(lv,face);
-  var LEAF='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 20C4 11 11 4 20 4c.6 7-2 12-6 15-3 2-7 2-10 1Z"/><path d="M6 18C9 13 13 9 18 6" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.1" stroke-linecap="round"/></svg>';
-  for(var li=0;li<6;li++){var lf=document.createElement('div');lf.className='clk-leaf';lf.innerHTML=LEAF;
-    var sz=13+(li%3)*5; lf.style.width=sz+'px'; lf.style.height=sz+'px';
-    lf.style.left=(6+li*16)+'%'; lf.style.animationDuration=(6.5+li*1.2)+'s'; lf.style.animationDelay=(-li*1.5)+'s';
-    lv.appendChild(lf);}
+  /* per-theme drifting icons — mirrors clock_app's animationThemes (eco / ac_unit / trip_origin / favorite) */
+  var fx=document.createElement('div');fx.className='clk-fx';clock.insertBefore(fx,face);
+  var ICONS={
+    lime:'<path d="M6 8c-3 3-3 7 0 10 1.5-3.4 4-6.2 7.3-7.9C10.6 12.4 8.6 15.7 8 19.4c2.6 1.2 5.8.8 8-1.4C19.4 14.5 20 4 20 4S9.5 4.6 6 8z"/>',
+    green:'<path d="M6 8c-3 3-3 7 0 10 1.5-3.4 4-6.2 7.3-7.9C10.6 12.4 8.6 15.7 8 19.4c2.6 1.2 5.8.8 8-1.4C19.4 14.5 20 4 20 4S9.5 4.6 6 8z"/>',
+    blue:'<path d="M22 11h-4.2l3.2-3.2-1.4-1.4L15 11h-2V9l4.7-4.7-1.4-1.4L13 6.2V2h-2v4.2L7.8 2.9 6.3 4.3 11 9v2H9L4.3 6.3 2.9 7.8 6.2 11H2v2h4.2l-3.3 3.2 1.4 1.4L9 13h2v2l-4.7 4.7 1.4 1.4L11 17.8V22h2v-4.2l3.2 3.2 1.4-1.4L13 15v-2h2l4.7 4.7 1.4-1.4L17.8 13H22z"/>',
+    fuchsia:'<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 16a6 6 0 110-12 6 6 0 010 12z"/>',
+    valentine:'<path d="M12 21.4l-1.5-1.3C5.4 15.4 2 12.3 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.8-3.4 6.9-8.6 11.6L12 21.4z"/>'
+  };
+  function buildIcons(){
+    if(!fx) return;
+    var path=ICONS[curAccent]||ICONS.lime, n=12, html='';
+    for(var i=0;i<n;i++){
+      var sz=14+Math.random()*26, mo=(0.2+Math.random()*0.45).toFixed(2);
+      html+='<div class="clk-ic" style="width:'+sz.toFixed(0)+'px;height:'+sz.toFixed(0)+'px;left:'+(Math.random()*90).toFixed(0)+'%;'
+        +'--mo:'+mo+';animation-duration:'+(5+Math.random()*5).toFixed(1)+'s;animation-delay:'+(-Math.random()*9).toFixed(1)+'s"><svg viewBox="0 0 24 24" fill="currentColor">'+path+'</svg></div>';
+    }
+    fx.innerHTML=html;
+  }
+  buildIcons();   // curAccent was set by setAccent() above, but fx didn't exist yet — populate now
   /* stacked digits: HH / MM / SS as three rows of two */
   var digs=[];
   for(var r=0;r<3;r++){var row=document.createElement('div');row.className='clk-row';
     for(var k=0;k<2;k++){var d=mkDig();row.appendChild(d);digs.push(d);}
     face.appendChild(row);}
+
+  /* drag the clock anywhere (PiP-style); remembers its spot */
+  (function(){
+    var dragging=false,sx=0,sy=0,ox=0,oy=0,moved=false;
+    function place(x,y){clock.style.left=x+'px';clock.style.top=y+'px';clock.style.bottom='auto';}
+    try{var sp=JSON.parse(localStorage.getItem('clockpos')||'null');if(sp&&sp.x!=null)place(sp.x,sp.y);}catch(e){}
+    clock.addEventListener('pointerdown',function(e){
+      if(e.target.closest('.clk-ctrls'))return;
+      dragging=true;moved=false;clock.classList.add('drag');
+      var r=clock.getBoundingClientRect();ox=r.left;oy=r.top;sx=e.clientX;sy=e.clientY;place(ox,oy);
+      try{clock.setPointerCapture(e.pointerId);}catch(_){}
+    });
+    clock.addEventListener('pointermove',function(e){
+      if(!dragging)return;var dx=e.clientX-sx,dy=e.clientY-sy;
+      if(Math.abs(dx)+Math.abs(dy)>3)moved=true;
+      var r=clock.getBoundingClientRect();
+      var nx=Math.max(4,Math.min(ox+dx,innerWidth-r.width-4)),ny=Math.max(4,Math.min(oy+dy,innerHeight-r.height-4));
+      place(nx,ny);
+    });
+    function end(){if(!dragging)return;dragging=false;clock.classList.remove('drag');
+      if(moved){var r=clock.getBoundingClientRect();try{localStorage.setItem('clockpos',JSON.stringify({x:Math.round(r.left),y:Math.round(r.top)}));}catch(_){}}}
+    clock.addEventListener('pointerup',end);clock.addEventListener('pointercancel',end);
+  })();
   function setDig(d,v){SEGS.forEach(function(s){d.querySelector('.'+s).classList.toggle('on',MAP[s].indexOf(v)>=0);});}
   function tick(){
     var n=new Date();
