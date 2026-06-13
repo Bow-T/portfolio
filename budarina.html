@@ -22,8 +22,8 @@
   .navbtns button{font:600 13px/1 'Inter',sans-serif;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.22);padding:11px 18px;border-radius:30px;cursor:pointer;transition:.2s;}
   .navbtns button:hover{background:#fff;color:#000;border-color:#fff;}
 
-  /* origami video reel (right) — its playhead is scrubbed by the hand */
-  .reel{position:absolute;top:0;right:0;width:58%;height:100%;object-fit:cover;z-index:1;background:#070707;}
+  /* origami reel (right) — pre-extracted frames swapped by the hand (no seek lag) */
+  .reel{position:absolute;top:0;right:0;width:58%;height:100%;z-index:1;background:#050505;display:block;}
   .reel-miss{position:absolute;top:0;right:0;width:58%;height:100%;z-index:1;display:none;align-items:center;justify-content:center;
     text-align:center;color:rgba(255,255,255,.5);font-size:13px;line-height:1.6;padding:30px;background:radial-gradient(circle at 60% 40%,#161616,#070707);}
   .reel-miss code{color:#bef264;font-family:ui-monospace,monospace;}
@@ -77,11 +77,12 @@
   <div class="navbtns"><button type="button">See My Work</button><button type="button">Say Hello</button></div>
 </nav>
 
-<!-- AI-made origami crumple video · the hand scrubs its playhead (open = clean, fist = crumpled) -->
-<video class="reel" id="reel" muted playsinline preload="auto">
+<!-- AI origami crumple clip → frames cached once → hand swaps frames (open = clean, fist = crumpled) -->
+<video id="vsrc" muted playsinline preload="auto" crossorigin="anonymous" style="position:fixed;left:-99999px;top:0;width:8px;height:8px;opacity:0;pointer-events:none">
   <source src="assets/budarina/origami.mp4" type="video/mp4">
 </video>
-<div class="reel-miss" id="reelmiss">Đặt video origami vào<br><code>assets/budarina/origami.mp4</code><br>rồi mở tay / nắm tay để vò.</div>
+<canvas class="reel" id="reel"></canvas>
+<div class="reel-miss" id="reelmiss" style="display:flex">Đang dựng khung hình… <b id="reelpct" style="color:#bef264;margin-left:6px">0%</b></div>
 <div class="reel-fade"></div>
 <div class="reel-fade bottom"></div>
 
@@ -112,23 +113,47 @@
 
 <script>
 (function(){
-  /* ============ scrub the origami video by hand-openness ============ */
-  var reel=document.getElementById('reel'),miss=document.getElementById('reelmiss');
-  var dur=0,ready=false,curT=0,mdown=false,handOpen=1,handT=0;
+  /* ====== pre-extract the clip into a frame cache, then the hand swaps frames (zero seek-lag) ====== */
+  var vsrc=document.getElementById('vsrc'),reel=document.getElementById('reel'),rctx=reel.getContext('2d');
+  var miss=document.getElementById('reelmiss'),pct=document.getElementById('reelpct');
+  var frames=[],ready=false,curIdx=0,mdown=false,handOpen=1,handT=0;
   function now(){return (window.performance&&performance.now())||0;}
-  reel.addEventListener('loadedmetadata',function(){dur=reel.duration||0;ready=dur>0;try{reel.pause();reel.currentTime=0.0001;}catch(e){}});
-  reel.addEventListener('error',function(){reel.style.display='none';miss.style.display='flex';});
-  reel.querySelector('source').addEventListener('error',function(){reel.style.display='none';miss.style.display='flex';});
+  function sizeReel(){var dpr=Math.min(devicePixelRatio||1,1.6);reel.width=Math.round(reel.clientWidth*dpr);reel.height=Math.round(reel.clientHeight*dpr);}
+  function seekTo(t){return new Promise(function(res){var d=function(){vsrc.removeEventListener('seeked',d);res();};vsrc.addEventListener('seeked',d);try{vsrc.currentTime=t;}catch(e){res();}});}
+  function extract(){
+    var dur=vsrc.duration;if(!dur||!isFinite(dur))dur=4;
+    var N=Math.max(20,Math.min(56,Math.round(dur*14)));
+    var vw=vsrc.videoWidth||1024,vh=vsrc.videoHeight||1024,fw=Math.min(520,vw),fh=Math.round(fw*vh/vw);
+    var oc=document.createElement('canvas');oc.width=fw;oc.height=fh;var octx=oc.getContext('2d'),i=0;
+    function next(){
+      if(i>=N){ready=true;miss.style.display='none';return;}
+      seekTo((i/(N-1))*dur*0.997).then(function(){
+        octx.drawImage(vsrc,0,0,fw,fh);
+        return (window.createImageBitmap?createImageBitmap(oc):Promise.reject()).then(function(b){frames.push(b);},function(){var cc=document.createElement('canvas');cc.width=fw;cc.height=fh;cc.getContext('2d').drawImage(oc,0,0);frames.push(cc);});
+      }).then(function(){i++;if(pct)pct.textContent=Math.round(i/N*100)+'%';next();},function(){i++;next();});
+    }
+    next();
+  }
+  function fail(){ready=false;miss.innerHTML='Thiếu <code>assets/budarina/origami.mp4</code>';miss.style.display='flex';}
+  vsrc.addEventListener('loadedmetadata',function(){sizeReel();extract();});
+  vsrc.addEventListener('error',fail);
+  var srcEl=vsrc.querySelector('source');if(srcEl)srcEl.addEventListener('error',fail);
   reel.addEventListener('pointerdown',function(){mdown=true;});
   addEventListener('pointerup',function(){mdown=false;});
-  function scrub(){
+  addEventListener('resize',sizeReel);
+  function draw(){
     var hand=now()-handT<300;
-    var tgt=hand?Math.max(0,Math.min(1,1-handOpen)):(mdown?1:0);  // open hand → 0 (clean), fist → 1 (crumpled)
-    curT+=(tgt-curT)*0.16;
-    if(ready){var t=curT*dur;if(Math.abs(reel.currentTime-t)>0.02){try{reel.currentTime=t;}catch(e){}}}
-    requestAnimationFrame(scrub);
+    var tgt=hand?Math.max(0,Math.min(1,1-handOpen)):(mdown?1:0);  // open hand → frame 0 (clean), fist → last frame (crumpled)
+    curIdx+=(tgt-curIdx)*0.2;
+    var W=reel.width,H=reel.height;rctx.clearRect(0,0,W,H);
+    if(ready&&frames.length){
+      var f=frames[Math.max(0,Math.min(frames.length-1,Math.round(curIdx*(frames.length-1))))];
+      var s=Math.min(W/f.width,H/f.height)*0.82,dw=f.width*s,dh=f.height*s;
+      rctx.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);
+    }
+    requestAnimationFrame(draw);
   }
-  scrub();
+  sizeReel();draw();try{vsrc.load();}catch(e){}
 
   /* ============ floating webcam window: drag + resize ============ */
   (function(){
