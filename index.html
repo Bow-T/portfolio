@@ -1563,64 +1563,37 @@ setLang(localStorage.getItem('lang')||'en');
 })();
 </script>
 
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
-</script>
-<script type="module">
-/* hero origami: morph a low-poly paper face between normal.glb and crumpled.glb (open=flat, fist=crumpled) */
-import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+<script>
+/* hero origami: a 3x3 sheet of 9 crumple frames, blended by hand/drag (open = clean face, fist = crumpled ball) */
 (function(){
   var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
   if(!wrap||!cv)return;
-  var renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
-  var scene=new THREE.Scene();
-  var cam=new THREE.PerspectiveCamera(34,1,0.1,100);cam.position.set(0.5,0.18,2.55);cam.lookAt(0,0,0);
-  scene.add(new THREE.AmbientLight(0xffffff,0.5));
-  var key=new THREE.DirectionalLight(0xfff1d8,2.1);key.position.set(2,2.4,2.6);scene.add(key);
-  var fill=new THREE.DirectionalLight(0xcfe0ff,0.6);fill.position.set(-2.2,-0.4,1.2);scene.add(fill);
-  var rim=new THREE.DirectionalLight(0xffffff,0.8);rim.position.set(-1.2,1.6,-2.2);scene.add(rim);
-  var group=new THREE.Group();scene.add(group);
-  var mat=new THREE.MeshStandardMaterial({color:0xe9e2d2,roughness:0.92,metalness:0.0,flatShading:true,side:THREE.DoubleSide});
-  var geom=null,nPos=null,cPos=null,ready=false;
+  var ctx=cv.getContext('2d');
+  var img=new Image();img.crossOrigin='anonymous';var ready=false;
+  var COLS=3,ROWS=3,N=9,cw=0,ch=0;
+  img.onload=function(){cw=img.width/COLS;ch=img.height/ROWS;ready=true;size();};
+  img.src='assets/origami/crumple-sheet.jpg';
   var curT=0,targetT=0,mhold=false,handOpen=1,handT=0,handOn=false;
   function now(){return (window.performance&&performance.now())||0;}
-  function firstMesh(g){var m=null;g.scene.traverse(function(o){if(!m&&o.isMesh)m=o;});return m;}
-  var L=new GLTFLoader();
-  Promise.all([L.loadAsync('assets/origami/normal.glb'),L.loadAsync('assets/origami/crumpled.glb')]).then(function(res){
-    var mn=firstMesh(res[0]),mc=firstMesh(res[1]);if(!mn||!mc)return;
-    geom=mn.geometry.index?mn.geometry.toNonIndexed():mn.geometry;
-    var cg=mc.geometry.index?mc.geometry.toNonIndexed():mc.geometry;
-    nPos=Float32Array.from(geom.attributes.position.array);
-    cPos=Float32Array.from(cg.attributes.position.array);
-    if(nPos.length!==cPos.length)return;
-    var bb=new THREE.Box3().setFromBufferAttribute(geom.attributes.position);
-    var cx=(bb.min.x+bb.max.x)/2,cy=(bb.min.y+bb.max.y)/2,cz=(bb.min.z+bb.max.z)/2;
-    var sc=2/Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z);
-    for(var i=0;i<nPos.length;i+=3){
-      nPos[i]=(nPos[i]-cx)*sc;nPos[i+1]=(nPos[i+1]-cy)*sc;nPos[i+2]=(nPos[i+2]-cz)*sc;
-      cPos[i]=(cPos[i]-cx)*sc;cPos[i+1]=(cPos[i+1]-cy)*sc;cPos[i+2]=(cPos[i+2]-cz)*sc;}
-    geom.setAttribute('position',new THREE.BufferAttribute(Float32Array.from(nPos),3));
-    geom.deleteAttribute('normal');
-    group.add(new THREE.Mesh(geom,mat));group.rotation.y=0.5;ready=true;
-  }).catch(function(){});
-  function size(){var w=cv.clientWidth||320;renderer.setSize(w,w,false);cam.aspect=1;cam.updateProjectionMatrix();}
+  function size(){var dpr=Math.min(devicePixelRatio||1,2),w=cv.clientWidth||320;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr);}
   addEventListener('resize',size);size();
   cv.addEventListener('pointerdown',function(){mhold=true;});addEventListener('pointerup',function(){mhold=false;});
-  function frame(){requestAnimationFrame(frame);
-    if(ready){
-      var hand=handOn&&(now()-handT<400);
-      targetT=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
-      curT+=(targetT-curT)*0.12;
-      var pa=geom.attributes.position.array;
-      for(var i=0;i<pa.length;i++)pa[i]=nPos[i]+(cPos[i]-nPos[i])*curT;
-      geom.attributes.position.needsUpdate=true;
-      group.rotation.y=0.5+Math.sin(now()*0.00026)*0.22;
-    }
-    renderer.render(scene,cam);
+  function drawFrame(k,alpha){
+    var col=k%COLS,row=(k/COLS)|0,W=cv.width,H=cv.height,s=Math.min(W/cw,H/ch)*0.94,dw=cw*s,dh=ch*s;
+    ctx.globalAlpha=alpha;ctx.drawImage(img,col*cw,row*ch,cw,ch,(W-dw)/2,(H-dh)/2,dw,dh);
   }
-  frame();
+  function loop(){requestAnimationFrame(loop);
+    if(!ready)return;
+    var hand=handOn&&(now()-handT<400);
+    targetT=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
+    curT+=(targetT-curT)*0.16;
+    var f=curT*(N-1),lo=Math.floor(f),hi=Math.min(N-1,lo+1),frac=f-lo;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    drawFrame(lo,1);
+    if(hi!==lo&&frac>0.001)drawFrame(hi,frac);
+    ctx.globalAlpha=1;
+  }
+  loop();
 
   /* opt-in hand control (no auto camera) */
   var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
