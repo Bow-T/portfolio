@@ -83,7 +83,7 @@
   #handcur{position:fixed;left:0;top:0;z-index:97;pointer-events:none;width:30px;height:30px;opacity:0;transition:opacity .2s;will-change:transform;}
   #handcur .hc-dot{position:absolute;inset:0;border-radius:50%;border:2px solid var(--g1);background:rgba(190,242,100,.18);box-shadow:0 0 16px 2px rgba(190,242,100,.55);transition:transform .12s,background .12s,border-color .12s;}
   #handcur.hot .hc-dot{transform:scale(1.5);background:rgba(45,212,191,.25);border-color:var(--g2);}
-  #handcur.pinch .hc-dot{transform:scale(.55);background:rgba(255,221,90,.7);border-color:#ffd95a;}
+  #handcur.pinch .hc-dot{transform:scale(.5);background:rgba(255,221,90,.78);border-color:#ffd95a;box-shadow:0 0 22px 4px rgba(255,221,90,.6);}
   #handcur.ping .hc-dot{animation:hcping .28s ease;}
   @keyframes hcping{0%{transform:scale(.55);opacity:1;}100%{transform:scale(2.3);opacity:0;}}
 
@@ -1324,14 +1324,16 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   (function(){
     var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
     var active=false,libLoaded=false,hands=null,video=null,pip=null,pcv=null,pctx=null,cur=null,raf=0,stream=null,sending=false;
-    var sx=null,sy=null,pinch=false,statusEl=null;
+    var sx=null,sy=null,pinch=false,statusEl=null,lastEl=null;
+    var grabY=0,grabScroll=0,grabMoved=false,grabTarget=null;
+    var GAIN=2.4,MARGIN=0.16,LERP=0.5;   // sensitivity: central camera box → full screen, snappier follow
     function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error('load'));};document.head.appendChild(s);});}
     function setStatus(m){if(statusEl)statusEl.textContent=m;}
     function build(){
       pip=document.createElement('div');pip.id='handpip';
       pip.innerHTML='<div class="hp-head"><span class="hp-dot"></span><b>Hand control</b><span class="hp-status">starting…</span><button class="hp-x" aria-label="Close">✕</button></div>'
         +'<div class="hp-body"><canvas class="hp-cv" width="240" height="180"></canvas></div>'
-        +'<div class="hp-hint">point ☝️ to move · pinch 🤏 to click</div>';
+        +'<div class="hp-hint">☝️ move · 🤏 tap = click · 🤏 hold + drag ↕ = scroll</div>';
       document.body.appendChild(pip);
       pcv=pip.querySelector('.hp-cv');pctx=pcv.getContext('2d');statusEl=pip.querySelector('.hp-status');
       pip.querySelector('.hp-x').addEventListener('click',function(e){e.stopPropagation();disable();});
@@ -1341,7 +1343,12 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
         function end(){dr=false;}head.addEventListener('pointerup',end);head.addEventListener('pointercancel',end);})();
       cur=document.createElement('div');cur.id='handcur';cur.innerHTML='<span class="hc-dot"></span>';document.body.appendChild(cur);
     }
-    function tap(){var el=document.elementFromPoint(sx,sy);if(el){if(typeof el.click==='function')el.click();cur.classList.add('ping');setTimeout(function(){if(cur)cur.classList.remove('ping');},280);}}
+    function remap(v){return Math.min(1,Math.max(0,(v-MARGIN)/(1-2*MARGIN)));}
+    function fire(type,el){if(!el)return;try{el.dispatchEvent(new MouseEvent(type,{bubbles:true,cancelable:true,clientX:sx,clientY:sy,view:window}));}catch(e){}}
+    function clickAt(){var el=document.elementFromPoint(sx,sy);if(!el)return;
+      fire('pointerdown',el);fire('mousedown',el);fire('mouseup',el);fire('pointerup',el);
+      if(typeof el.click==='function')el.click();
+      cur.classList.add('ping');setTimeout(function(){if(cur)cur.classList.remove('ping');},280);}
     function onResults(res){
       if(!pctx)return;
       pctx.save();pctx.clearRect(0,0,pcv.width,pcv.height);pctx.translate(pcv.width,0);pctx.scale(-1,1);
@@ -1349,18 +1356,23 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       var lm=res.multiHandLandmarks&&res.multiHandLandmarks[0];
       if(lm){pctx.fillStyle='#bef264';for(var i=0;i<lm.length;i++){pctx.beginPath();pctx.arc(lm[i].x*pcv.width,lm[i].y*pcv.height,2.4,0,7);pctx.fill();}}
       pctx.restore();
-      if(lm){
-        setStatus('tracking ✋');
-        var tip=lm[8],tx=(1-tip.x)*innerWidth,ty=tip.y*innerHeight;
-        if(sx==null){sx=tx;sy=ty;}
-        sx+=(tx-sx)*0.35;sy+=(ty-sy)*0.35;
-        cur.style.transform='translate('+sx+'px,'+sy+'px) translate(-50%,-50%)';cur.style.opacity='1';
-        var dx=lm[4].x-lm[8].x,dy=lm[4].y-lm[8].y,d=Math.sqrt(dx*dx+dy*dy),now=d<0.06;
-        if(now&&!pinch){pinch=true;cur.classList.add('pinch');tap();}
-        else if(!now&&pinch){pinch=false;cur.classList.remove('pinch');}
-        var el=document.elementFromPoint(sx,sy);
-        cur.classList.toggle('hot',!!(el&&el.closest&&el.closest('a,button,input,textarea,select,.pcard,.iconbtn,.mpill,.li,.filt,#scenebar button,.scchip,.chip')));
-      }else{setStatus('show your hand ✋');if(cur)cur.style.opacity='.25';}
+      if(!lm){setStatus('show your hand ✋');if(cur)cur.style.opacity='.25';return;}
+      // index fingertip → screen, with a central-box gain so small moves reach the edges
+      var tip=lm[8],tx=(1-remap(tip.x))*innerWidth,ty=remap(tip.y)*innerHeight;
+      if(sx==null){sx=tx;sy=ty;}
+      sx+=(tx-sx)*LERP;sy+=(ty-sy)*LERP;
+      cur.style.transform='translate('+sx+'px,'+sy+'px) translate(-50%,-50%)';cur.style.opacity='1';
+      // drive the page's own mouse-driven UI (custom cursor ring, hover, card tilt) so it feels unified
+      var el=document.elementFromPoint(sx,sy);
+      if(el!==lastEl){fire('mouseout',lastEl);fire('mouseover',el);lastEl=el;}
+      fire('mousemove',el); fire('pointermove',el);
+      cur.classList.toggle('hot',!!(el&&el.closest&&el.closest('a,button,input,textarea,select,.pcard,.iconbtn,.mpill,.li,.filt,#scenebar button,.scchip,.chip,.musicbtn,#theme,#starry,.btn')));
+      // pinch = grab: a quick pinch taps (click); a pinch held + moved drags the page (scroll)
+      var dd=Math.hypot(lm[4].x-lm[8].x,lm[4].y-lm[8].y),now=dd<0.065;
+      if(now&&!pinch){pinch=true;cur.classList.add('pinch');grabY=sy;grabScroll=window.scrollY||window.pageYOffset||0;grabMoved=false;grabTarget=el;}
+      else if(now&&pinch){var off=sy-grabY;if(Math.abs(off)>9)grabMoved=true;if(grabMoved){window.scrollTo(0,Math.max(0,grabScroll-off*GAIN));setStatus('scrolling ✊');}}
+      else if(!now&&pinch){pinch=false;cur.classList.remove('pinch');if(!grabMoved){clickAt();setStatus('click 🤏');}else setStatus('tracking ✋');}
+      else setStatus('tracking ✋');
     }
     function pump(){if(!active)return;
       if(!sending&&video&&video.readyState>=2&&hands){sending=true;hands.send({image:video}).then(function(){sending=false;}).catch(function(){sending=false;});}
@@ -1373,16 +1385,16 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
         libLoaded=true;
         if(typeof Hands==='undefined')throw new Error('no Hands');
         setStatus('requesting camera…');
-        return navigator.mediaDevices.getUserMedia({video:{width:320,height:240,facingMode:'user'},audio:false});
+        return navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});
       }).then(function(s){
         stream=s;video=document.createElement('video');video.setAttribute('playsinline','');video.muted=true;video.srcObject=stream;
         return video.play().catch(function(){});
       }).then(function(){
         hands=new Hands({locateFile:function(f){return LIB+f;}});
-        hands.setOptions({maxNumHands:1,modelComplexity:0,minDetectionConfidence:.6,minTrackingConfidence:.6});
+        hands.setOptions({maxNumHands:1,modelComplexity:0,minDetectionConfidence:.6,minTrackingConfidence:.5});
         hands.onResults(onResults);
         active=true;setStatus('show your hand ✋');pump();
-        if(typeof toast==='function')toast('🖐️ Hand control on — pinch 🤏 to click');
+        if(typeof toast==='function')toast('🖐️ Hand control — 🤏 tap to click, 🤏 drag to scroll');
       }).catch(function(err){
         var dn=err&&(err.name==='NotAllowedError'||err.name==='SecurityError');
         setStatus(dn?'camera denied':'unavailable');
