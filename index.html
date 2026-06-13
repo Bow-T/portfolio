@@ -1567,53 +1567,42 @@ setLang(localStorage.getItem('lang')||'en');
   var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
   if(!wrap||!cv)return;
   var ctx=cv.getContext('2d');
-  var img=new Image();img.crossOrigin='anonymous';var ready=false,N=9,fw=0,fh=0,frames=[];
-  var mainC=document.createElement('canvas'),mctx=mainC.getContext('2d');
-  var reflC=document.createElement('canvas'),rctx=reflC.getContext('2d');
-  var curT=0,targetT=0,mhold=false,handOpen=1,handT=0,handOn=false;
+  var img=new Image();img.crossOrigin='anonymous';var ready=false,N=9,frames=[];
+  var curT=0,targetT=0,mhold=false,handOpenRaw=1,handOpen=1,handT=0,handOn=false;
   function now(){return (window.performance&&performance.now())||0;}
   img.onload=function(){
-    var cw=img.width/3,ch=img.height/3;
-    for(var k=0;k<9;k++){var col=k%3,row=(k/3)|0,oc=document.createElement('canvas');oc.width=cw;oc.height=ch;
-      var o=oc.getContext('2d');o.drawImage(img,col*cw,row*ch,cw,ch,0,0,cw,ch);
-      var id=o.getImageData(0,0,cw,ch),d=id.data;            /* key the near-black studio bg → transparent */
+    var cw=img.width/3,ch=img.height/3,mx=Math.round(cw*0.03),my=Math.round(ch*0.03),sw=cw-2*mx,sh=ch-2*my;
+    for(var k=0;k<9;k++){var col=k%3,row=(k/3)|0,oc=document.createElement('canvas');oc.width=sw;oc.height=sh;
+      var o=oc.getContext('2d');
+      o.drawImage(img,col*cw+mx,row*ch+my,sw,sh,0,0,sw,sh);   /* inset the cell to drop grid lines + neighbour bleed */
+      var id=o.getImageData(0,0,sw,sh),d=id.data;             /* key the near-black studio bg → transparent */
       for(var p=0;p<d.length;p+=4){var lum=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];
         var a=lum<=7?0:(lum>=20?1:(lum-7)/13);d[p+3]=(d[p+3]*a)|0;}
       o.putImageData(id,0,0);frames.push(oc);}
-    fw=cw;fh=ch;ready=true;size();
+    ready=true;size();
   };
   img.src='assets/origami/crumple-sheet.jpg';
-  function size(){var dpr=Math.min(devicePixelRatio||1,2),s=Math.round((cv.clientWidth||320)*dpr);
-    cv.width=s;cv.height=s;mainC.width=s;mainC.height=s;reflC.width=s;reflC.height=s;}
+  function size(){var dpr=Math.min(devicePixelRatio||1,2),s=Math.round((cv.clientWidth||320)*dpr);cv.width=s;cv.height=s;}
   addEventListener('resize',size);size();
   cv.addEventListener('pointerdown',function(){mhold=true;});addEventListener('pointerup',function(){mhold=false;});
-  function blit(c,k,alpha,W,H){var f=frames[k],s=Math.min(W/f.width,H/f.height)*0.92,dw=f.width*s,dh=f.height*s;
-    c.globalAlpha=alpha;c.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);c.globalAlpha=1;}
+  function blit(k,alpha,W,H){var f=frames[k],s=Math.min(W/f.width,H/f.height)*0.92,dw=f.width*s,dh=f.height*s;
+    ctx.globalAlpha=alpha;ctx.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;}
   function loop(){requestAnimationFrame(loop);
     if(!ready)return;
-    var hand=handOn&&(now()-handT<400);
+    handOpen+=(handOpenRaw-handOpen)*0.2;                      /* low-pass the hand so it stops jittering at half-open */
+    var hand=handOn&&(now()-handT<500);
     targetT=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
     curT+=(targetT-curT)*0.16;
     var W=cv.width,H=cv.height,f=curT*(N-1),lo=Math.floor(f),hi=Math.min(N-1,lo+1),frac=f-lo;
-    mctx.clearRect(0,0,W,H);blit(mctx,lo,1,W,H);if(hi!==lo&&frac>0.001)blit(mctx,hi,frac,W,H);
     ctx.clearRect(0,0,W,H);
-    /* once it has crumpled, a faded mirror of the paper ball appears above */
-    var refl=Math.max(0,Math.min(1,(curT-0.5)/0.45)),sc=Math.min(W/fw,H/fh)*0.92,dh=fh*sc,topY=(H-dh)/2;
-    if(refl>0.01){
-      rctx.clearRect(0,0,W,H);
-      rctx.save();rctx.translate(0,2*topY);rctx.scale(1,-1);rctx.drawImage(mainC,0,0);rctx.restore();
-      rctx.globalCompositeOperation='destination-in';
-      var g=rctx.createLinearGradient(0,topY,0,topY-dh);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');
-      rctx.fillStyle=g;rctx.fillRect(0,topY-dh,W,dh+2);rctx.globalCompositeOperation='source-over';
-      ctx.globalAlpha=refl*0.5;ctx.drawImage(reflC,0,0);ctx.globalAlpha=1;
-    }
-    ctx.drawImage(mainC,0,0);
+    blit(lo,1,W,H);
+    if(hi!==lo&&frac>0.001)blit(hi,frac,W,H);
   }
   loop();
 
   /* opt-in hand control (no auto camera) */
   var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
-  var hands=null,stream=null,sending=false,libLoaded=false,pip=null,pcv=null,pctx=null,pst=null,pv=null;
+  var hands=null,stream=null,sending=false,libLoaded=false,pip=null,pcv=null,pctx=null,pst=null,pv=null,lastSend=0;
   var HC=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
   function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej();};document.head.appendChild(s);});}
   function openness(lm){var w=lm[0],m=lm[9],s2=Math.hypot(w.x-m.x,w.y-m.y)||0.1,s=0,t=[8,12,16,20];for(var i=0;i<4;i++)s+=Math.hypot(lm[t[i]].x-w.x,lm[t[i]].y-w.y)/s2;return Math.max(0,Math.min(1,(s/4-1.15)/0.95));}
@@ -1635,9 +1624,9 @@ setLang(localStorage.getItem('lang')||'en');
     pctx.strokeStyle='rgba(190,242,100,.9)';pctx.lineWidth=2;pctx.lineCap='round';
     for(var i=0;i<HC.length;i++){pctx.beginPath();pctx.moveTo(X(HC[i][0]),Y(HC[i][0]));pctx.lineTo(X(HC[i][1]),Y(HC[i][1]));pctx.stroke();}
     for(var j=0;j<lm.length;j++){pctx.beginPath();pctx.arc(X(j),Y(j),2.4,0,7);pctx.fillStyle='#fff';pctx.fill();}
-    handOpen=openness(lm);handT=now();if(pst)pst.textContent=handOpen<0.4?'✊':'✋';
+    handOpenRaw=openness(lm);handT=now();if(pst)pst.textContent=handOpenRaw<0.4?'✊':'✋';
   }
-  function pump(){if(!handOn)return;if(!sending&&hands&&pv&&pv.readyState>=2){sending=true;hands.send({image:pv}).then(function(){sending=false;}).catch(function(){sending=false;});}requestAnimationFrame(pump);}
+  function pump(){if(!handOn)return;if(!sending&&hands&&pv&&pv.readyState>=2&&now()-lastSend>45){sending=true;lastSend=now();hands.send({image:pv}).then(function(){sending=false;}).catch(function(){sending=false;});}requestAnimationFrame(pump);}
   function startHand(){
     if(handOn)return;if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return;
     handOn=true;btn.classList.add('on');buildPip();if(pst)pst.textContent='loading…';
