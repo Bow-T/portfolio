@@ -1376,7 +1376,10 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       cur.style.transform='translate('+sx+'px,'+sy+'px) translate(-50%,-50%)';cur.style.opacity='1';
       // share hand state; when the sculpt canvas is open, the hand shapes the image instead of clicking the page
       var pdd=Math.hypot(lm[4].x-lm[8].x,lm[4].y-lm[8].y),pnow=pdd<0.065;
-      window.__handState={x:sx,y:sy,pinch:pnow,t:(window.performance&&performance.now())||0};
+      var ow=lm[0],om=lm[9],osc=Math.hypot(ow.x-om.x,ow.y-om.y)||0.1,osum=0,oti=[8,12,16,20];
+      for(var oi=0;oi<4;oi++)osum+=Math.hypot(lm[oti[oi]].x-ow.x,lm[oti[oi]].y-ow.y)/osc;
+      var oopen=Math.max(0,Math.min(1,(osum/4-1.15)/0.95));  // 0 = fist, 1 = open hand
+      window.__handState={x:sx,y:sy,pinch:pnow,open:oopen,t:(window.performance&&performance.now())||0};
       if(window.__sculpting){cur.classList.toggle('pinch',pnow);pinch=pnow;setStatus(pnow?'shaping ✊':'sculpt mode 🎨');return;}
       // drive the page's own mouse-driven UI (custom cursor ring, hover, card tilt) so it feels unified
       var el=document.elementFromPoint(sx,sy);
@@ -1432,25 +1435,38 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
 
   // ===== sculpt / liquify — knead a photo with your hand (or mouse) via a WebGL mesh warp =====
   (function(){
-    var ov=null,canvas=null,gl=null,prog=null,uRes=null,aPos=null,aUV=null,posBuf=null,uvBuf=null,idxBuf=null,tex=null;
-    var raf=0,open=false,img=null,GX=40,GY=24,base=null,curP=null,uvs=null,idx=null,brush=120;
-    var mx=null,my=null,mdown=false,px=null,py=null,fileInput=null,hintEl=null,vid=null,stream=null;
+    var ov=null,canvas=null,gl=null,prog=null,uRes=null,uK=null,uCenter=null,uTex=null,uLinesLoc=null;
+    var aRest=null,aUV=null,aFold=null,restBuf=null,uvBuf=null,foldBuf=null,idxBuf=null,tex=null;
+    var raf=0,open=false,img=null,ready=false,GX=42,GY=24,idx=null,curK=0,cenX=0,cenY=0;
+    var mdown=false,fileInput=null,hintEl=null,vid=null,stream=null;
     function now(){return (window.performance&&performance.now())||0;}
+    var HINT='Nắm tay ✊ (hoặc giữ chuột) để <b>vo ảnh thành cục</b> · mở tay / thả ra để bung lại ảnh gập.';
     function initGL(){
-      var vs='attribute vec2 aPos;attribute vec2 aUV;uniform vec2 uRes;varying vec2 vUV;void main(){vec2 c=(aPos/uRes)*2.0-1.0;c.y=-c.y;gl_Position=vec4(c,0.0,1.0);vUV=aUV;}';
-      var fs='precision mediump float;varying vec2 vUV;uniform sampler2D uTex;void main(){gl_FragColor=texture2D(uTex,vUV);}';
+      var vs='attribute vec2 aRest;attribute vec2 aUV;attribute vec2 aFold;uniform vec2 uRes;uniform vec2 uCenter;uniform float uK;varying vec2 vUV;varying float vK;'
+        +'void main(){vec2 v=(aRest-uCenter)*0.16;float R=min(uRes.x,uRes.y)*0.15;float l=length(v);if(l>R)v=v/l*R;'
+        +'vec2 crum=uCenter+v+aFold*R;vec2 pos=mix(aRest,crum,uK);vec2 c=(pos/uRes)*2.0-1.0;c.y=-c.y;gl_Position=vec4(c,0.0,1.0);vUV=aUV;vK=uK;}';
+      var fs='precision mediump float;varying vec2 vUV;varying float vK;uniform sampler2D uTex;uniform vec4 uLines[10];'
+        +'float hsh(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}'
+        +'void main(){vec4 col=texture2D(uTex,vUV);float crease=0.0,facet=0.0;'
+        +'for(int i=0;i<10;i++){vec4 L=uLines[i];float q=dot(vUV,L.xy)-L.z;crease+=smoothstep(0.014,0.0,abs(q));facet+=(q>0.0?1.0:-1.0)*L.w;}'
+        +'float shade=1.0-0.17*clamp(crease,0.0,1.0)+0.06*facet;float grain=0.96+0.07*hsh(floor(vUV*260.0));shade*=grain;'
+        +'vec3 paper=mix(col.rgb,col.rgb*vec3(1.05,1.0,0.92),0.18);float wr=hsh(floor(vUV*14.0));float crum=mix(1.0,0.5+0.7*wr,vK);'
+        +'gl_FragColor=vec4(paper*shade*crum,col.a);}';
       function sh(tp,s){var o=gl.createShader(tp);gl.shaderSource(o,s);gl.compileShader(o);return o;}
       prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,vs));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);gl.useProgram(prog);
-      aPos=gl.getAttribLocation(prog,'aPos');aUV=gl.getAttribLocation(prog,'aUV');uRes=gl.getUniformLocation(prog,'uRes');
-      posBuf=gl.createBuffer();uvBuf=gl.createBuffer();idxBuf=gl.createBuffer();tex=gl.createTexture();
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.clearColor(0.04,0.06,0.1,1);
+      aRest=gl.getAttribLocation(prog,'aRest');aUV=gl.getAttribLocation(prog,'aUV');aFold=gl.getAttribLocation(prog,'aFold');
+      uRes=gl.getUniformLocation(prog,'uRes');uK=gl.getUniformLocation(prog,'uK');uCenter=gl.getUniformLocation(prog,'uCenter');uTex=gl.getUniformLocation(prog,'uTex');uLinesLoc=gl.getUniformLocation(prog,'uLines');
+      restBuf=gl.createBuffer();uvBuf=gl.createBuffer();foldBuf=gl.createBuffer();idxBuf=gl.createBuffer();tex=gl.createTexture();
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.clearColor(0.03,0.05,0.09,1);
+      var lines=[];for(var i=0;i<10;i++){var a=Math.random()*Math.PI,dx=Math.cos(a),dy=Math.sin(a),rx=0.15+Math.random()*0.7,ry=0.15+Math.random()*0.7;lines.push(dx,dy,dx*rx+dy*ry,(Math.random()-0.5)*0.5);}
+      gl.uniform4fv(uLinesLoc,new Float32Array(lines));
     }
     function build(){
       ov=document.createElement('div');ov.id='sculpt';
       ov.innerHTML='<canvas></canvas>'
-        +'<div class="sc-hint" id="sc-hint">Pinch 🤏 và kéo (hoặc kéo chuột) để <b>vò nắn</b> ảnh — mỗi nhát kéo là một lần nặn.</div>'
+        +'<div class="sc-hint" id="sc-hint">'+HINT+'</div>'
         +'<div class="sc-bar"><button class="sc-primary" id="sc-hand">✋ Dùng tay</button><button id="sc-up">📁 Tải ảnh</button>'
-        +'<button id="sc-cam">📷 Webcam</button><button id="sc-reset">🔄 Khôi phục</button><button id="sc-save">⬇️ Lưu</button><button id="sc-x">✕ Đóng</button></div>';
+        +'<button id="sc-cam">📷 Webcam</button><button id="sc-reset">🔄 Ảnh gốc</button><button id="sc-save">⬇️ Lưu</button><button id="sc-x">✕ Đóng</button></div>';
       document.body.appendChild(ov);
       canvas=ov.querySelector('canvas');hintEl=ov.querySelector('#sc-hint');
       gl=canvas.getContext('webgl')||canvas.getContext('experimental-webgl');
@@ -1459,25 +1475,22 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       fileInput=document.createElement('input');fileInput.type='file';fileInput.accept='image/*';fileInput.style.display='none';ov.appendChild(fileInput);
       fileInput.addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var u=URL.createObjectURL(f),im=new Image();im.onload=function(){setImage(im);URL.revokeObjectURL(u);};im.src=u;});
       ov.querySelector('#sc-up').onclick=function(){fileInput.click();};
-      ov.querySelector('#sc-reset').onclick=function(){if(base)curP=base.slice();};
+      ov.querySelector('#sc-reset').onclick=function(){loadDefault();};
       ov.querySelector('#sc-x').onclick=close;
       ov.querySelector('#sc-save').onclick=save;
       ov.querySelector('#sc-cam').onclick=webcam;
       ov.querySelector('#sc-hand').onclick=function(){if(!(window.__handActive&&window.__handActive())&&window.__hand)window.__hand();};
-      canvas.addEventListener('pointerdown',function(e){mdown=true;var p=cpt(e);mx=p.x;my=p.y;px=py=null;try{canvas.setPointerCapture(e.pointerId);}catch(_){}});
-      canvas.addEventListener('pointermove',function(e){var p=cpt(e);mx=p.x;my=p.y;});
+      canvas.addEventListener('pointerdown',function(e){mdown=true;try{canvas.setPointerCapture(e.pointerId);}catch(_){}});
       canvas.addEventListener('pointerup',function(){mdown=false;});
       canvas.addEventListener('pointercancel',function(){mdown=false;});
       addEventListener('resize',function(){if(open&&img)layout();});
       return true;
     }
-    function cpt(e){var r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};}
     function setImage(src){
       var sw=src.naturalWidth||src.videoWidth||src.width,sh=src.naturalHeight||src.videoHeight||src.height,MAX=1280;
       if(Math.max(sw,sh)>MAX){var k=MAX/Math.max(sw,sh),oc=document.createElement('canvas');oc.width=Math.round(sw*k);oc.height=Math.round(sh*k);oc.getContext('2d').drawImage(src,0,0,oc.width,oc.height);img=oc;}
       else img=src;
-      hintEl.innerHTML='Pinch 🤏 và kéo (hoặc kéo chuột) để <b>vò nắn</b> ảnh — mỗi nhát kéo là một lần nặn.';
-      layout();
+      hintEl.innerHTML=HINT;layout();
     }
     function layout(){
       if(!img)return;
@@ -1493,42 +1506,41 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
       buildMesh();
     }
+    function up(buf,arr){gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);}
     function buildMesh(){
-      var W=canvas.width,Hh=canvas.height;GY=Math.max(8,Math.round(GX*Hh/W));base=[];uvs=[];idx=[];
-      for(var r=0;r<=GY;r++)for(var c=0;c<=GX;c++){base.push(c/GX*W,r/GY*Hh);uvs.push(c/GX,r/GY);}
-      curP=base.slice();
+      var W=canvas.width,Hh=canvas.height;GY=Math.max(8,Math.round(GX*Hh/W));
+      var rest=[],uv=[],fold=[];idx=[];
+      for(var r=0;r<=GY;r++)for(var c=0;c<=GX;c++){var u=c/GX,vv=r/GY;
+        rest.push(u*W,vv*Hh);uv.push(u,vv);
+        fold.push(Math.sin(vv*13.0+u*5.0)*0.7+Math.sin(u*7.0)*0.3,Math.cos(u*11.0+vv*4.0)*0.7+Math.cos(vv*6.0)*0.3);}
       for(var r2=0;r2<GY;r2++)for(var c2=0;c2<GX;c2++){var a=r2*(GX+1)+c2,b=a+1,d=a+(GX+1),e=d+1;idx.push(a,b,d,b,e,d);}
-      gl.bindBuffer(gl.ARRAY_BUFFER,uvBuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(uvs),gl.STATIC_DRAW);
+      up(restBuf,rest);up(uvBuf,uv);up(foldBuf,fold);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(idx),gl.STATIC_DRAW);
-      brush=Math.max(70,W*0.13);
-    }
-    function shape(cx,cy){
-      if(px!=null){var dx=cx-px,dy=cy-py;
-        if(dx||dy){for(var i=0;i<curP.length;i+=2){var ex=curP[i]-cx,ey=curP[i+1]-cy,dd=Math.sqrt(ex*ex+ey*ey);
-          if(dd<brush){var w=1-dd/brush;w*=w;curP[i]+=dx*w;curP[i+1]+=dy*w;}}}}
-      px=cx;py=cy;
+      ready=true;
     }
     function draw(){
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.bindBuffer(gl.ARRAY_BUFFER,posBuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(curP),gl.DYNAMIC_DRAW);
-      gl.enableVertexAttribArray(aPos);gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
+      gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(prog);
+      gl.uniform1f(uK,curK);gl.uniform2f(uCenter,cenX,cenY);
+      gl.bindBuffer(gl.ARRAY_BUFFER,restBuf);gl.enableVertexAttribArray(aRest);gl.vertexAttribPointer(aRest,2,gl.FLOAT,false,0,0);
       gl.bindBuffer(gl.ARRAY_BUFFER,uvBuf);gl.enableVertexAttribArray(aUV);gl.vertexAttribPointer(aUV,2,gl.FLOAT,false,0,0);
+      gl.bindBuffer(gl.ARRAY_BUFFER,foldBuf);gl.enableVertexAttribArray(aFold);gl.vertexAttribPointer(aFold,2,gl.FLOAT,false,0,0);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);
-      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);
+      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(uTex,0);
       gl.drawElements(gl.TRIANGLES,idx.length,gl.UNSIGNED_SHORT,0);
     }
     function frame(){
       if(!open)return;
-      var hs=window.__handState,useHand=hs&&(now()-(hs.t||0)<300),cx=null,cy=null,push=false;
-      if(useHand){var r=canvas.getBoundingClientRect();cx=(hs.x-r.left)*(canvas.width/r.width);cy=(hs.y-r.top)*(canvas.height/r.height);push=hs.pinch;}
-      else if(mdown){cx=mx;cy=my;push=true;}
-      if(push&&cx!=null&&base)shape(cx,cy);else{px=py=null;}
-      if(base&&curP)draw();
+      var hs=window.__handState,useHand=hs&&(now()-(hs.t||0)<300),tgt=0;
+      if(useHand)tgt=1-(hs.open!=null?hs.open:1);   // closed hand → crumple to a ball
+      else if(mdown)tgt=1;
+      curK+=(tgt-curK)*0.18;if(curK<0.002&&tgt===0)curK=0;
+      cenX=canvas.width*0.5;cenY=canvas.height*0.5;
+      if(ready)draw();
       raf=requestAnimationFrame(frame);
     }
     function loadDefault(){var im=new Image();im.crossOrigin='anonymous';
       im.onload=function(){setImage(im);};
-      im.onerror=function(){hintEl.innerHTML='Chưa có ảnh mặc định. Bấm <b>📁 Tải ảnh</b> hoặc <b>📷 Webcam</b> để chọn ảnh để vò nắn.';};
+      im.onerror=function(){hintEl.innerHTML='Chưa có ảnh mặc định. Bấm <b>📁 Tải ảnh</b> hoặc <b>📷 Webcam</b> để chọn ảnh.';};
       im.src='assets/sculpt/me.jpg';}
     function webcam(){
       if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){if(typeof toast==='function')toast('📷 Camera không khả dụng');return;}
@@ -1539,10 +1551,10 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       }).catch(function(){if(typeof toast==='function')toast('📷 Camera bị từ chối');});
     }
     function stopCam(){if(stream){stream.getTracks().forEach(function(t){try{t.stop();}catch(_){}});stream=null;}if(vid){try{vid.srcObject=null;}catch(_){}vid=null;}}
-    function save(){try{if(base&&curP)draw();var a=document.createElement('a');a.download='vo-nan.png';a.href=canvas.toDataURL('image/png');a.click();}catch(e){if(typeof toast==='function')toast('⚠️ Không lưu được ảnh này');}}
+    function save(){try{if(ready)draw();var a=document.createElement('a');a.download='origami.png';a.href=canvas.toDataURL('image/png');a.click();}catch(e){if(typeof toast==='function')toast('⚠️ Không lưu được ảnh này');}}
     function openS(){if(!ov){if(!build())return;}open=true;window.__sculpting=true;ov.classList.add('open');
       if(!img)loadDefault();else layout();cancelAnimationFrame(raf);frame();
-      if(typeof toast==='function')toast('🎨 Vò nắn — kéo để nặn · bấm ✋ để điều khiển bằng tay');}
+      if(typeof toast==='function')toast('📄 Origami — nắm tay ✊ để vo thành cục, mở tay để bung · bấm ✋ để bật camera');}
     function close(){open=false;window.__sculpting=false;if(ov)ov.classList.remove('open');cancelAnimationFrame(raf);stopCam();}
     window.__sculpt=function(){open?close():openS();};
   })();
