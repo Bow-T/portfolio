@@ -433,6 +433,40 @@
   /* faint top-edge sheen via a thin gradient border highlight (no overlay on text) */
   .pcard:hover,.skillcard:hover,.stat:hover,.btn.ghost:hover,.iconbtn:hover{border-color:var(--g2)!important;}
 
+  /* ===== accent palettes (from clock_app: green / blue / fuchsia / valentine + current lime) ===== */
+  :root{--clk:#4ade80;--clkbg:rgba(10,26,14,.6);}
+  html[data-accent="green"]{--g1:#6ee06a;--g2:#4daf50;--g3:#2d8a36;--g4:#1e6024;--spot:rgba(77,175,80,.24);--clk:#4daf50;--clkbg:rgba(14,34,15,.62);}
+  html[data-accent="blue"]{--g1:#62d0ff;--g2:#00b1ff;--g3:#0090d8;--g4:#0076aa;--spot:rgba(0,177,255,.22);--clk:#22b8ff;--clkbg:rgba(0,30,44,.6);}
+  html[data-accent="fuchsia"]{--g1:#ff8fd8;--g2:#fa4dbe;--g3:#d62a9a;--g4:#aa1b78;--spot:rgba(250,77,190,.22);--clk:#fa4dbe;--clkbg:rgba(50,12,38,.6);}
+  html[data-accent="valentine"]{--g1:#ff7a6b;--g2:#fd2a2a;--g3:#d61515;--g4:#ac0e0e;--spot:rgba(253,42,42,.22);--clk:#fd2a2a;--clkbg:rgba(46,10,10,.6);}
+  .accent{display:inline-flex;gap:6px;align-items:center;margin-right:2px;}
+  .accent button{width:15px;height:15px;border-radius:50%;border:1.5px solid transparent;background:var(--d);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;}
+  .accent button:hover{transform:scale(1.18);}
+  .accent button.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 8px var(--d);}
+
+  /* ===== corner digital clock (clock_app UI: white 7-segment bars glowing the accent) ===== */
+  #clock{position:fixed;left:18px;bottom:74px;z-index:69;display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:15px;
+    background:var(--clkbg);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);
+    border:1px solid color-mix(in srgb,var(--clk) 26%,transparent);box-shadow:0 10px 28px rgba(0,0,0,.4);opacity:.92;transition:opacity .2s;}
+  #clock:hover{opacity:1;}
+  #clock .clk-face{display:flex;align-items:center;gap:5px;}
+  .dig{position:relative;width:17px;height:31px;}
+  .dig .s{position:absolute;background:#fff;border-radius:5px;opacity:0;box-shadow:0 0 4px var(--clk),0 0 9px var(--clk);transition:opacity .28s ease,transform .42s cubic-bezier(.3,1.5,.5,1);}
+  .dig .top,.dig .mid,.dig .bot{height:3.2px;width:12px;left:50%;transform:translateX(-50%) scaleX(.18);}
+  .dig .top{top:0;} .dig .mid{top:50%;margin-top:-1.6px;} .dig .bot{bottom:0;}
+  .dig .top.on,.dig .mid.on,.dig .bot.on{transform:translateX(-50%) scaleX(1);}
+  .dig .tl,.dig .tr,.dig .bl,.dig .br,.dig .ct,.dig .cb{width:3.2px;height:11px;}
+  .dig .tl{left:0;top:2.6px;transform:scaleY(.18);} .dig .tr{right:0;top:2.6px;transform:scaleY(.18);}
+  .dig .bl{left:0;bottom:2.6px;transform:scaleY(.18);} .dig .br{right:0;bottom:2.6px;transform:scaleY(.18);}
+  .dig .ct{left:50%;margin-left:-1.6px;top:2.6px;transform:scaleY(.18);} .dig .cb{left:50%;margin-left:-1.6px;bottom:2.6px;transform:scaleY(.18);}
+  .dig .tl.on,.dig .tr.on,.dig .bl.on,.dig .br.on,.dig .ct.on,.dig .cb.on{transform:scaleY(1);}
+  .dig .s.on{opacity:1;}
+  .clk-colon{display:flex;flex-direction:column;justify-content:center;gap:7px;height:31px;}
+  .clk-colon i{width:3.2px;height:3.2px;border-radius:50%;background:#fff;box-shadow:0 0 4px var(--clk),0 0 8px var(--clk);transition:opacity .3s;}
+  .clk-colon.blink i{opacity:.16;}
+  @media(max-width:560px){#clock{transform:scale(.82);transform-origin:left bottom;}}
+  @media(prefers-reduced-motion:reduce){.dig .s{transition:opacity .2s;}}
+
 </style>
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 <!-- Firebase Analytics (project bow-portfolio-11921) -->
@@ -535,6 +569,13 @@
       <a class="lnk" href="#activity" data-i18n="nav.activity">Activity</a>
       <span class="langsel" id="langsel"><button data-l="en">EN</button><button data-l="vi">VI</button><button data-l="fr">FR</button></span>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
+      <span class="accent" id="accent" aria-label="Accent colour">
+        <button data-ac="lime" style="--d:#4ade80" title="Lime" aria-label="Lime"></button>
+        <button data-ac="green" style="--d:#4daf50" title="Green" aria-label="Green"></button>
+        <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
+        <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
+        <button data-ac="valentine" style="--d:#fd2a2a" title="Valentine" aria-label="Valentine"></button>
+      </span>
       <a href="#contact" class="btn" data-i18n="nav.sayhi">Say hi</a>
     </div>
   </div>
@@ -1231,6 +1272,41 @@ setLang(localStorage.getItem('lang')||'en');
   const M={'flutter':'flutter','dart':'dart','firebase':'firebase','supabase':'supabase','stripe':'stripe','paypal':'paypal','figma':'figma','google maps':'googlemaps','socket.io':'socketdotio','kotlin':'kotlin','swift':'swift','fastlane':'fastlane','codemagic':'codemagic','revenuecat':'revenuecat'};
   document.querySelectorAll('.skillcard .chip').forEach(ch=>{const t=ch.textContent.toLowerCase();
     for(const k in M){if(t.indexOf(k)>=0){const img=document.createElement('img');img.className='cico';img.src='https://cdn.simpleicons.org/'+M[k];img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();ch.prepend(img);break;}}});
+})();
+</script>
+
+<div id="clock" aria-label="Clock"><div class="clk-face"></div></div>
+<script>
+/* accent palette picker (clock_app themes) + corner 7-segment clock */
+(function(){
+  var root=document.documentElement, box=document.getElementById('accent');
+  function setAccent(a){
+    if(a==='lime'){root.removeAttribute('data-accent');} else {root.setAttribute('data-accent',a);}
+    try{localStorage.setItem('accent',a);}catch(e){}
+    box.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.ac===a);});
+  }
+  box.addEventListener('click',function(e){var b=e.target.closest('button');if(b)setAccent(b.dataset.ac);});
+  var saved='lime';try{saved=localStorage.getItem('accent')||'lime';}catch(e){}
+  setAccent(saved);
+
+  var face=document.querySelector('#clock .clk-face');
+  var SEGS=['top','mid','bot','tl','tr','bl','br','ct','cb'];
+  var MAP={top:[0,2,3,5,6,7,8,9],mid:[2,3,4,5,6,8,9],bot:[0,2,3,5,6,8,9],tr:[0,2,3,4,7,8,9],br:[0,3,4,5,6,7,8,9],tl:[0,4,5,6,8,9],bl:[0,2,6,8],ct:[1],cb:[1]};
+  function mkDig(){var d=document.createElement('div');d.className='dig';SEGS.forEach(function(s){var e=document.createElement('span');e.className='s '+s;d.appendChild(e);});return d;}
+  var digs=[];
+  [0,0,'c',0,0,'c',0,0].forEach(function(x){
+    if(x==='c'){var c=document.createElement('div');c.className='clk-colon';c.innerHTML='<i></i><i></i>';face.appendChild(c);}
+    else{var d=mkDig();face.appendChild(d);digs.push(d);}
+  });
+  var colons=face.querySelectorAll('.clk-colon');
+  function setDig(d,v){SEGS.forEach(function(s){d.querySelector('.'+s).classList.toggle('on',MAP[s].indexOf(v)>=0);});}
+  function tick(){
+    var n=new Date();
+    var str=[n.getHours(),n.getMinutes(),n.getSeconds()].map(function(x){return ('0'+x).slice(-2);}).join('');
+    for(var i=0;i<6;i++) setDig(digs[i],+str[i]);
+    var blink=n.getSeconds()%2===0; colons.forEach(function(c){c.classList.toggle('blink',blink);});
+  }
+  tick(); setInterval(tick,1000);
 })();
 </script>
 </body>
