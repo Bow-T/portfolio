@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>Carter — a world by Bow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>
+  :root{--or1:#ffd78f;--or4:#ee6f25;--green:#20d090;--txt:#f1ece7;--mut:#b3a99f;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--txt);background:#120f0d;overflow-x:hidden;}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+      radial-gradient(70% 50% at 50% -8%,#5a3d22 0%,transparent 55%),
+      radial-gradient(85% 60% at 82% 28%,rgba(238,111,37,.2),transparent 60%),
+      radial-gradient(75% 55% at 12% 72%,rgba(32,208,144,.12),transparent 55%),
+      linear-gradient(180deg,#241a12 0%,#1a130d 45%,#100b08 100%);}
+  [data-theme="light"] body{color:#2a1f16;}
+  [data-theme="light"] .bg{background:radial-gradient(70% 50% at 50% -8%,#f3e2cf 0%,transparent 55%),radial-gradient(85% 60% at 82% 28%,rgba(238,111,37,.2),transparent 60%),linear-gradient(180deg,#f6efe7 0%,#efe5da 45%,#e7dccf 100%);}
+  #motes{position:fixed;inset:0;z-index:-1;pointer-events:none;}
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--or1),var(--or4),var(--green));box-shadow:0 0 10px rgba(238,111,37,.6);}
+  .top-ui{position:fixed;top:16px;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:0 20px;pointer-events:none;}
+  .top-ui a,.top-ui button{pointer-events:auto;}
+  #back{display:inline-flex;align-items:center;gap:7px;color:var(--txt);text-decoration:none;font-weight:700;font-size:14px;background:rgba(20,15,11,.5);backdrop-filter:blur(8px);padding:9px 15px;border-radius:30px;border:1px solid rgba(255,255,255,.1);transition:transform .2s;}
+  #back:hover{transform:translateX(-3px);}
+  [data-theme="light"] #back,[data-theme="light"] .snd{background:rgba(255,255,255,.62);border-color:rgba(140,100,60,.2);color:#2a1f16;}
+  .snd{display:inline-flex;align-items:center;gap:9px;background:rgba(20,15,11,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 14px;color:var(--txt);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .snd .eq{display:inline-flex;gap:2px;align-items:flex-end;height:13px;}.snd .eq i{width:3px;background:var(--or4);border-radius:2px;height:5px;}
+  .snd.on .eq i{animation:eq 1s ease-in-out infinite;}.snd.on .eq i:nth-child(2){animation-delay:.2s}.snd.on .eq i:nth-child(3){animation-delay:.4s}.snd.on .eq i:nth-child(4){animation-delay:.1s}
+  @keyframes eq{0%,100%{height:4px}50%{height:13px}}.snd .lbl{opacity:.8;font-weight:600;}
+
+  section{position:relative;}.wrap{max-width:980px;margin:0 auto;padding:0 26px;}
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:80px 20px 40px;}
+  .court{position:absolute;inset:0;z-index:0;opacity:.16;display:grid;place-items:center;}
+  .court svg{width:min(620px,120%);}
+  .ball{position:relative;z-index:2;font-size:84px;line-height:1;animation:bounce 1.4s cubic-bezier(.5,0,.5,1) infinite;filter:drop-shadow(0 16px 20px rgba(0,0,0,.4));}
+  @keyframes bounce{0%,100%{transform:translateY(-26px)}50%{transform:translateY(10px) scaleY(.92)}}
+  .hero .eyebrow{position:relative;z-index:2;margin-top:18px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--or4);}
+  .hero h1{position:relative;z-index:2;font-family:'Sora';font-weight:800;font-size:clamp(46px,10vw,92px);line-height:.96;margin-top:6px;color:#fff;letter-spacing:-.02em;}
+  [data-theme="light"] .hero h1{color:#120f0d;}
+  .hero h1 .a{color:var(--or4);}
+  .hero .tag{position:relative;z-index:2;max-width:560px;margin:18px auto 0;font-size:clamp(16px,2.4vw,20px);color:#e7d4c2;line-height:1.5;font-weight:600;}
+  [data-theme="light"] .hero .tag,[data-theme="light"] .stage .sub{color:#7a5a40;}
+  .scrollhint{position:relative;z-index:2;margin-top:38px;color:var(--mut);font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:8px;animation:hbob 2s ease-in-out infinite;}
+  @keyframes hbob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(6px);opacity:1}}
+  .scrollhint .m{width:24px;height:38px;border:2px solid var(--mut);border-radius:13px;position:relative;}
+  .scrollhint .m::after{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:4px;height:7px;border-radius:3px;background:var(--or4);animation:wheel 1.6s ease-in-out infinite;}
+  @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+
+  .beat{padding:14vh 0;}
+  .eyebrow2{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--or4);margin-bottom:18px;}
+  .lead{font-family:'Sora';font-weight:700;font-size:clamp(28px,5vw,46px);line-height:1.12;color:#fff;max-width:18ch;letter-spacing:-.01em;}
+  [data-theme="light"] .lead,[data-theme="light"] .stage h2,[data-theme="light"] .outro .big{color:#120f0d;}
+  .lead .hl{color:var(--or4);}
+  .body{margin-top:22px;font-size:clamp(16px,2.3vw,19px);line-height:1.7;color:#dccdbe;max-width:60ch;font-weight:600;}
+  [data-theme="light"] .body,[data-theme="light"] .outro p{color:#5a4636;}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;}
+  .chips span{background:rgba(238,111,37,.12);border:1px solid rgba(255,170,90,.3);color:#ffcb9c;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 20px;text-align:center;}
+  .stage .eyebrow2{color:var(--green);}
+  .stage h2{font-family:'Sora';font-weight:700;font-size:clamp(26px,4.6vw,40px);color:#fff;max-width:20ch;margin:0 auto;letter-spacing:-.01em;}
+  .stage .sub{margin-top:12px;color:#e7d4c2;font-size:16px;font-weight:600;}
+  .phone{position:relative;margin-top:38px;width:min(312px,82vw);aspect-ratio:375/812;background:#0a0a0a;border-radius:42px;padding:9px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #2a1f16,0 0 70px rgba(238,111,37,.28);}
+  .phone iframe{width:100%;height:100%;border:0;border-radius:34px;display:block;background:#131313;}
+  .phone .ring{position:absolute;inset:-14px;border-radius:54px;border:1px dashed rgba(255,170,90,.3);animation:spin 26s linear infinite;pointer-events:none;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .outro{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12vh 24px;}
+  .outro .big{font-family:'Sora';font-weight:800;font-size:clamp(30px,5.5vw,52px);line-height:1.1;color:#fff;max-width:17ch;letter-spacing:-.01em;}
+  .outro .big .hl{color:var(--green);}
+  .outro p{margin-top:20px;font-size:18px;color:#dccdbe;max-width:54ch;line-height:1.6;font-weight:600;}
+  .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:14px 24px;font-weight:800;font-size:15px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;transition:transform .18s;}
+  .btn.p{background:linear-gradient(120deg,var(--or4),#c8551a);color:#fff;box-shadow:0 14px 30px rgba(238,111,37,.35);}
+  .btn.g{background:rgba(255,255,255,.07);color:#f1ece7;border:1px solid rgba(255,255,255,.16);}
+  [data-theme="light"] .btn.g{background:rgba(255,255,255,.6);color:#2a1f16;border-color:rgba(140,100,60,.2);}
+  .btn:hover{transform:translateY(-3px);}
+  .foot{padding:40px 20px 60px;text-align:center;color:#8a7a6a;font-size:13px;}.foot b{color:var(--or4);}
+  [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);}
+  [data-reveal].in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important;transform:none!important;}.ball,.phone .ring,.scrollhint,.snd.on .eq i{animation:none!important;}html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<div class="bg"></div><canvas id="motes"></canvas><div id="prog"></div>
+<div class="top-ui">
+  <a id="back" href="./#projects">← Portfolio</a>
+  <button class="snd" id="snd" aria-label="Toggle sound"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="lbl">Game Day</span></button>
+</div>
+
+<section class="hero">
+  <div class="court"><svg viewBox="0 0 100 56" fill="none" stroke="#ffd78f" stroke-width="1"><rect x="1" y="1" width="98" height="54" rx="2"/><line x1="50" y1="1" x2="50" y2="55"/><circle cx="50" cy="28" r="8"/><path d="M1 16 H18 V40 H1"/><path d="M18 16 a12 12 0 0 1 0 24"/><path d="M99 16 H82 V40 H99"/><path d="M82 16 a12 12 0 0 0 0 24"/></svg></div>
+  <div class="ball">🏀</div>
+  <div class="eyebrow">A project, told as a world · 04</div>
+  <h1>Car<span class="a">ter</span></h1>
+  <p class="tag">Run your basketball club from your pocket.</p>
+  <div class="scrollhint"><span class="m"></span>scroll to begin</div>
+</section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The problem</div>
+  <div class="lead" data-reveal>A club lives in <span class="hl">scattered</span> heads and group chats.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">Who's on the roster, who plays which position, who's coming to training, who's improving, where the team stands, which drills to run tonight. It's a spreadsheet nightmare — and most of it never makes it out of someone's memory.</p>
+</div></section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The journey</div>
+  <div class="lead" data-reveal>Carter puts the whole club <span class="hl">on the court</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">Rosters and positions laid out on a real court. Events and training sessions, attendance and standings. An exercise library and tactical boards for game night. And a play-to-earn reward system that quietly keeps players turning up — for managers, coaches and players, finally on the same page.</p>
+  <div class="chips" data-reveal style="transition-delay:.12s"><span>Flutter</span><span>Socket.IO</span><span>Firebase</span><span>Google Maps</span><span>play-to-earn</span></div>
+</div></section>
+
+<section class="stage">
+  <div class="eyebrow2" data-reveal>Step inside</div>
+  <h2 data-reveal>The team, live. Switch between List and Court.</h2>
+  <div class="sub" data-reveal style="transition-delay:.08s">Tap "Court" to see the players take their positions.</div>
+  <div class="phone" data-reveal style="transition-delay:.12s"><span class="ring"></span><iframe src="carter.html" loading="lazy" title="Carter live preview"></iframe></div>
+</section>
+
+<section class="outro">
+  <div class="big" data-reveal>Managers, coaches, players — <span class="hl">one team</span>.</div>
+  <p data-reveal style="transition-delay:.1s">1K+ downloads, live on the App Store and Google Play. The club, organised — so everyone can just play.</p>
+  <div class="cta" data-reveal style="transition-delay:.18s">
+    <a class="btn p" href="https://apps.apple.com/fr/app/carter-coaching/id6443718007" target="_blank" rel="noopener">App Store ↗</a>
+    <a class="btn g" href="./#projects">← Back to the other worlds</a>
+  </div>
+</section>
+
+<div class="foot">A world built by <b>Bow</b> · one of several. Sound is composed live in your browser.</div>
+
+<script src="assets/worldkit.js"></script>
+<script>
+  Worldkit.motes(['rgba(255,170,90,','rgba(32,208,144,','rgba(255,215,143,']);
+  Worldkit.scroll();
+  Worldkit.sound('snd',{
+    chords:[[196,246.94,293.66],[261.63,329.63,392.00],[174.61,220,261.63],[220,277.18,329.63]],
+    scale:[293.66,349.23,392,440,523.25,587.33,659.25,784],
+    bar:5, step:330, density:0.62, noteDur:1.0, leadType:'sawtooth',
+    pad:0.04, lead:0.05, bass:true, bassVol:0.12, delay:0.26, fb:0.28, wet:0.36, vol:0.5
+  });
+</script>
+</body>
+</html>
