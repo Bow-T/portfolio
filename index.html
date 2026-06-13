@@ -1567,15 +1567,15 @@ setLang(localStorage.getItem('lang')||'en');
   var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
   if(!wrap||!cv)return;
   var ctx=cv.getContext('2d');
-  var img=new Image();img.crossOrigin='anonymous';var ready=false,N=9,frames=[],LARGEST=1;
+  var img=new Image();img.crossOrigin='anonymous';var COLS=6,ROWS=6,N=COLS*ROWS,ready=false,frames=[],LARGEST=1;
   var curT=0,targetT=0,mhold=false,handOpenRaw=1,handOpen=1,handT=0,handOn=false;
   function now(){return (window.performance&&performance.now())||0;}
   img.onload=function(){
-    var cw=img.width/3,ch=img.height/3,tmp=document.createElement('canvas');tmp.width=cw;tmp.height=ch;var tc=tmp.getContext('2d');
-    for(var k=0;k<9;k++){var col=k%3,row=(k/3)|0;
+    var cw=img.width/COLS,ch=img.height/ROWS,tmp=document.createElement('canvas');tmp.width=cw;tmp.height=ch;var tc=tmp.getContext('2d');
+    for(var k=0;k<N;k++){var col=k%COLS,row=(k/COLS)|0;
       tc.clearRect(0,0,cw,ch);tc.drawImage(img,col*cw,row*ch,cw,ch,0,0,cw,ch);
       var id=tc.getImageData(0,0,cw,ch),d=id.data;
-      var Lm=(cw*0.07)|0,Rm=Math.ceil(cw*0.93),Tm=(ch*0.035)|0,Bm=Math.ceil(ch*0.965);   /* scan only the centre → ignore grid line + neighbour bleed */
+      var Lm=(cw*0.05)|0,Rm=Math.ceil(cw*0.95),Tm=(ch*0.12)|0,Bm=Math.ceil(ch*0.97);   /* scan centre only → ignore grid line, bleed AND the 01-36 frame number top-left */
       var minx=cw,miny=ch,maxx=0,maxy=0,found=false;
       for(var y=0;y<ch;y++)for(var x=0;x<cw;x++){var i=(y*cw+x)*4,lum=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
         d[i+3]=lum<=8?0:(lum>=22?255:((lum-8)/14*255)|0);                                 /* key near-black bg → transparent */
