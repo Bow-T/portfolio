@@ -106,9 +106,7 @@
   /* hero origami clip (to the right of the intro) — frame cache scrubbed by drag or hand */
   .hero{position:relative;}
   #herofx-wrap{position:absolute;top:54px;right:max(14px,calc(50% - 566px));width:clamp(260px,28vw,366px);z-index:3;}
-  #herofx{width:100%;aspect-ratio:1/1;display:block;cursor:grab;touch-action:none;
-    -webkit-mask-image:radial-gradient(ellipse 76% 82% at 50% 46%,#000 50%,transparent 100%);
-    mask-image:radial-gradient(ellipse 76% 82% at 50% 46%,#000 50%,transparent 100%);}
+  #herofx{width:100%;aspect-ratio:1/1;display:block;cursor:grab;touch-action:none;}
   #herofx:active{cursor:grabbing;}
   #herofx-hand{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
     background:color-mix(in srgb,var(--bg) 60%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
@@ -1569,29 +1567,47 @@ setLang(localStorage.getItem('lang')||'en');
   var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
   if(!wrap||!cv)return;
   var ctx=cv.getContext('2d');
-  var img=new Image();img.crossOrigin='anonymous';var ready=false;
-  var COLS=3,ROWS=3,N=9,cw=0,ch=0;
-  img.onload=function(){cw=img.width/COLS;ch=img.height/ROWS;ready=true;size();};
-  img.src='assets/origami/crumple-sheet.jpg';
+  var img=new Image();img.crossOrigin='anonymous';var ready=false,N=9,fw=0,fh=0,frames=[];
+  var mainC=document.createElement('canvas'),mctx=mainC.getContext('2d');
+  var reflC=document.createElement('canvas'),rctx=reflC.getContext('2d');
   var curT=0,targetT=0,mhold=false,handOpen=1,handT=0,handOn=false;
   function now(){return (window.performance&&performance.now())||0;}
-  function size(){var dpr=Math.min(devicePixelRatio||1,2),w=cv.clientWidth||320;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr);}
+  img.onload=function(){
+    var cw=img.width/3,ch=img.height/3;
+    for(var k=0;k<9;k++){var col=k%3,row=(k/3)|0,oc=document.createElement('canvas');oc.width=cw;oc.height=ch;
+      var o=oc.getContext('2d');o.drawImage(img,col*cw,row*ch,cw,ch,0,0,cw,ch);
+      var id=o.getImageData(0,0,cw,ch),d=id.data;            /* key the near-black studio bg → transparent */
+      for(var p=0;p<d.length;p+=4){var lum=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];
+        var a=lum<=7?0:(lum>=20?1:(lum-7)/13);d[p+3]=(d[p+3]*a)|0;}
+      o.putImageData(id,0,0);frames.push(oc);}
+    fw=cw;fh=ch;ready=true;size();
+  };
+  img.src='assets/origami/crumple-sheet.jpg';
+  function size(){var dpr=Math.min(devicePixelRatio||1,2),s=Math.round((cv.clientWidth||320)*dpr);
+    cv.width=s;cv.height=s;mainC.width=s;mainC.height=s;reflC.width=s;reflC.height=s;}
   addEventListener('resize',size);size();
   cv.addEventListener('pointerdown',function(){mhold=true;});addEventListener('pointerup',function(){mhold=false;});
-  function drawFrame(k,alpha){
-    var col=k%COLS,row=(k/COLS)|0,W=cv.width,H=cv.height,s=Math.min(W/cw,H/ch)*0.94,dw=cw*s,dh=ch*s;
-    ctx.globalAlpha=alpha;ctx.drawImage(img,col*cw,row*ch,cw,ch,(W-dw)/2,(H-dh)/2,dw,dh);
-  }
+  function blit(c,k,alpha,W,H){var f=frames[k],s=Math.min(W/f.width,H/f.height)*0.92,dw=f.width*s,dh=f.height*s;
+    c.globalAlpha=alpha;c.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);c.globalAlpha=1;}
   function loop(){requestAnimationFrame(loop);
     if(!ready)return;
     var hand=handOn&&(now()-handT<400);
     targetT=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
     curT+=(targetT-curT)*0.16;
-    var f=curT*(N-1),lo=Math.floor(f),hi=Math.min(N-1,lo+1),frac=f-lo;
-    ctx.clearRect(0,0,cv.width,cv.height);
-    drawFrame(lo,1);
-    if(hi!==lo&&frac>0.001)drawFrame(hi,frac);
-    ctx.globalAlpha=1;
+    var W=cv.width,H=cv.height,f=curT*(N-1),lo=Math.floor(f),hi=Math.min(N-1,lo+1),frac=f-lo;
+    mctx.clearRect(0,0,W,H);blit(mctx,lo,1,W,H);if(hi!==lo&&frac>0.001)blit(mctx,hi,frac,W,H);
+    ctx.clearRect(0,0,W,H);
+    /* once it has crumpled, a faded mirror of the paper ball appears above */
+    var refl=Math.max(0,Math.min(1,(curT-0.5)/0.45)),sc=Math.min(W/fw,H/fh)*0.92,dh=fh*sc,topY=(H-dh)/2;
+    if(refl>0.01){
+      rctx.clearRect(0,0,W,H);
+      rctx.save();rctx.translate(0,2*topY);rctx.scale(1,-1);rctx.drawImage(mainC,0,0);rctx.restore();
+      rctx.globalCompositeOperation='destination-in';
+      var g=rctx.createLinearGradient(0,topY,0,topY-dh);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');
+      rctx.fillStyle=g;rctx.fillRect(0,topY-dh,W,dh+2);rctx.globalCompositeOperation='source-over';
+      ctx.globalAlpha=refl*0.5;ctx.drawImage(reflC,0,0);ctx.globalAlpha=1;
+    }
+    ctx.drawImage(mainC,0,0);
   }
   loop();
 
