@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>ProtectU — a world by Bow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>
+  :root{--red:#ff4d4f;--red2:#ff8a6b;--blue:#4f9bf0;--txt:#eef0f4;--mut:#9aa0ab;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--txt);background:#0c0d10;overflow-x:hidden;}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+      radial-gradient(70% 50% at 50% -8%,#3a2026 0%,transparent 55%),
+      radial-gradient(85% 60% at 82% 28%,rgba(255,77,79,.16),transparent 60%),
+      radial-gradient(75% 55% at 14% 72%,rgba(79,155,240,.12),transparent 55%),
+      linear-gradient(180deg,#1a1c22 0%,#131419 45%,#0a0b0e 100%);}
+  [data-theme="light"] body{color:#1c2028;}
+  [data-theme="light"] .bg{background:radial-gradient(70% 50% at 50% -8%,#f3dcde 0%,transparent 55%),radial-gradient(80% 60% at 82% 28%,rgba(79,155,240,.14),transparent 60%),linear-gradient(180deg,#eef0f4 0%,#e6e9ef 45%,#dde1e8 100%);}
+  #motes{position:fixed;inset:0;z-index:-1;pointer-events:none;}
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--blue),var(--red2),var(--red));box-shadow:0 0 10px rgba(255,77,79,.6);}
+  .top-ui{position:fixed;top:16px;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:0 20px;pointer-events:none;}
+  .top-ui a,.top-ui button{pointer-events:auto;}
+  #back{display:inline-flex;align-items:center;gap:7px;color:var(--txt);text-decoration:none;font-weight:700;font-size:14px;background:rgba(12,13,16,.5);backdrop-filter:blur(8px);padding:9px 15px;border-radius:30px;border:1px solid rgba(255,255,255,.1);transition:transform .2s;}
+  #back:hover{transform:translateX(-3px);}
+  [data-theme="light"] #back,[data-theme="light"] .snd{background:rgba(255,255,255,.62);border-color:rgba(120,120,130,.2);color:#1c2028;}
+  .snd{display:inline-flex;align-items:center;gap:9px;background:rgba(12,13,16,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 14px;color:var(--txt);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .snd .eq{display:inline-flex;gap:2px;align-items:flex-end;height:13px;}.snd .eq i{width:3px;background:var(--red2);border-radius:2px;height:5px;}
+  .snd.on .eq i{animation:eq 1s ease-in-out infinite;}.snd.on .eq i:nth-child(2){animation-delay:.2s}.snd.on .eq i:nth-child(3){animation-delay:.4s}.snd.on .eq i:nth-child(4){animation-delay:.1s}
+  @keyframes eq{0%,100%{height:4px}50%{height:13px}}.snd .lbl{opacity:.8;font-weight:600;}
+
+  section{position:relative;}.wrap{max-width:980px;margin:0 auto;padding:0 26px;}
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:80px 20px 40px;}
+  .maph{position:absolute;inset:0;z-index:0;opacity:.45;background:
+      repeating-linear-gradient(0deg,rgba(180,190,210,.06) 0 1px,transparent 1px 46px),
+      repeating-linear-gradient(90deg,rgba(180,190,210,.06) 0 1px,transparent 1px 46px);
+    mask:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 78%);-webkit-mask:radial-gradient(60% 60% at 50% 45%,#000 30%,transparent 78%);}
+  .you{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:1;width:16px;height:16px;border-radius:50%;background:var(--blue);box-shadow:0 0 16px var(--blue);}
+  .you::before,.you::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid rgba(255,77,79,.55);border-radius:50%;width:16px;height:16px;animation:radar 3s ease-out infinite;}
+  .you::after{animation-delay:1.5s;}
+  @keyframes radar{0%{width:16px;height:16px;opacity:.85}100%{width:260px;height:260px;opacity:0}}
+  .dp{position:absolute;z-index:1;width:13px;height:13px;border-radius:50% 50% 50% 0;background:var(--red);transform:rotate(-45deg);box-shadow:0 0 10px rgba(255,77,79,.7);}
+  .dp.a{left:33%;top:33%}.dp.b{left:66%;top:38%}.dp.c{left:60%;top:66%}.dp.d{left:30%;top:60%}
+  .hero .eyebrow{position:relative;z-index:2;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--red2);}
+  .hero h1{position:relative;z-index:2;font-family:'Sora';font-weight:800;font-size:clamp(46px,10vw,92px);line-height:.96;margin-top:8px;color:#fff;letter-spacing:-.02em;}
+  [data-theme="light"] .hero h1{color:#0c0d10;}
+  .hero h1 .a{color:var(--red);}
+  .hero .tag{position:relative;z-index:2;max-width:560px;margin:18px auto 0;font-size:clamp(16px,2.4vw,20px);color:#d3d7e0;line-height:1.5;font-weight:600;}
+  [data-theme="light"] .hero .tag,[data-theme="light"] .stage .sub{color:#5a606c;}
+  .scrollhint{position:relative;z-index:2;margin-top:44px;color:var(--mut);font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:8px;animation:hbob 2s ease-in-out infinite;}
+  @keyframes hbob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(6px);opacity:1}}
+  .scrollhint .m{width:24px;height:38px;border:2px solid var(--mut);border-radius:13px;position:relative;}
+  .scrollhint .m::after{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:4px;height:7px;border-radius:3px;background:var(--red2);animation:wheel 1.6s ease-in-out infinite;}
+  @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+
+  .beat{padding:14vh 0;}
+  .eyebrow2{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--red2);margin-bottom:18px;}
+  .lead{font-family:'Sora';font-weight:700;font-size:clamp(28px,5vw,46px);line-height:1.12;color:#fff;max-width:18ch;letter-spacing:-.01em;}
+  [data-theme="light"] .lead,[data-theme="light"] .stage h2,[data-theme="light"] .outro .big{color:#0c0d10;}
+  .lead .hl{color:var(--red);}
+  .body{margin-top:22px;font-size:clamp(16px,2.3vw,19px);line-height:1.7;color:#cfd3dd;max-width:60ch;font-weight:600;}
+  [data-theme="light"] .body,[data-theme="light"] .outro p{color:#454b57;}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;}
+  .chips span{background:rgba(255,77,79,.12);border:1px solid rgba(255,138,107,.3);color:#ffc2b3;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 20px;text-align:center;}
+  .stage .eyebrow2{color:var(--blue);}
+  .stage h2{font-family:'Sora';font-weight:700;font-size:clamp(26px,4.6vw,40px);color:#fff;max-width:20ch;margin:0 auto;letter-spacing:-.01em;}
+  .stage .sub{margin-top:12px;color:#d3d7e0;font-size:16px;font-weight:600;}
+  .phone{position:relative;margin-top:38px;width:min(312px,82vw);aspect-ratio:375/812;background:#0a0a0a;border-radius:42px;padding:9px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #20222a,0 0 70px rgba(255,77,79,.25);}
+  .phone iframe{width:100%;height:100%;border:0;border-radius:34px;display:block;background:#373739;}
+  .phone .ring{position:absolute;inset:-14px;border-radius:54px;border:1px dashed rgba(255,138,107,.3);animation:spin 26s linear infinite;pointer-events:none;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .outro{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12vh 24px;}
+  .outro .big{font-family:'Sora';font-weight:800;font-size:clamp(30px,5.5vw,52px);line-height:1.1;color:#fff;max-width:17ch;letter-spacing:-.01em;}
+  .outro .big .hl{color:var(--blue);}
+  .outro p{margin-top:20px;font-size:18px;color:#cfd3dd;max-width:54ch;line-height:1.6;font-weight:600;}
+  .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:14px 24px;font-weight:800;font-size:15px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;transition:transform .18s;}
+  .btn.p{background:linear-gradient(120deg,var(--red),#cf2c2e);color:#fff;box-shadow:0 14px 30px rgba(255,77,79,.35);}
+  .btn.g{background:rgba(255,255,255,.07);color:#eef0f4;border:1px solid rgba(255,255,255,.16);}
+  [data-theme="light"] .btn.g{background:rgba(255,255,255,.6);color:#1c2028;border-color:rgba(120,120,130,.2);}
+  .btn:hover{transform:translateY(-3px);}
+  .foot{padding:40px 20px 60px;text-align:center;color:#7c828e;font-size:13px;}.foot b{color:var(--red2);}
+  [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);}
+  [data-reveal].in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important;transform:none!important;}.you::before,.you::after,.phone .ring,.scrollhint,.snd.on .eq i{animation:none!important;}html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<div class="bg"></div><canvas id="motes"></canvas><div id="prog"></div>
+<div class="top-ui">
+  <a id="back" href="./#projects">← Portfolio</a>
+  <button class="snd" id="snd" aria-label="Toggle sound"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="lbl">On Watch</span></button>
+</div>
+
+<section class="hero">
+  <div class="maph"></div>
+  <span class="dp a"></span><span class="dp b"></span><span class="dp c"></span><span class="dp d"></span>
+  <span class="you"></span>
+  <div class="eyebrow">A project, told as a world · 06</div>
+  <h1>Protect<span class="a">U</span></h1>
+  <p class="tag">See it. Understand it. Act — before it's too late.</p>
+  <div class="scrollhint"><span class="m"></span>scroll to begin</div>
+</section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The problem</div>
+  <div class="lead" data-reveal>When something goes wrong, it goes wrong <span class="hl">fast</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">And usually you're alone, on a street you half-know, with no idea where the nearest safe place is or how to tell someone you trust — quickly, without fumbling. In those seconds, information is everything.</p>
+</div></section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The journey</div>
+  <div class="lead" data-reveal>ProtectU turns panic into a <span class="hl">plan</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">An interactive incident map shows what's happening around you in real time. It guides you to the nearest safe place. It shares your live location and opens secure messaging to your trusted contacts in a tap — a French citizen-safety app built to <em>see, understand and act</em>.</p>
+  <div class="chips" data-reveal style="transition-delay:.12s"><span>Flutter</span><span>SignalR · real-time</span><span>Google Maps</span><span>Firebase</span><span>secure messaging</span></div>
+</div></section>
+
+<section class="stage">
+  <div class="eyebrow2" data-reveal>Step inside</div>
+  <h2 data-reveal>The live safety map — incidents around you, now.</h2>
+  <div class="sub" data-reveal style="transition-delay:.08s">Pan the map. Red markers are reported dangers.</div>
+  <div class="phone" data-reveal style="transition-delay:.12s"><span class="ring"></span><iframe src="protectu.html" loading="lazy" title="ProtectU live preview"></iframe></div>
+</section>
+
+<section class="outro">
+  <div class="big" data-reveal>Help is one <span class="hl">tap</span> away.</div>
+  <p data-reveal style="transition-delay:.1s">1K+ downloads, on the App Store and Google Play. Real-time awareness, safe routing and trusted contacts — when seconds count.</p>
+  <div class="cta" data-reveal style="transition-delay:.18s">
+    <a class="btn p" href="https://play.google.com/store/apps/details?id=com.protectu.fr" target="_blank" rel="noopener">Google Play ↗</a>
+    <a class="btn g" href="./#projects">← Back to the other worlds</a>
+  </div>
+</section>
+
+<div class="foot">A world built by <b>Bow</b> · one of several. Sound is composed live in your browser.</div>
+
+<script src="assets/worldkit.js"></script>
+<script>
+  Worldkit.motes(['rgba(255,138,107,','rgba(79,155,240,','rgba(200,206,220,']);
+  Worldkit.scroll();
+  Worldkit.sound('snd',{
+    chords:[[220,261.63,329.63],[196,233.08,293.66],[174.61,220,261.63],[164.81,196,246.94]],
+    scale:[220,261.63,293.66,329.63,392,440,523.25],
+    bar:8, step:560, density:0.48, noteDur:1.9, leadType:'triangle',
+    pad:0.06, lead:0.06, bass:true, bassVol:0.13, delay:0.4, fb:0.37, wet:0.56, vol:0.48
+  });
+</script>
+</body>
+</html>

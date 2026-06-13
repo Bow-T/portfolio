@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="robots" content="noindex">
+<title>Octopush — a world by Bow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>
+  :root{--teal:#19b6a8;--blue:#3a7bd5;--amber:#dcc279;--txt:#e9f1f0;--mut:#94a7a4;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--txt);background:#0a1412;overflow-x:hidden;}
+  .bg{position:fixed;inset:0;z-index:-2;background:
+      radial-gradient(70% 50% at 50% -8%,#0f4d47 0%,transparent 55%),
+      radial-gradient(85% 60% at 82% 28%,rgba(25,182,168,.2),transparent 60%),
+      radial-gradient(75% 55% at 14% 72%,rgba(58,123,213,.14),transparent 55%),
+      linear-gradient(180deg,#11201d 0%,#0d1916 45%,#08110f 100%);}
+  [data-theme="light"] body{color:#16302b;}
+  [data-theme="light"] .bg{background:radial-gradient(70% 50% at 50% -8%,#cdeee9 0%,transparent 55%),radial-gradient(80% 60% at 82% 28%,rgba(58,123,213,.14),transparent 60%),linear-gradient(180deg,#edf6f4 0%,#e3efec 45%,#d9e9e5 100%);}
+  #motes{position:fixed;inset:0;z-index:-1;pointer-events:none;}
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--blue),var(--teal),var(--amber));box-shadow:0 0 10px rgba(25,182,168,.6);}
+  .top-ui{position:fixed;top:16px;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:0 20px;pointer-events:none;}
+  .top-ui a,.top-ui button{pointer-events:auto;}
+  #back{display:inline-flex;align-items:center;gap:7px;color:var(--txt);text-decoration:none;font-weight:700;font-size:14px;background:rgba(10,20,18,.5);backdrop-filter:blur(8px);padding:9px 15px;border-radius:30px;border:1px solid rgba(255,255,255,.1);transition:transform .2s;}
+  #back:hover{transform:translateX(-3px);}
+  [data-theme="light"] #back,[data-theme="light"] .snd{background:rgba(255,255,255,.62);border-color:rgba(60,130,120,.2);color:#16302b;}
+  .snd{display:inline-flex;align-items:center;gap:9px;background:rgba(10,20,18,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 14px;color:var(--txt);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .snd .eq{display:inline-flex;gap:2px;align-items:flex-end;height:13px;}.snd .eq i{width:3px;background:var(--teal);border-radius:2px;height:5px;}
+  .snd.on .eq i{animation:eq 1s ease-in-out infinite;}.snd.on .eq i:nth-child(2){animation-delay:.2s}.snd.on .eq i:nth-child(3){animation-delay:.4s}.snd.on .eq i:nth-child(4){animation-delay:.1s}
+  @keyframes eq{0%,100%{height:4px}50%{height:13px}}.snd .lbl{opacity:.8;font-weight:600;}
+
+  section{position:relative;}.wrap{max-width:980px;margin:0 auto;padding:0 26px;}
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:80px 20px 40px;}
+  .bubbles{position:relative;z-index:2;width:min(320px,82vw);height:160px;margin-bottom:6px;}
+  .bub{position:absolute;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:8px 13px 8px 8px;backdrop-filter:blur(6px);animation:floaty 5s ease-in-out infinite;}
+  .bub .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;flex:none;}
+  .bub b{font-size:12px;font-weight:700;}
+  .bub.b1{left:0;top:8px;animation-delay:0s}.bub.b2{right:6px;top:44px;animation-delay:-1.4s}.bub.b3{left:30px;bottom:6px;animation-delay:-2.6s}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .hero .eyebrow{position:relative;z-index:2;margin-top:14px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--teal);}
+  .hero h1{position:relative;z-index:2;font-family:'Sora';font-weight:800;font-size:clamp(44px,9.5vw,86px);line-height:.96;margin-top:6px;color:#fff;letter-spacing:-.02em;}
+  [data-theme="light"] .hero h1{color:#0a1412;}
+  .hero h1 .a{color:var(--teal);}
+  .hero .tag{position:relative;z-index:2;max-width:560px;margin:18px auto 0;font-size:clamp(16px,2.4vw,20px);color:#cfe2df;line-height:1.5;font-weight:600;}
+  [data-theme="light"] .hero .tag,[data-theme="light"] .stage .sub{color:#4a6a64;}
+  .scrollhint{position:relative;z-index:2;margin-top:38px;color:var(--mut);font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:8px;animation:hbob 2s ease-in-out infinite;}
+  @keyframes hbob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(6px);opacity:1}}
+  .scrollhint .m{width:24px;height:38px;border:2px solid var(--mut);border-radius:13px;position:relative;}
+  .scrollhint .m::after{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:4px;height:7px;border-radius:3px;background:var(--teal);animation:wheel 1.6s ease-in-out infinite;}
+  @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+
+  .beat{padding:14vh 0;}
+  .eyebrow2{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--teal);margin-bottom:18px;}
+  .lead{font-family:'Sora';font-weight:700;font-size:clamp(28px,5vw,46px);line-height:1.12;color:#fff;max-width:18ch;letter-spacing:-.01em;}
+  [data-theme="light"] .lead,[data-theme="light"] .stage h2,[data-theme="light"] .outro .big{color:#0a1412;}
+  .lead .hl{color:var(--teal);}
+  .body{margin-top:22px;font-size:clamp(16px,2.3vw,19px);line-height:1.7;color:#cfe0dd;max-width:60ch;font-weight:600;}
+  [data-theme="light"] .body,[data-theme="light"] .outro p{color:#3e5650;}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;}
+  .chips span{background:rgba(25,182,168,.12);border:1px solid rgba(25,182,168,.32);color:#a8ece4;border-radius:30px;padding:8px 14px;font-size:13px;font-weight:700;}
+
+  .stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 20px;text-align:center;}
+  .stage .eyebrow2{color:var(--amber);}
+  .stage h2{font-family:'Sora';font-weight:700;font-size:clamp(26px,4.6vw,40px);color:#fff;max-width:20ch;margin:0 auto;letter-spacing:-.01em;}
+  .stage .sub{margin-top:12px;color:#cfe2df;font-size:16px;font-weight:600;}
+  .phone{position:relative;margin-top:38px;width:min(312px,82vw);aspect-ratio:375/812;background:#0a0a0a;border-radius:42px;padding:9px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 2px #16302b,0 0 70px rgba(25,182,168,.28);}
+  .phone iframe{width:100%;height:100%;border:0;border-radius:34px;display:block;background:#fff;}
+  .phone .ring{position:absolute;inset:-14px;border-radius:54px;border:1px dashed rgba(25,182,168,.3);animation:spin 26s linear infinite;pointer-events:none;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .outro{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12vh 24px;}
+  .outro .big{font-family:'Sora';font-weight:800;font-size:clamp(30px,5.5vw,52px);line-height:1.1;color:#fff;max-width:18ch;letter-spacing:-.01em;}
+  .outro .big .hl{color:var(--teal);}
+  .outro p{margin-top:20px;font-size:18px;color:#cfe0dd;max-width:54ch;line-height:1.6;font-weight:600;}
+  .cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:30px;padding:14px 24px;font-weight:800;font-size:15px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;transition:transform .18s;}
+  .btn.p{background:linear-gradient(120deg,var(--teal),#0e8d82);color:#fff;box-shadow:0 14px 30px rgba(25,182,168,.35);}
+  .btn.g{background:rgba(255,255,255,.07);color:#e9f1f0;border:1px solid rgba(255,255,255,.16);}
+  [data-theme="light"] .btn.g{background:rgba(255,255,255,.6);color:#16302b;border-color:rgba(60,130,120,.2);}
+  .btn:hover{transform:translateY(-3px);}
+  .foot{padding:40px 20px 60px;text-align:center;color:#7a8a86;font-size:13px;}.foot b{color:var(--teal);}
+  [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);}
+  [data-reveal].in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important;transform:none!important;}.bub,.phone .ring,.scrollhint,.snd.on .eq i{animation:none!important;}html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<div class="bg"></div><canvas id="motes"></canvas><div id="prog"></div>
+<div class="top-ui">
+  <a id="back" href="./#projects">← Portfolio</a>
+  <button class="snd" id="snd" aria-label="Toggle sound"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="lbl">Inbox Zero</span></button>
+</div>
+
+<section class="hero">
+  <div class="bubbles">
+    <span class="bub b1"><span class="av" style="background:#a8d5a2">LE</span><b>Merci c'est noté</b></span>
+    <span class="bub b2"><span class="av" style="background:#3e5266">CA</span><b>Parfait, rdv jeudi</b></span>
+    <span class="bub b3"><span class="av" style="background:#dcc279">QU</span><b>Célébrons ça !</b></span>
+  </div>
+  <div class="eyebrow">A project, told as a world · 08</div>
+  <h1>Octo<span class="a">push</span></h1>
+  <p class="tag">Every customer conversation, in one calm inbox.</p>
+  <div class="scrollhint"><span class="m"></span>scroll to begin</div>
+</section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The problem</div>
+  <div class="lead" data-reveal>Customers write from <span class="hl">everywhere</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">SMS here, a chat there, a missed message in a third tab. For a team handling real customers, conversations scatter across channels — and a reply that comes an hour late is a reply that comes too late.</p>
+</div></section>
+
+<section class="beat"><div class="wrap">
+  <div class="eyebrow2" data-reveal>The journey</div>
+  <div class="lead" data-reveal>Octopush pulls them into <span class="hl">one thread</span>.</div>
+  <p class="body" data-reveal style="transition-delay:.1s">A customer-conversation messenger for the Octopush (Marseille) multichannel / SMS platform: the whole team handles every conversation and live chat from a single app, with push notifications so nothing slips — replies fast, from one place.</p>
+  <div class="chips" data-reveal style="transition-delay:.12s"><span>Flutter</span><span>dio + retrofit</span><span>Firebase Messaging</span><span>multichannel / SMS</span></div>
+</div></section>
+
+<section class="stage">
+  <div class="eyebrow2" data-reveal>Step inside</div>
+  <h2 data-reveal>The live conversation list — tidy, fast, all here.</h2>
+  <div class="sub" data-reveal style="transition-delay:.08s">Every customer, every channel, one screen.</div>
+  <div class="phone" data-reveal style="transition-delay:.12s"><span class="ring"></span><iframe src="octopush.html" loading="lazy" title="Octopush live preview"></iframe></div>
+</section>
+
+<section class="outro">
+  <div class="big" data-reveal>One inbox. Every <span class="hl">customer</span>.</div>
+  <p data-reveal style="transition-delay:.1s">The team messenger for a multichannel / SMS platform — on the App Store and Google Play. Reply fast, from one place.</p>
+  <div class="cta" data-reveal style="transition-delay:.18s">
+    <a class="btn p" href="https://play.google.com/store/apps/details?id=com.du.octopush" target="_blank" rel="noopener">Google Play ↗</a>
+    <a class="btn g" href="./#projects">← Back to the other worlds</a>
+  </div>
+</section>
+
+<div class="foot">A world built by <b>Bow</b> · one of several. Sound is composed live in your browser.</div>
+
+<script src="assets/worldkit.js"></script>
+<script>
+  Worldkit.motes(['rgba(25,182,168,','rgba(58,123,213,','rgba(220,194,121,']);
+  Worldkit.scroll();
+  Worldkit.sound('snd',{
+    chords:[[261.63,329.63,392.00],[329.63,392.00,493.88],[293.66,369.99,440.00],[349.23,440.00,523.25]],
+    scale:[392,440,493.88,587.33,659.25,784,880,987.77],
+    bar:5, step:340, density:0.5, noteDur:1.0, leadType:'triangle',
+    pad:0.045, lead:0.06, bass:true, bassVol:0.09, delay:0.26, fb:0.27, wet:0.4, vol:0.5
+  });
+</script>
+</body>
+</html>
