@@ -71,6 +71,8 @@
     window.track('ui_click', {label: label||'(empty)', target_type:type, area:area, link_url:(''+href).slice(0,100)}); try{ addDoc(collection(db,'events'),{ ts:serverTimestamp(), label:(label||'(empty)').slice(0,80), area:area, page:location.pathname, link:(''+href).slice(0,120) }); }catch(_){ }
   }, true);
 </script>
+<script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>[data-theme="light"]{--bg:#eef3e7;--card:#ffffff;--ink:#1a2416;--muted:#5d6e52;--line:#dde7d0;}[data-theme="light"] .mute{background:rgba(255,255,255,.6);}</style>
 </head>
 <body>
   <div class="head">

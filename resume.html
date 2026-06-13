@@ -92,6 +92,8 @@
     window.track('ui_click', {label: label||'(empty)', target_type:type, area:area, link_url:(''+href).slice(0,100)}); try{ addDoc(collection(db,'events'),{ ts:serverTimestamp(), label:(label||'(empty)').slice(0,80), area:area, page:location.pathname, link:(''+href).slice(0,120) }); }catch(_){ }
   }, true);
 </script>
+<script>(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>@media screen{[data-theme="dark"]{--ink:#e7efe4;--muted:#9fb098;--line:#28341f;--soft:#161c12;--accent:#3fb0bd;--accent2:#4cc5d4;}[data-theme="dark"] body{background:#0b100a;}[data-theme="dark"] .page{background:#141a10;box-shadow:0 18px 50px rgba(0,0,0,.55);}[data-theme="dark"] .proj.star{background:#1b2213;}[data-theme="dark"] .tag.lite{background:#22301a;color:#7fd3dd;}[data-theme="dark"] .ph{color:#ff8a9a;}[data-theme="dark"] footer{color:#7a8a6e;border-top-color:#28341f;}}</style>
 </head>
 <body>
 <div class="page">
