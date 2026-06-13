@@ -443,12 +443,31 @@
   .accent button{width:15px;height:15px;border-radius:50%;border:1.5px solid transparent;background:var(--d);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;}
   .accent button:hover{transform:scale(1.18);}
   .accent button.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 8px var(--d);}
+  /* click-to-show menus for language + accent */
+  .ctrl{position:relative;display:inline-flex;}
+  #langbtn{font-weight:700;font-size:11.5px;letter-spacing:.04em;min-width:42px;gap:4px;}
+  #palbtn{position:relative;}
+  #palbtn::after{content:"";position:absolute;right:5px;bottom:5px;width:8px;height:8px;border-radius:50%;background:var(--clk);box-shadow:0 0 5px var(--clk);}
+  .pop{position:absolute;top:calc(100% + 9px);right:0;background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);
+    border:1px solid var(--glassb);border-radius:14px;padding:7px;box-shadow:0 16px 40px -12px rgba(0,0,0,.5),inset 0 1px 0 var(--glasshi);
+    z-index:60;display:none;flex-direction:column;gap:3px;min-width:140px;animation:popin .18s ease;}
+  .pop.open{display:flex;}
+  @keyframes popin{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+  .pop.lang button{border:none;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:600;text-align:left;padding:9px 12px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:9px;}
+  .pop.lang button:hover{background:var(--chip);}
+  .pop.lang button.on{color:#0a2009;background:var(--grad);}
+  .pop.lang button .fl{font-size:14px;}
+  .pop.acc{flex-direction:row;gap:9px;padding:11px 12px;min-width:0;align-items:center;}
 
   /* ===== corner digital clock (clock_app UI: white 7-segment bars glowing the accent) ===== */
-  #clock{position:fixed;left:18px;bottom:74px;z-index:69;display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:15px;
+  #clock{position:fixed;left:18px;bottom:74px;z-index:69;display:none;align-items:center;gap:6px;padding:11px 13px 11px 13px;border-radius:15px;
     background:var(--clkbg);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);
-    border:1px solid color-mix(in srgb,var(--clk) 26%,transparent);box-shadow:0 10px 28px rgba(0,0,0,.4);opacity:.92;transition:opacity .2s;}
-  #clock:hover{opacity:1;}
+    border:1px solid color-mix(in srgb,var(--clk) 26%,transparent);box-shadow:0 10px 28px rgba(0,0,0,.4);}
+  #clock.show{display:flex;animation:clkin .55s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes clkin{from{opacity:0;transform:translateY(14px) scale(.9);}to{opacity:1;transform:none;}}
+  #clock .clk-ctrls{display:flex;flex-direction:column;gap:6px;margin-left:4px;}
+  #clock .clk-ctrls button{width:18px;height:18px;border-radius:50%;border:1px solid color-mix(in srgb,var(--clk) 30%,transparent);background:transparent;color:#fff;font-size:10px;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:.75;transition:.15s;padding:0;}
+  #clock .clk-ctrls button:hover{opacity:1;border-color:var(--clk);}
   #clock .clk-face{display:flex;align-items:center;gap:5px;}
   .dig{position:relative;width:17px;height:31px;}
   .dig .s{position:absolute;background:#fff;border-radius:5px;opacity:0;box-shadow:0 0 4px var(--clk),0 0 9px var(--clk);transition:opacity .28s ease,transform .42s cubic-bezier(.3,1.5,.5,1);}
@@ -567,15 +586,21 @@
       <a class="lnk" href="#work" data-i18n="nav.work">Work</a>
       <a class="lnk" href="#experience" data-i18n="nav.experience">Experience</a>
       <a class="lnk" href="#activity" data-i18n="nav.activity">Activity</a>
-      <span class="langsel" id="langsel"><button data-l="en">EN</button><button data-l="vi">VI</button><button data-l="fr">FR</button></span>
+      <span class="ctrl"><button class="iconbtn" id="langbtn" aria-haspopup="true" title="Language">🌐&nbsp;<span id="langcur">EN</span></button>
+        <div class="pop lang" id="langpop">
+          <button data-l="en"><span class="fl">🇬🇧</span>English</button>
+          <button data-l="vi"><span class="fl">🇻🇳</span>Tiếng Việt</button>
+          <button data-l="fr"><span class="fl">🇫🇷</span>Français</button>
+        </div></span>
       <button class="iconbtn" id="theme" aria-label="Toggle theme" title="Toggle light / dark">🌙</button>
-      <span class="accent" id="accent" aria-label="Accent colour">
-        <button data-ac="lime" style="--d:#4ade80" title="Lime" aria-label="Lime"></button>
-        <button data-ac="green" style="--d:#4daf50" title="Green" aria-label="Green"></button>
-        <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
-        <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
-        <button data-ac="valentine" style="--d:#fd2a2a" title="Valentine" aria-label="Valentine"></button>
-      </span>
+      <span class="ctrl"><button class="iconbtn" id="palbtn" aria-haspopup="true" aria-label="Accent colour" title="Accent colour">🎨</button>
+        <div class="pop acc accent" id="accent" aria-label="Accent colour">
+          <button data-ac="lime" style="--d:#4ade80" title="Lime" aria-label="Lime"></button>
+          <button data-ac="green" style="--d:#4daf50" title="Green" aria-label="Green"></button>
+          <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
+          <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
+          <button data-ac="valentine" style="--d:#fd2a2a" title="Valentine" aria-label="Valentine"></button>
+        </div></span>
       <a href="#contact" class="btn" data-i18n="nav.sayhi">Say hi</a>
     </div>
   </div>
@@ -1104,7 +1129,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     function loop(){fx+=(mx-fx)*0.16;fy+=(my-fy)*0.16;f.style.setProperty('--fx',fx+'px');f.style.setProperty('--fy',fy+'px');if(on)raf=requestAnimationFrame(loop);}
   })();
   // type keywords
-  (function(){let buf='';addEventListener('keydown',e=>{if(e.key.length!==1)return;if(/INPUT|TEXTAREA/.test(e.target.tagName))return;buf=(buf+e.key.toLowerCase()).slice(-10);if(buf.endsWith('bow')){confetti();toast('🎀 Hi, I\'m Bow!');buf='';}else if(buf.endsWith('flutter')){confetti();toast('🦋 Flutter forever 💙');buf='';}else if(buf.endsWith('rain')){if(window.__rain)window.__rain(true);toast('🌧️ let it rain');buf='';}else if(buf.endsWith('hire')){toast('📬 nguyenvantuan4034@gmail.com — let\'s talk!');buf='';}});})();
+  (function(){let buf='';addEventListener('keydown',e=>{if(e.key.length!==1)return;if(/INPUT|TEXTAREA/.test(e.target.tagName))return;buf=(buf+e.key.toLowerCase()).slice(-10);if(buf.endsWith('bow')){confetti();toast('🎀 Hi, I\'m Bow!');buf='';}else if(buf.endsWith('flutter')){confetti();toast('🦋 Flutter forever 💙');buf='';}else if(buf.endsWith('rain')){if(window.__rain)window.__rain(true);toast('🌧️ let it rain');buf='';}else if(buf.endsWith('hire')){toast('📬 nguyenvantuan4034@gmail.com — let\'s talk!');buf='';}else if(buf.endsWith('clock')){if(window.__clock)window.__clock();toast('⏰ tic… toc…');buf='';}});})();
 
   // idle
   (function(){let it;function r(){clearTimeout(it);it=setTimeout(()=>toast('still there? 👀 try typing "bow"'),35000);}['mousemove','keydown','scroll','touchstart','click'].forEach(ev=>addEventListener(ev,r,{passive:true}));r();})();
@@ -1186,9 +1211,10 @@ Object.assign(I18N,{
 function setLang(l){localStorage.setItem('lang',l);document.documentElement.lang=l;
   document.querySelectorAll('[data-i18n]').forEach(e=>{const t=I18N[e.dataset.i18n];if(t&&t[l]!=null)e.textContent=t[l];});
   document.querySelectorAll('[data-i18n-html]').forEach(e=>{const t=I18N[e.dataset.i18nHtml];if(t&&t[l]!=null)e.innerHTML=t[l];});
-  document.querySelectorAll('#langsel button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  document.querySelectorAll('#langpop button').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  var cur=document.getElementById('langcur'); if(cur) cur.textContent=l.toUpperCase();
   if(typeof renderWork==='function')renderWork();}
-document.getElementById('langsel').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setLang(b.dataset.l);});
+document.getElementById('langpop').addEventListener('click',e=>{const b=e.target.closest('button');if(b){setLang(b.dataset.l);b.closest('.pop').classList.remove('open');}});
 setLang(localStorage.getItem('lang')||'en');
 
 // ===== chatbot (scripted) =====
@@ -1275,7 +1301,8 @@ setLang(localStorage.getItem('lang')||'en');
 })();
 </script>
 
-<div id="clock" aria-label="Clock"><div class="clk-face"></div></div>
+<audio id="clkaudio" src="assets/audio/clock.mp3" loop preload="none"></audio>
+<div id="clock" aria-label="Clock"><div class="clk-face"></div><div class="clk-ctrls"><button id="clkmute" title="Mute music">♪</button><button id="clkx" title="Hide clock">✕</button></div></div>
 <script>
 /* accent palette picker (clock_app themes) + corner 7-segment clock */
 (function(){
@@ -1285,11 +1312,20 @@ setLang(localStorage.getItem('lang')||'en');
     try{localStorage.setItem('accent',a);}catch(e){}
     box.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.ac===a);});
   }
-  box.addEventListener('click',function(e){var b=e.target.closest('button');if(b)setAccent(b.dataset.ac);});
+  box.addEventListener('click',function(e){var b=e.target.closest('button');if(b){setAccent(b.dataset.ac);var p=b.closest('.pop');if(p)p.classList.remove('open');}});
   var saved='lime';try{saved=localStorage.getItem('accent')||'lime';}catch(e){}
   setAccent(saved);
 
-  var face=document.querySelector('#clock .clk-face');
+  /* click-to-show menus for language + accent */
+  function bindPop(btnId,popId){var btn=document.getElementById(btnId),pop=document.getElementById(popId);if(!btn)return;
+    btn.addEventListener('click',function(e){e.stopPropagation();var open=pop.classList.contains('open');
+      document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});
+      if(!open)pop.classList.add('open');});}
+  bindPop('langbtn','langpop'); bindPop('palbtn','accent');
+  document.addEventListener('click',function(e){if(!e.target.closest('.ctrl'))document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});});
+
+  var clock=document.getElementById('clock'), audio=document.getElementById('clkaudio');
+  var face=clock.querySelector('.clk-face');
   var SEGS=['top','mid','bot','tl','tr','bl','br','ct','cb'];
   var MAP={top:[0,2,3,5,6,7,8,9],mid:[2,3,4,5,6,8,9],bot:[0,2,3,5,6,8,9],tr:[0,2,3,4,7,8,9],br:[0,3,4,5,6,7,8,9],tl:[0,4,5,6,8,9],bl:[0,2,6,8],ct:[1],cb:[1]};
   function mkDig(){var d=document.createElement('div');d.className='dig';SEGS.forEach(function(s){var e=document.createElement('span');e.className='s '+s;d.appendChild(e);});return d;}
@@ -1307,6 +1343,18 @@ setLang(localStorage.getItem('lang')||'en');
     var blink=n.getSeconds()%2===0; colons.forEach(function(c){c.classList.toggle('blink',blink);});
   }
   tick(); setInterval(tick,1000);
+
+  /* the clock is hidden until summoned by typing "clock"; it brings the clock_app track */
+  var muted=false;
+  function show(on){
+    clock.classList.toggle('show',on);
+    if(on){ if(!muted){ var p=audio.play(); if(p&&p.catch)p.catch(function(){}); } }
+    else{ audio.pause(); }
+  }
+  window.__clock=function(){ show(!clock.classList.contains('show')); };
+  document.getElementById('clkx').addEventListener('click',function(e){e.stopPropagation();show(false);});
+  document.getElementById('clkmute').addEventListener('click',function(e){e.stopPropagation();muted=!muted;this.textContent=muted?'🔇':'♪';
+    if(muted)audio.pause(); else if(clock.classList.contains('show')){var p=audio.play();if(p&&p.catch)p.catch(function(){});}});
 })();
 </script>
 </body>
