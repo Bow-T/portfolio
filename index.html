@@ -1563,47 +1563,71 @@ setLang(localStorage.getItem('lang')||'en');
 })();
 </script>
 
-<script>
-/* hero origami clip: extract frames once, then drag or hand scrubs them (open=clean, fist=crumpled) */
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+/* hero origami: morph a low-poly paper face between normal.glb and crumpled.glb (open=flat, fist=crumpled) */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 (function(){
-  var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx');if(!wrap||!cv)return;
-  var ctx=cv.getContext('2d');
-  var V=document.createElement('video');V.muted=true;V.setAttribute('playsinline','');V.setAttribute('crossorigin','anonymous');V.preload='auto';
-  V.style.cssText='position:fixed;left:-99999px;top:0;width:8px;height:8px;opacity:0;pointer-events:none';V.src='assets/budarina/origami.mp4';document.body.appendChild(V);
-  var frames=[],ready=false,curIdx=0,mhold=false,handOpen=1,handT=0,handOn=false;
+  var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
+  if(!wrap||!cv)return;
+  var renderer=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  var scene=new THREE.Scene();
+  var cam=new THREE.PerspectiveCamera(34,1,0.1,100);cam.position.set(0.5,0.18,2.55);cam.lookAt(0,0,0);
+  scene.add(new THREE.AmbientLight(0xffffff,0.5));
+  var key=new THREE.DirectionalLight(0xfff1d8,2.1);key.position.set(2,2.4,2.6);scene.add(key);
+  var fill=new THREE.DirectionalLight(0xcfe0ff,0.6);fill.position.set(-2.2,-0.4,1.2);scene.add(fill);
+  var rim=new THREE.DirectionalLight(0xffffff,0.8);rim.position.set(-1.2,1.6,-2.2);scene.add(rim);
+  var group=new THREE.Group();scene.add(group);
+  var mat=new THREE.MeshStandardMaterial({color:0xe9e2d2,roughness:0.92,metalness:0.0,flatShading:true,side:THREE.DoubleSide});
+  var geom=null,nPos=null,cPos=null,ready=false;
+  var curT=0,targetT=0,mhold=false,handOpen=1,handT=0,handOn=false;
   function now(){return (window.performance&&performance.now())||0;}
-  function size(){var dpr=Math.min(devicePixelRatio||1,2),w=cv.clientWidth||320;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr);}
-  function seekTo(t){return new Promise(function(res){var d=function(){V.removeEventListener('seeked',d);res();};V.addEventListener('seeked',d);try{V.currentTime=t;}catch(e){res();}});}
-  function extract(){
-    var dur=V.duration;if(!dur||!isFinite(dur))dur=4;var N=Math.max(20,Math.min(56,Math.round(dur*14)));
-    var vw=V.videoWidth||1024,vh=V.videoHeight||1024,fw=Math.min(480,vw),fh=Math.round(fw*vh/vw);
-    var oc=document.createElement('canvas');oc.width=fw;oc.height=fh;var octx=oc.getContext('2d'),i=0;
-    (function nx(){if(i>=N){ready=true;return;}
-      seekTo((i/(N-1))*dur*0.997).then(function(){octx.drawImage(V,0,0,fw,fh);
-        return (window.createImageBitmap?createImageBitmap(oc):Promise.reject()).then(function(b){frames.push(b);},function(){var c=document.createElement('canvas');c.width=fw;c.height=fh;c.getContext('2d').drawImage(oc,0,0);frames.push(c);});
-      }).then(function(){i++;nx();},function(){i++;nx();});})();
+  function firstMesh(g){var m=null;g.scene.traverse(function(o){if(!m&&o.isMesh)m=o;});return m;}
+  var L=new GLTFLoader();
+  Promise.all([L.loadAsync('assets/origami/normal.glb'),L.loadAsync('assets/origami/crumpled.glb')]).then(function(res){
+    var mn=firstMesh(res[0]),mc=firstMesh(res[1]);if(!mn||!mc)return;
+    geom=mn.geometry.index?mn.geometry.toNonIndexed():mn.geometry;
+    var cg=mc.geometry.index?mc.geometry.toNonIndexed():mc.geometry;
+    nPos=Float32Array.from(geom.attributes.position.array);
+    cPos=Float32Array.from(cg.attributes.position.array);
+    if(nPos.length!==cPos.length)return;
+    var bb=new THREE.Box3().setFromBufferAttribute(geom.attributes.position);
+    var cx=(bb.min.x+bb.max.x)/2,cy=(bb.min.y+bb.max.y)/2,cz=(bb.min.z+bb.max.z)/2;
+    var sc=2/Math.max(bb.max.x-bb.min.x,bb.max.y-bb.min.y,bb.max.z-bb.min.z);
+    for(var i=0;i<nPos.length;i+=3){
+      nPos[i]=(nPos[i]-cx)*sc;nPos[i+1]=(nPos[i+1]-cy)*sc;nPos[i+2]=(nPos[i+2]-cz)*sc;
+      cPos[i]=(cPos[i]-cx)*sc;cPos[i+1]=(cPos[i+1]-cy)*sc;cPos[i+2]=(cPos[i+2]-cz)*sc;}
+    geom.setAttribute('position',new THREE.BufferAttribute(Float32Array.from(nPos),3));
+    geom.deleteAttribute('normal');
+    group.add(new THREE.Mesh(geom,mat));group.rotation.y=0.5;ready=true;
+  }).catch(function(){});
+  function size(){var w=cv.clientWidth||320;renderer.setSize(w,w,false);cam.aspect=1;cam.updateProjectionMatrix();}
+  addEventListener('resize',size);size();
+  cv.addEventListener('pointerdown',function(){mhold=true;});addEventListener('pointerup',function(){mhold=false;});
+  function frame(){requestAnimationFrame(frame);
+    if(ready){
+      var hand=handOn&&(now()-handT<400);
+      targetT=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
+      curT+=(targetT-curT)*0.12;
+      var pa=geom.attributes.position.array;
+      for(var i=0;i<pa.length;i++)pa[i]=nPos[i]+(cPos[i]-nPos[i])*curT;
+      geom.attributes.position.needsUpdate=true;
+      group.rotation.y=0.5+Math.sin(now()*0.00026)*0.22;
+    }
+    renderer.render(scene,cam);
   }
-  V.addEventListener('loadedmetadata',function(){size();extract();});
-  cv.addEventListener('pointerdown',function(){mhold=true;});
-  addEventListener('pointerup',function(){mhold=false;});
-  addEventListener('resize',size);
-  function loop(){
-    var hand=handOn&&(now()-handT<400);
-    var tgt=hand?Math.max(0,Math.min(1,1-handOpen)):(mhold?1:0);
-    curIdx+=(tgt-curIdx)*0.2;
-    var W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);
-    if(ready&&frames.length){var f=frames[Math.max(0,Math.min(frames.length-1,Math.round(curIdx*(frames.length-1))))];
-      var s=Math.min(W/f.width,H/f.height),dw=f.width*s,dh=f.height*s;ctx.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);}
-    requestAnimationFrame(loop);
-  }
-  size();loop();try{V.load();}catch(e){}
+  frame();
 
   /* opt-in hand control (no auto camera) */
   var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
-  var hands=null,stream=null,sending=false,libLoaded=false,pip=null,pcv=null,pctx=null,pst=null,pv=null,btn=document.getElementById('herofx-hand');
+  var hands=null,stream=null,sending=false,libLoaded=false,pip=null,pcv=null,pctx=null,pst=null,pv=null;
   var HC=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
   function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej();};document.head.appendChild(s);});}
-  function openness(lm){var w=lm[0],m=lm[9],sc=Math.hypot(w.x-m.x,w.y-m.y)||0.1,s=0,t=[8,12,16,20];for(var i=0;i<4;i++)s+=Math.hypot(lm[t[i]].x-w.x,lm[t[i]].y-w.y)/sc;return Math.max(0,Math.min(1,(s/4-1.15)/0.95));}
+  function openness(lm){var w=lm[0],m=lm[9],s2=Math.hypot(w.x-m.x,w.y-m.y)||0.1,s=0,t=[8,12,16,20];for(var i=0;i<4;i++)s+=Math.hypot(lm[t[i]].x-w.x,lm[t[i]].y-w.y)/s2;return Math.max(0,Math.min(1,(s/4-1.15)/0.95));}
   function buildPip(){
     pip=document.createElement('div');pip.id='hfxcam';
     pip.innerHTML='<div class="hc-h"><span class="hc-d"></span>Hand <span class="hc-s">…</span><button class="hc-x" aria-label="Close">✕</button></div><div class="hc-b"><video playsinline muted></video><canvas></canvas></div><div class="hc-f">✋ phẳng · ✊ vò</div>';
