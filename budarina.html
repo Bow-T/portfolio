@@ -13,10 +13,8 @@
   body{position:relative;}
   .serif{font-family:'Playfair Display',Georgia,serif;font-style:italic;}
 
-  /* ===== top nav ===== */
   nav{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 40px;z-index:30;}
   .logo{font-weight:700;font-size:21px;letter-spacing:-.5px;}
-  .logo b{font-weight:700;}
   .navlinks{display:flex;gap:32px;}
   .navlinks a{color:rgba(255,255,255,.62);text-decoration:none;font-size:14px;transition:color .2s;}
   .navlinks a:hover{color:#fff;}
@@ -24,13 +22,12 @@
   .navbtns button{font:600 13px/1 'Inter',sans-serif;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.22);padding:11px 18px;border-radius:30px;cursor:pointer;transition:.2s;}
   .navbtns button:hover{background:#fff;color:#000;border-color:#fff;}
 
-  /* ===== video reel (right, mirrored, loops) ===== */
-  .reel{position:absolute;top:0;right:0;width:58%;height:100%;object-fit:cover;transform:scaleX(-1);z-index:1;background:#0a0a0a;}
+  /* origami portrait reel (right) */
+  #reel{position:absolute;top:0;right:0;width:58%;height:100%;z-index:1;display:block;background:#070707;}
   .reel-fade{position:absolute;top:0;right:0;bottom:0;width:64%;z-index:2;pointer-events:none;
     background:linear-gradient(90deg,#050505 0%,rgba(5,5,5,.72) 24%,rgba(5,5,5,0) 62%);}
   .reel-fade.bottom{width:100%;height:30%;top:auto;background:linear-gradient(0deg,#050505,rgba(5,5,5,0));}
 
-  /* ===== hero copy (left) ===== */
   .hero{position:absolute;left:40px;top:21vh;z-index:5;max-width:min(720px,60vw);}
   .tag{display:flex;align-items:center;gap:11px;font-size:12.5px;letter-spacing:.14em;color:rgba(255,255,255,.82);text-transform:uppercase;margin-bottom:30px;}
   .tag .dia{width:9px;height:9px;background:#fff;transform:rotate(45deg);flex:0 0 auto;}
@@ -38,14 +35,13 @@
   h1{font-size:clamp(38px,6.2vw,86px);line-height:1.01;font-weight:600;letter-spacing:-2.5px;}
   h1 .serif{font-weight:400;display:inline-block;margin-top:.04em;}
 
-  /* ===== bottom-left subtitle + pill ===== */
   .bl{position:absolute;left:40px;bottom:38px;z-index:5;max-width:430px;}
   .bl p{font-size:14.5px;line-height:1.62;color:rgba(255,255,255,.6);margin-bottom:22px;}
   .pill{display:inline-flex;align-items:center;gap:9px;background:#fff;color:#000;font-weight:600;font-size:14px;padding:14px 24px;border-radius:32px;text-decoration:none;transition:transform .2s,box-shadow .2s;}
   .pill:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,255,255,.18);}
   .pill svg{width:15px;height:15px;}
 
-  /* ===== floating webcam window (draggable + resizable) ===== */
+  /* floating webcam (draggable + resizable) */
   #cam{position:fixed;right:34px;bottom:34px;width:286px;height:214px;z-index:40;background:#0c0c0c;
     border:1px solid rgba(255,255,255,.16);border-radius:14px;overflow:hidden;resize:both;min-width:190px;min-height:158px;max-width:90vw;max-height:80vh;
     display:flex;flex-direction:column;box-shadow:0 22px 60px rgba(0,0,0,.6);}
@@ -65,7 +61,7 @@
 
   @media(max-width:820px){
     nav{padding:18px 20px;}.navlinks{display:none;}
-    .reel{width:100%;opacity:.34;}.reel-fade{width:100%;background:linear-gradient(90deg,#050505,rgba(5,5,5,.5));}
+    #reel{width:100%;opacity:.4;}.reel-fade{width:100%;background:linear-gradient(90deg,#050505,rgba(5,5,5,.5));}
     .hero{left:20px;top:15vh;max-width:90vw;}.bl{left:20px;max-width:88vw;}
     h1{letter-spacing:-1.2px;}
   }
@@ -75,20 +71,12 @@
 
 <nav>
   <div class="logo"><b>Budarina</b></div>
-  <div class="navlinks">
-    <a href="#">Home</a><a href="#">Work</a><a href="#">About</a><a href="#">Contact</a>
-  </div>
-  <div class="navbtns">
-    <button type="button">See My Work</button>
-    <button type="button">Say Hello</button>
-  </div>
+  <div class="navlinks"><a href="#">Home</a><a href="#">Work</a><a href="#">About</a><a href="#">Contact</a></div>
+  <div class="navbtns"><button type="button">See My Work</button><button type="button">Say Hello</button></div>
 </nav>
 
-<!-- video reel on the right, mirrored horizontally · swap the sources for your own showreel -->
-<video class="reel" id="reel" autoplay loop muted playsinline>
-  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-  <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-</video>
+<!-- the reel is now an origami portrait of your photo; the hand folds it -->
+<canvas id="reel"></canvas>
 <div class="reel-fade"></div>
 <div class="reel-fade bottom"></div>
 
@@ -104,91 +92,150 @@
   </a>
 </div>
 
-<!-- floating webcam · open hand ✋ plays the reel, closed fist ✊ pauses it -->
+<!-- webcam · open hand ✋ unfolds the portrait, closed fist ✊ crumples it -->
 <div id="cam">
   <div class="cam-head"><span class="rec"></span> Hand control <span class="st" id="camst">starting…</span></div>
   <div class="cam-body">
     <video id="camv" playsinline muted></video>
     <canvas id="camc"></canvas>
     <div class="cam-enable" id="camen" style="display:none">
-      <div>Cho phép camera để điều khiển reel bằng cử chỉ tay</div>
+      <div>Cho phép camera để gập / bung chân dung bằng tay</div>
       <button type="button" id="cambtn">Bật camera</button>
     </div>
-    <div class="cam-foot">✋ play&nbsp;&nbsp;·&nbsp;&nbsp;✊ pause</div>
+    <div class="cam-foot">✋ bung&nbsp;&nbsp;·&nbsp;&nbsp;✊ gập</div>
   </div>
 </div>
 
 <script>
 (function(){
-  var reel=document.getElementById('reel');
-  reel.play().catch(function(){});
+  /* ================= origami portrait (WebGL faceted fold) ================= */
+  var cv=document.getElementById('reel'),gl=cv.getContext('webgl')||cv.getContext('experimental-webgl');
+  var targetK=0,curK=0,mdownK=false,handOpen=1,handT=0,texReady=false,useVideo=false,meshReady=false,srcAspect=1;
+  var prog,uRes,uK,uCenter,uTex,aRest,aUV,aFold,aH,restBuf,uvBuf,foldBuf,hBuf,idxBuf,tex,idxLen=0,GX=26,GY=24;
+  function now(){return (window.performance&&performance.now())||0;}
+  if(gl){
+    var deriv=gl.getExtension('OES_standard_derivatives');
+    var vs='attribute vec2 aRest;attribute vec2 aUV;attribute vec2 aFold;attribute float aH;uniform vec2 uRes;uniform vec2 uCenter;uniform float uK;'
+      +'varying vec2 vUV;varying vec3 vPos;void main(){float S=min(uRes.x,uRes.y);vec2 rel=aRest-uCenter;'
+      +'vec2 comp=uCenter+rel*mix(1.0,0.64,uK);vec2 pos=comp+aFold*(S*0.09)*uK;float z=aH*S*mix(0.012,0.17,uK);'
+      +'vec2 c=(pos/uRes)*2.0-1.0;c.y=-c.y;gl_Position=vec4(c,0.0,1.0);vUV=aUV;vPos=vec3(pos.x/uRes.y,pos.y/uRes.y,z/uRes.y);}';
+    var head=deriv?'#extension GL_OES_standard_derivatives : enable\n':'';
+    var fs=head+'precision mediump float;varying vec2 vUV;varying vec3 vPos;uniform sampler2D uTex;'
+      +'float hsh(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}void main(){vec4 col=texture2D(uTex,vUV);'
+      +(deriv?'vec3 N=normalize(cross(dFdx(vPos),dFdy(vPos)));vec3 L=normalize(vec3(0.4,0.55,0.75));float d=clamp(dot(N,L),0.0,1.0);float shade=0.58+0.64*d;':'float shade=1.0;')
+      +'float grain=0.95+0.08*hsh(floor(vUV*240.0));vec3 paper=mix(col.rgb,col.rgb*vec3(1.06,1.0,0.9),0.22);'
+      +'gl_FragColor=vec4(paper*shade*grain,col.a);}';
+    function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o;}
+    prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,vs));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);gl.useProgram(prog);
+    aRest=gl.getAttribLocation(prog,'aRest');aUV=gl.getAttribLocation(prog,'aUV');aFold=gl.getAttribLocation(prog,'aFold');aH=gl.getAttribLocation(prog,'aH');
+    uRes=gl.getUniformLocation(prog,'uRes');uK=gl.getUniformLocation(prog,'uK');uCenter=gl.getUniformLocation(prog,'uCenter');uTex=gl.getUniformLocation(prog,'uTex');
+    restBuf=gl.createBuffer();uvBuf=gl.createBuffer();foldBuf=gl.createBuffer();hBuf=gl.createBuffer();idxBuf=gl.createBuffer();tex=gl.createTexture();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.clearColor(0.03,0.03,0.03,1);
+    gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  }
+  function uparr(buf,arr){gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);}
+  function sizeCanvas(){var dpr=Math.min(devicePixelRatio||1,1.6);cv.width=Math.round(cv.clientWidth*dpr);cv.height=Math.round(cv.clientHeight*dpr);
+    if(gl){gl.viewport(0,0,cv.width,cv.height);gl.useProgram(prog);gl.uniform2f(uRes,cv.width,cv.height);}}
+  function buildMesh(mirror){
+    if(!gl)return;var W=cv.width,H=cv.height,ca=W/H,ia=srcAspect;
+    // cover-fit UVs (crop), optional horizontal mirror
+    var us=1,vs2=1,uo=0,vo=0;if(ia>ca){us=ca/ia;uo=(1-us)/2;}else{vs2=ia/ca;vo=(1-vs2)/2;}
+    GY=Math.max(8,Math.round(GX*H/W));
+    var rest=[],uv=[],fold=[],hgt=[],idx=[];
+    for(var r=0;r<=GY;r++)for(var c=0;c<=GX;c++){var u=c/GX,v=r/GY;
+      rest.push(u*W,v*H);var uu=uo+u*us;if(mirror)uu=1-uu;uv.push(uu,vo+v*vs2);
+      fold.push(Math.sin(v*13.0+u*5.0)*0.7+Math.sin(u*7.0)*0.3,Math.cos(u*11.0+v*4.0)*0.7+Math.cos(v*6.0)*0.3);
+      hgt.push(Math.sin(u*5.0+v*3.0)*0.6+Math.cos(v*6.0-u*2.0)*0.5+Math.sin((u+v)*9.0)*0.35+Math.cos((u-v)*7.0+1.3)*0.3);}
+    for(var r2=0;r2<GY;r2++)for(var c2=0;c2<GX;c2++){var a=r2*(GX+1)+c2,b=a+1,d=a+(GX+1),e=d+1;idx.push(a,b,d,b,e,d);}
+    uparr(restBuf,rest);uparr(uvBuf,uv);uparr(foldBuf,fold);uparr(hBuf,hgt);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(idx),gl.STATIC_DRAW);
+    idxLen=idx.length;meshReady=true;
+  }
+  function uploadTex(src){gl.bindTexture(gl.TEXTURE_2D,tex);try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src);}catch(e){}}
+  function drawGL(){
+    gl.clear(gl.COLOR_BUFFER_BIT);if(!meshReady)return;gl.useProgram(prog);
+    gl.uniform1f(uK,curK);gl.uniform2f(uCenter,cv.width*0.5,cv.height*0.5);
+    gl.bindBuffer(gl.ARRAY_BUFFER,restBuf);gl.enableVertexAttribArray(aRest);gl.vertexAttribPointer(aRest,2,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,uvBuf);gl.enableVertexAttribArray(aUV);gl.vertexAttribPointer(aUV,2,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,foldBuf);gl.enableVertexAttribArray(aFold);gl.vertexAttribPointer(aFold,2,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,hBuf);gl.enableVertexAttribArray(aH);gl.vertexAttribPointer(aH,1,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(uTex,0);
+    gl.drawElements(gl.TRIANGLES,idxLen,gl.UNSIGNED_SHORT,0);
+  }
+  function loadPortrait(){
+    var im=new Image();im.crossOrigin='anonymous';
+    im.onload=function(){srcAspect=(im.naturalWidth||im.width)/(im.naturalHeight||im.height);sizeCanvas();uploadTex(im);buildMesh(false);texReady=true;};
+    im.onerror=function(){useVideo=true;};   // no portrait yet → fall back to the live webcam as the paper
+    im.src='assets/budarina/portrait.jpg';
+  }
+  function renderLoop(){
+    if(gl){
+      if(useVideo && !texReady && camvReady()){srcAspect=(camv.videoWidth||4)/(camv.videoHeight||3);sizeCanvas();buildMesh(true);texReady=true;}
+      if(useVideo && texReady && camvReady())uploadTex(camv);
+      var hand=now()-handT<300;
+      var t=hand?Math.max(0,Math.min(1,1-handOpen)):(mdownK?1:0);
+      targetK=t;curK+=(targetK-curK)*0.16;if(curK<0.002&&targetK===0)curK=0;
+      drawGL();
+    }
+    requestAnimationFrame(renderLoop);
+  }
+  // mouse fold (works without camera)
+  cv.addEventListener('pointerdown',function(){mdownK=true;});
+  addEventListener('pointerup',function(){mdownK=false;});
+  addEventListener('resize',function(){if(texReady){sizeCanvas();buildMesh(useVideo);}});
+  function camvReady(){return camv&&camv.readyState>=2;}
+  sizeCanvas();loadPortrait();renderLoop();
 
-  /* ---- floating window: draggable (header) + resizable (native CSS resize) ---- */
+  /* ================= floating webcam window: drag + resize ================= */
   (function(){
-    var cam=document.getElementById('cam'),head=cam.querySelector('.cam-head');
-    var dr=false,ox=0,oy=0,sx=0,sy=0;
-    head.addEventListener('pointerdown',function(e){dr=true;var r=cam.getBoundingClientRect();ox=r.left;oy=r.top;sx=e.clientX;sy=e.clientY;
-      cam.style.right='auto';cam.style.bottom='auto';cam.style.left=ox+'px';cam.style.top=oy+'px';
-      try{head.setPointerCapture(e.pointerId);}catch(_){}});
-    head.addEventListener('pointermove',function(e){if(!dr)return;var r=cam.getBoundingClientRect();
-      cam.style.left=Math.max(4,Math.min(ox+e.clientX-sx,innerWidth-r.width-4))+'px';
-      cam.style.top=Math.max(4,Math.min(oy+e.clientY-sy,innerHeight-r.height-4))+'px';});
-    function end(){dr=false;}head.addEventListener('pointerup',end);head.addEventListener('pointercancel',end);
+    var cam=document.getElementById('cam'),hd=cam.querySelector('.cam-head');var dr=false,ox=0,oy=0,sx=0,sy=0;
+    hd.addEventListener('pointerdown',function(e){dr=true;var r=cam.getBoundingClientRect();ox=r.left;oy=r.top;sx=e.clientX;sy=e.clientY;
+      cam.style.right='auto';cam.style.bottom='auto';cam.style.left=ox+'px';cam.style.top=oy+'px';try{hd.setPointerCapture(e.pointerId);}catch(_){}});
+    hd.addEventListener('pointermove',function(e){if(!dr)return;var r=cam.getBoundingClientRect();
+      cam.style.left=Math.max(4,Math.min(ox+e.clientX-sx,innerWidth-r.width-4))+'px';cam.style.top=Math.max(4,Math.min(oy+e.clientY-sy,innerHeight-r.height-4))+'px';});
+    function end(){dr=false;}hd.addEventListener('pointerup',end);hd.addEventListener('pointercancel',end);
   })();
 
-  /* ---- hand tracking → play / pause the reel ---- */
+  /* ================= hand tracking → fold the portrait ================= */
   var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
   var camv=document.getElementById('camv'),camc=document.getElementById('camc'),cctx=camc.getContext('2d');
   var st=document.getElementById('camst'),enbox=document.getElementById('camen'),enbtn=document.getElementById('cambtn');
-  var hands=null,stream=null,sending=false,raf=0,want=true,libLoaded=false;
+  var hands=null,stream=null,sending=false,libLoaded=false;
   var HC=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
   function setState(m){st.textContent=m;}
   function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error('load'));};document.head.appendChild(s);});}
-
-  function openness(lm){
-    var w=lm[0],m=lm[9],sc=Math.hypot(w.x-m.x,w.y-m.y)||0.1,s=0,t=[8,12,16,20];
-    for(var i=0;i<4;i++)s+=Math.hypot(lm[t[i]].x-w.x,lm[t[i]].y-w.y)/sc;
-    return Math.max(0,Math.min(1,(s/4-1.15)/0.95)); // 0 = fist, 1 = open
-  }
-  function draw(res){
-    var W=camc.width=camc.clientWidth,H=camc.height=camc.clientHeight;
-    cctx.clearRect(0,0,W,H);
+  function openness(lm){var w=lm[0],m=lm[9],sc=Math.hypot(w.x-m.x,w.y-m.y)||0.1,s=0,t=[8,12,16,20];
+    for(var i=0;i<4;i++)s+=Math.hypot(lm[t[i]].x-w.x,lm[t[i]].y-w.y)/sc;return Math.max(0,Math.min(1,(s/4-1.15)/0.95));}
+  function onResults(res){
+    var W=camc.width=camc.clientWidth,H=camc.height=camc.clientHeight;cctx.clearRect(0,0,W,H);
     var lm=res.multiHandLandmarks&&res.multiHandLandmarks[0];
     if(!lm){setState('show your hand ✋');return;}
-    function X(i){return (1-lm[i].x)*W;} function Y(i){return lm[i].y*H;}   // mirror x to match the flipped video
+    function X(i){return (1-lm[i].x)*W;}function Y(i){return lm[i].y*H;}
     cctx.strokeStyle='rgba(255,255,255,.85)';cctx.lineWidth=2;cctx.lineCap='round';
     for(var i=0;i<HC.length;i++){cctx.beginPath();cctx.moveTo(X(HC[i][0]),Y(HC[i][0]));cctx.lineTo(X(HC[i][1]),Y(HC[i][1]));cctx.stroke();}
-    for(var j=0;j<lm.length;j++){var tip=(j===4||j===8||j===12||j===16||j===20);
-      cctx.beginPath();cctx.arc(X(j),Y(j),tip?4:2.6,0,7);cctx.fillStyle=tip?'#fff':'rgba(255,255,255,.7)';cctx.fill();}
-    // open hand → play, fist → pause (with a dead-zone so it doesn't flicker)
-    var op=openness(lm);
-    if(op>0.55)want=true; else if(op<0.3)want=false;
-    if(want){reel.play().catch(function(){});setState('▶ playing · open ✋');}
-    else{reel.pause();setState('⏸ paused · fist ✊');}
+    for(var j=0;j<lm.length;j++){var tp=(j===4||j===8||j===12||j===16||j===20);cctx.beginPath();cctx.arc(X(j),Y(j),tp?4:2.6,0,7);cctx.fillStyle=tp?'#fff':'rgba(255,255,255,.7)';cctx.fill();}
+    handOpen=openness(lm);handT=now();
+    setState(handOpen<0.4?'✊ folding':'✋ unfolded');
   }
-  function pump(){if(!stream)return;
-    if(!sending&&hands&&camv.readyState>=2){sending=true;hands.send({image:camv}).then(function(){sending=false;}).catch(function(){sending=false;});}
-    raf=requestAnimationFrame(pump);}
+  function pump(){if(!stream)return;if(!sending&&hands&&camv.readyState>=2){sending=true;hands.send({image:camv}).then(function(){sending=false;}).catch(function(){sending=false;});}requestAnimationFrame(pump);}
   function start(){
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){enbox.style.display='flex';enbox.firstChild.textContent='Camera không khả dụng ở đây.';return;}
     setState('loading…');
     (libLoaded?Promise.resolve():loadScript(LIB+'hands.js')).then(function(){
-      libLoaded=true;if(typeof Hands==='undefined')throw new Error('no Hands');
-      setState('requesting camera…');
+      libLoaded=true;if(typeof Hands==='undefined')throw new Error('no Hands');setState('requesting camera…');
       return navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});
     }).then(function(s){stream=s;camv.srcObject=s;enbox.style.display='none';return camv.play().catch(function(){});}).then(function(){
       hands=new Hands({locateFile:function(f){return LIB+f;}});
       hands.setOptions({maxNumHands:1,modelComplexity:0,minDetectionConfidence:.6,minTrackingConfidence:.5});
-      hands.onResults(draw);
-      setState('show your hand ✋');pump();
+      hands.onResults(onResults);setState('show your hand ✋');pump();
     }).catch(function(err){
-      var dn=err&&(err.name==='NotAllowedError'||err.name==='SecurityError');
-      setState(dn?'camera denied':'unavailable');enbox.style.display='flex';
-      enbox.firstChild.textContent=dn?'Camera bị từ chối — bật lại để dùng cử chỉ tay.':'Không tải được mô-hình bàn tay.';
+      var dn=err&&(err.name==='NotAllowedError'||err.name==='SecurityError');setState(dn?'camera denied':'unavailable');enbox.style.display='flex';
+      enbox.firstChild.textContent=dn?'Camera bị từ chối — bật lại để gập bằng tay.':'Không tải được mô-hình bàn tay.';
     });
   }
-  enbtn.addEventListener('click',start);
-  start();
+  enbtn.addEventListener('click',start);start();
 })();
 </script>
 </body>
