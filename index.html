@@ -1435,31 +1435,39 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
 
   // ===== sculpt / liquify — knead a photo with your hand (or mouse) via a WebGL mesh warp =====
   (function(){
-    var ov=null,canvas=null,gl=null,prog=null,uRes=null,uK=null,uCenter=null,uTex=null,uLinesLoc=null;
-    var aRest=null,aUV=null,aFold=null,restBuf=null,uvBuf=null,foldBuf=null,idxBuf=null,tex=null;
-    var raf=0,open=false,img=null,ready=false,GX=42,GY=24,idx=null,curK=0,cenX=0,cenY=0;
+    var ov=null,canvas=null,gl=null,prog=null,uRes=null,uK=null,uCenter=null,uTex=null;
+    var aRest=null,aUV=null,aFold=null,aH=null,restBuf=null,uvBuf=null,foldBuf=null,hBuf=null,idxBuf=null,tex=null;
+    var raf=0,open=false,img=null,ready=false,GX=26,GY=24,idx=null,curK=0,cenX=0,cenY=0;
     var mdown=false,fileInput=null,hintEl=null,vid=null,stream=null;
     function now(){return (window.performance&&performance.now())||0;}
-    var HINT='Nắm tay ✊ (hoặc giữ chuột) để <b>vo ảnh thành cục</b> · mở tay / thả ra để bung lại ảnh gập.';
+    var HINT='Nắm tay ✊ (hoặc giữ chuột) để <b>nén &amp; gập ảnh lại như giấy</b> · mở tay / thả ra để bung phẳng.';
     function initGL(){
-      var vs='attribute vec2 aRest;attribute vec2 aUV;attribute vec2 aFold;uniform vec2 uRes;uniform vec2 uCenter;uniform float uK;varying vec2 vUV;varying float vK;'
-        +'void main(){vec2 v=(aRest-uCenter)*0.16;float R=min(uRes.x,uRes.y)*0.15;float l=length(v);if(l>R)v=v/l*R;'
-        +'vec2 crum=uCenter+v+aFold*R;vec2 pos=mix(aRest,crum,uK);vec2 c=(pos/uRes)*2.0-1.0;c.y=-c.y;gl_Position=vec4(c,0.0,1.0);vUV=aUV;vK=uK;}';
-      var fs='precision mediump float;varying vec2 vUV;varying float vK;uniform sampler2D uTex;uniform vec4 uLines[10];'
+      var deriv=gl.getExtension('OES_standard_derivatives');
+      // vertex: compress inward + overlapping fold-warp + per-vertex fold height (z) → low-poly paper facets
+      var vs='attribute vec2 aRest;attribute vec2 aUV;attribute vec2 aFold;attribute float aH;'
+        +'uniform vec2 uRes;uniform vec2 uCenter;uniform float uK;varying vec2 vUV;varying float vK;varying vec3 vPos;'
+        +'void main(){float S=min(uRes.x,uRes.y);vec2 rel=aRest-uCenter;'
+        +'vec2 comp=uCenter+rel*mix(1.0,0.62,uK);'
+        +'vec2 pos=comp+aFold*(S*0.10)*uK;'
+        +'float z=aH*S*mix(0.012,0.17,uK);'
+        +'vec2 c=(pos/uRes)*2.0-1.0;c.y=-c.y;gl_Position=vec4(c,0.0,1.0);'
+        +'vUV=aUV;vK=uK;vPos=vec3(pos.x/uRes.y,pos.y/uRes.y,z/uRes.y);}';
+      // fragment: flat per-facet shading from the screen-space derivative normal = folded-paper look
+      var head=deriv?'#extension GL_OES_standard_derivatives : enable\n':'';
+      var fs=head+'precision mediump float;varying vec2 vUV;varying float vK;varying vec3 vPos;uniform sampler2D uTex;'
         +'float hsh(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}'
-        +'void main(){vec4 col=texture2D(uTex,vUV);float crease=0.0,facet=0.0;'
-        +'for(int i=0;i<10;i++){vec4 L=uLines[i];float q=dot(vUV,L.xy)-L.z;crease+=smoothstep(0.014,0.0,abs(q));facet+=(q>0.0?1.0:-1.0)*L.w;}'
-        +'float shade=1.0-0.17*clamp(crease,0.0,1.0)+0.06*facet;float grain=0.96+0.07*hsh(floor(vUV*260.0));shade*=grain;'
-        +'vec3 paper=mix(col.rgb,col.rgb*vec3(1.05,1.0,0.92),0.18);float wr=hsh(floor(vUV*14.0));float crum=mix(1.0,0.5+0.7*wr,vK);'
-        +'gl_FragColor=vec4(paper*shade*crum,col.a);}';
+        +'void main(){vec4 col=texture2D(uTex,vUV);'
+        +(deriv?'vec3 N=normalize(cross(dFdx(vPos),dFdy(vPos)));vec3 L=normalize(vec3(0.4,0.55,0.75));float diff=clamp(dot(N,L),0.0,1.0);float shade=0.58+0.64*diff;':'float shade=1.0;')
+        +'float grain=0.95+0.08*hsh(floor(vUV*240.0));'
+        +'vec3 paper=mix(col.rgb,col.rgb*vec3(1.06,1.0,0.9),0.22);'
+        +'float wr=hsh(floor(vUV*16.0));float crush=mix(1.0,0.6+0.65*wr,vK*0.6);'
+        +'gl_FragColor=vec4(paper*shade*grain*crush,col.a);}';
       function sh(tp,s){var o=gl.createShader(tp);gl.shaderSource(o,s);gl.compileShader(o);return o;}
       prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,vs));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);gl.useProgram(prog);
-      aRest=gl.getAttribLocation(prog,'aRest');aUV=gl.getAttribLocation(prog,'aUV');aFold=gl.getAttribLocation(prog,'aFold');
-      uRes=gl.getUniformLocation(prog,'uRes');uK=gl.getUniformLocation(prog,'uK');uCenter=gl.getUniformLocation(prog,'uCenter');uTex=gl.getUniformLocation(prog,'uTex');uLinesLoc=gl.getUniformLocation(prog,'uLines');
-      restBuf=gl.createBuffer();uvBuf=gl.createBuffer();foldBuf=gl.createBuffer();idxBuf=gl.createBuffer();tex=gl.createTexture();
+      aRest=gl.getAttribLocation(prog,'aRest');aUV=gl.getAttribLocation(prog,'aUV');aFold=gl.getAttribLocation(prog,'aFold');aH=gl.getAttribLocation(prog,'aH');
+      uRes=gl.getUniformLocation(prog,'uRes');uK=gl.getUniformLocation(prog,'uK');uCenter=gl.getUniformLocation(prog,'uCenter');uTex=gl.getUniformLocation(prog,'uTex');
+      restBuf=gl.createBuffer();uvBuf=gl.createBuffer();foldBuf=gl.createBuffer();hBuf=gl.createBuffer();idxBuf=gl.createBuffer();tex=gl.createTexture();
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.clearColor(0.03,0.05,0.09,1);
-      var lines=[];for(var i=0;i<10;i++){var a=Math.random()*Math.PI,dx=Math.cos(a),dy=Math.sin(a),rx=0.15+Math.random()*0.7,ry=0.15+Math.random()*0.7;lines.push(dx,dy,dx*rx+dy*ry,(Math.random()-0.5)*0.5);}
-      gl.uniform4fv(uLinesLoc,new Float32Array(lines));
     }
     function build(){
       ov=document.createElement('div');ov.id='sculpt';
@@ -1509,12 +1517,13 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     function up(buf,arr){gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);}
     function buildMesh(){
       var W=canvas.width,Hh=canvas.height;GY=Math.max(8,Math.round(GX*Hh/W));
-      var rest=[],uv=[],fold=[];idx=[];
+      var rest=[],uv=[],fold=[],hgt=[];idx=[];
       for(var r=0;r<=GY;r++)for(var c=0;c<=GX;c++){var u=c/GX,vv=r/GY;
         rest.push(u*W,vv*Hh);uv.push(u,vv);
-        fold.push(Math.sin(vv*13.0+u*5.0)*0.7+Math.sin(u*7.0)*0.3,Math.cos(u*11.0+vv*4.0)*0.7+Math.cos(vv*6.0)*0.3);}
+        fold.push(Math.sin(vv*13.0+u*5.0)*0.7+Math.sin(u*7.0)*0.3,Math.cos(u*11.0+vv*4.0)*0.7+Math.cos(vv*6.0)*0.3);
+        hgt.push(Math.sin(u*5.0+vv*3.0)*0.6+Math.cos(vv*6.0-u*2.0)*0.5+Math.sin((u+vv)*9.0)*0.35+Math.cos((u-vv)*7.0+1.3)*0.3);}
       for(var r2=0;r2<GY;r2++)for(var c2=0;c2<GX;c2++){var a=r2*(GX+1)+c2,b=a+1,d=a+(GX+1),e=d+1;idx.push(a,b,d,b,e,d);}
-      up(restBuf,rest);up(uvBuf,uv);up(foldBuf,fold);
+      up(restBuf,rest);up(uvBuf,uv);up(foldBuf,fold);up(hBuf,hgt);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(idx),gl.STATIC_DRAW);
       ready=true;
     }
@@ -1524,6 +1533,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       gl.bindBuffer(gl.ARRAY_BUFFER,restBuf);gl.enableVertexAttribArray(aRest);gl.vertexAttribPointer(aRest,2,gl.FLOAT,false,0,0);
       gl.bindBuffer(gl.ARRAY_BUFFER,uvBuf);gl.enableVertexAttribArray(aUV);gl.vertexAttribPointer(aUV,2,gl.FLOAT,false,0,0);
       gl.bindBuffer(gl.ARRAY_BUFFER,foldBuf);gl.enableVertexAttribArray(aFold);gl.vertexAttribPointer(aFold,2,gl.FLOAT,false,0,0);
+      gl.bindBuffer(gl.ARRAY_BUFFER,hBuf);gl.enableVertexAttribArray(aH);gl.vertexAttribPointer(aH,1,gl.FLOAT,false,0,0);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBuf);
       gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(uTex,0);
       gl.drawElements(gl.TRIANGLES,idx.length,gl.UNSIGNED_SHORT,0);
@@ -1554,7 +1564,7 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     function save(){try{if(ready)draw();var a=document.createElement('a');a.download='origami.png';a.href=canvas.toDataURL('image/png');a.click();}catch(e){if(typeof toast==='function')toast('⚠️ Không lưu được ảnh này');}}
     function openS(){if(!ov){if(!build())return;}open=true;window.__sculpting=true;ov.classList.add('open');
       if(!img)loadDefault();else layout();cancelAnimationFrame(raf);frame();
-      if(typeof toast==='function')toast('📄 Origami — nắm tay ✊ để vo thành cục, mở tay để bung · bấm ✋ để bật camera');}
+      if(typeof toast==='function')toast('📄 Origami — nắm tay ✊ để nén & gập lại, mở tay để bung · bấm ✋ để bật camera');}
     function close(){open=false;window.__sculpting=false;if(ov)ov.classList.remove('open');cancelAnimationFrame(raf);stopCam();}
     window.__sculpt=function(){open?close():openS();};
   })();
