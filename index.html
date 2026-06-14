@@ -704,9 +704,9 @@
       <div class="stat"><div class="n gtext" data-to="15" data-suf="+">0</div><div class="l" data-i18n="stat.live">Live on App&nbsp;Store / Play</div></div>
     </div>
   </div>
-  <div id="herofx-wrap" aria-hidden="true">
-    <canvas id="herofx"></canvas>
-    <button id="herofx-hand" type="button" title="Điều khiển bằng tay">🤚</button>
+  <div id="herofx-wrap">
+    <canvas id="herofx" aria-hidden="true"></canvas>
+    <button id="herofx-hand" type="button" title="Điều khiển bằng tay" aria-label="Điều khiển clip bằng tay">🤚</button>
   </div>
 </header>
 
@@ -1770,12 +1770,12 @@ setLang(localStorage.getItem('lang')||'en');
     var dur=vsrc.duration;if(!dur||!isFinite(dur))dur=4;
     N=Math.max(24,Math.min(44,Math.round(dur*12)));
     var vw=vsrc.videoWidth||1024,vh=vsrc.videoHeight||1024,sc=Math.min(1,500/Math.max(vw,vh)),fw=Math.round(vw*sc),fh=Math.round(vh*sc);
-    var oc=document.createElement('canvas');oc.width=fw;oc.height=fh;var octx=oc.getContext('2d'),raw=[],i=0;
+    var oc=document.createElement('canvas');oc.width=fw;oc.height=fh;var octx=oc.getContext('2d',{willReadFrequently:true}),raw=[],i=0;
     (function step(){
       if(i>=N){crop(raw,fw,fh);return;}
       seekTo((i/(N-1))*dur*0.997).then(function(){
         octx.clearRect(0,0,fw,fh);octx.drawImage(vsrc,0,0,fw,fh);keyBg(octx,fw,fh);
-        var c=document.createElement('canvas');c.width=fw;c.height=fh;c.getContext('2d').drawImage(oc,0,0);raw.push(c);
+        var c=document.createElement('canvas');c.width=fw;c.height=fh;c.getContext('2d',{willReadFrequently:true}).drawImage(oc,0,0);raw.push(c);
         i++;if(hint)hint.textContent='dựng khung… '+Math.round(i/N*100)+'%';step();
       },function(){i++;step();});
     })();
