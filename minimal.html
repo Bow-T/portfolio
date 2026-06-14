@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuan Nguyen — Flutter &amp; Mobile Developer</title>
+<meta name="description" content="Bow (Tuan Nguyen) — Flutter / mobile developer in Da Nang. 6+ years, 30+ shipped apps, one past 500K downloads.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f7f6f2;--ink:#161512;--muted:#75736b;--line:#e4e2da;--hover:#efede6;}
+  html[data-theme="dark"]{--bg:#121211;--ink:#ece9e1;--muted:#928f86;--line:#2a2926;--hover:#1c1b19;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;
+    transition:background .4s,color .4s;}
+  .serif{font-family:'Playfair Display',Georgia,serif;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 32px;}
+  a{color:inherit;}
+
+  /* header */
+  header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;}
+  .name{font-family:'Playfair Display',serif;font-weight:600;font-size:19px;letter-spacing:.2px;text-decoration:none;}
+  nav{display:flex;align-items:center;gap:26px;}
+  nav a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .2s;}
+  nav a:hover{color:var(--ink);}
+  nav .sw{border:1px solid var(--line);padding:6px 12px;border-radius:30px;color:var(--ink);}
+  nav .sw:hover{background:var(--hover);}
+  .tt{background:none;border:none;font:inherit;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:4px;}
+  .tt:hover{color:var(--ink);}
+
+  /* intro */
+  .intro{padding:13vh 0 9vh;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:26px;display:flex;align-items:center;gap:10px;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#3fae50;display:inline-block;}
+  .lead{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(30px,5.2vw,54px);line-height:1.16;letter-spacing:-.5px;max-width:18ch;}
+  .lead em{font-style:italic;}
+  .meta{margin-top:40px;display:flex;flex-wrap:wrap;gap:36px;}
+  .meta div{font-size:14px;}
+  .meta b{display:block;font-family:'Playfair Display',serif;font-size:26px;font-weight:500;letter-spacing:-.3px;}
+  .meta span{color:var(--muted);font-size:12.5px;}
+
+  /* sections */
+  section{padding:9vh 0;border-bottom:1px solid var(--line);}
+  .label{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:34px;}
+
+  /* work list */
+  .work a.row{display:grid;grid-template-columns:46px 1fr auto;align-items:baseline;gap:18px;padding:20px 12px;margin:0 -12px;
+    text-decoration:none;border-top:1px solid var(--line);transition:background .2s;}
+  .work a.row:last-child{border-bottom:1px solid var(--line);}
+  .work a.row:hover{background:var(--hover);}
+  .work .no{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:6px;}
+  .work .ttl{font-family:'Playfair Display',serif;font-size:clamp(21px,2.6vw,27px);font-weight:500;letter-spacing:-.3px;}
+  .work .ttl .cat{display:inline-block;margin-left:12px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);vertical-align:middle;}
+  .work .rl{font-size:13.5px;color:var(--muted);margin-top:4px;}
+  .work .rl .bdg{color:var(--ink);}
+  .work .arr{align-self:center;font-size:15px;color:var(--muted);transition:transform .2s,color .2s;}
+  .work a.row:hover .arr{transform:translateX(4px);color:var(--ink);}
+  .work a.row.nolink{cursor:default;}
+  .work a.row.nolink:hover{background:transparent;}
+  .work a.row.nolink .arr{opacity:0;}
+
+  /* prose */
+  .prose{max-width:62ch;}
+  .prose p{font-size:clamp(16px,2vw,18px);color:var(--ink);margin-bottom:22px;}
+  .prose p.big{font-family:'Playfair Display',serif;font-size:clamp(20px,2.6vw,26px);line-height:1.4;color:var(--ink);}
+  .prose strong{font-weight:600;}
+
+  /* experience */
+  .exp .item{display:grid;grid-template-columns:160px 1fr;gap:24px;padding:22px 0;border-top:1px solid var(--line);}
+  .exp .item:last-child{border-bottom:1px solid var(--line);}
+  .exp .yr{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .exp h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;margin-bottom:6px;}
+  .exp p{font-size:14.5px;color:var(--muted);max-width:60ch;}
+
+  /* contact */
+  .contact .big{font-family:'Playfair Display',serif;font-size:clamp(30px,5vw,52px);font-weight:400;line-height:1.15;letter-spacing:-.5px;margin-bottom:34px;}
+  .contact .big em{font-style:italic;}
+  .links{display:flex;flex-wrap:wrap;gap:14px 28px;font-size:15px;}
+  .links a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s;}
+  .links a:hover{border-color:var(--ink);}
+
+  footer{padding:38px 0;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted);}
+
+  @media(max-width:640px){
+    .wrap{padding:0 20px;}
+    nav{gap:14px;} nav a.hide{display:none;}
+    .work a.row{grid-template-columns:30px 1fr;}
+    .work .arr{display:none;}
+    .exp .item{grid-template-columns:1fr;gap:6px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="#" class="name">Bow</a>
+    <nav>
+      <a href="#work" class="hide">Work</a>
+      <a href="#about" class="hide">About</a>
+      <a href="#contact" class="hide">Contact</a>
+      <button class="tt" id="tt" title="Light / dark" aria-label="Toggle theme">◐</button>
+      <a href="index.html" class="sw" title="Switch to the vivid layout">✦&nbsp;Vivid</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <div class="wrap">
+      <div class="eyebrow"><span class="dot"></span> Available for work · Da Nang / Remote</div>
+      <h1 class="lead">Tuan Nguyen — I build Flutter apps people <em>actually use</em>.</h1>
+      <div class="meta">
+        <div><b>30+</b><span>Apps shipped</span></div>
+        <div><b>500K+</b><span>Downloads, top app</span></div>
+        <div><b>6+</b><span>Years experience</span></div>
+        <div><b>15+</b><span>Live on the stores</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="work" id="work">
+    <div class="wrap">
+      <div class="label">Selected work</div>
+      <a class="row" href="octopus.html" target="_blank" rel="noopener"><span class="no">01</span><span><span class="ttl">Octopus<span class="cat">Mobility</span></span><div class="rl"><span class="bdg">Flagship super-app</span> · Lead Mobile Developer · 2026–Present</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apps.apple.com/us/app/ynstant-carpooling/id1610500828" target="_blank" rel="noopener"><span class="no">02</span><span><span class="ttl">Ynstant<span class="cat">Mobility</span></span><div class="rl"><span class="bdg">500K+ downloads</span> · Flutter Developer · 2023</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://play.google.com/store/apps/details?id=com.du.secumap" target="_blank" rel="noopener"><span class="no">03</span><span><span class="ttl">SecuMap<span class="cat">Safety</span></span><div class="rl"><span class="bdg">10K+ · national press</span> · Sole Developer · 2023–2025</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://play.google.com/store/apps/details?id=com.doctorsyrup.app" target="_blank" rel="noopener"><span class="no">04</span><span><span class="ttl">Docteur Sirop<span class="cat">Health &amp; AI</span></span><div class="rl"><span class="bdg">AI voice + Unity 3D</span> · Sole Developer · 2025–2026</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apps.apple.com/fr/app/carter-coaching/id6443718007" target="_blank" rel="noopener"><span class="no">05</span><span><span class="ttl">Carter<span class="cat">Sports</span></span><div class="rl">Lead Developer · 2022–2024</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apps.apple.com/fr/app/spaurt/id6743203018" target="_blank" rel="noopener"><span class="no">06</span><span><span class="ttl">Spaurt<span class="cat">Sports</span></span><div class="rl">Sole Developer · 2025–2026</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apps.apple.com/us/app/protectu/id6743616393" target="_blank" rel="noopener"><span class="no">07</span><span><span class="ttl">ProtectU<span class="cat">Safety</span></span><div class="rl">Sole Developer · 2025</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://play.google.com/store/apps/details?id=com.mentalia.app" target="_blank" rel="noopener"><span class="no">08</span><span><span class="ttl">Mentalia<span class="cat">Health &amp; AI</span></span><div class="rl"><span class="bdg">AI virtual coach</span> · Lead Developer · 2023–2024</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apps.apple.com/us/app/nila-sphere/id6754004164" target="_blank" rel="noopener"><span class="no">09</span><span><span class="ttl">Nila Sphere<span class="cat">Lifestyle</span></span><div class="rl">Sole Developer · 2026</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apkcombo.com/beauty-squad/com.beautysquaduser/" target="_blank" rel="noopener"><span class="no">10</span><span><span class="ttl">Beauty Squad<span class="cat">Marketplace</span></span><div class="rl">Sole Developer · 2024–2025</div></span><span class="arr">↗</span></a>
+      <a class="row" href="https://apkcombo.com/keym-reseau-social-musical/keymmusic.com.keym/" target="_blank" rel="noopener"><span class="no">11</span><span><span class="ttl">KEYM<span class="cat">Social</span></span><div class="rl"><span class="bdg">5K+ downloads</span> · Flutter Developer · 2023</div></span><span class="arr">↗</span></a>
+      <a class="row nolink"><span class="no">12</span><span><span class="ttl">Octopush<span class="cat">Social</span></span><div class="rl">Lead Developer · 2024–2026 · B2B / internal</div></span><span class="arr">↗</span></a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="label">About</div>
+      <div class="prose">
+        <p class="big">A Flutter / mobile developer based in Da&nbsp;Nang, Vietnam — for 6+ years the lead or sole developer on 30+ production apps across mobility, safety, health, sport and social.</p>
+        <p>At <strong>Digital Unicorn</strong> I lead the mobile side of the DUOCT “Octopus” super-app, and I wrote the shared Flutter base architecture that 20+ of our apps are built on — turning “a few weeks of setup” into “start today.”</p>
+        <p>I'm not a fan of over-engineering. I'd rather ship something that works, feels right, and won't be a nightmare to maintain in six months — clean MVVM, real-time that doesn't stutter, payments that don't break, builds that hit the store on time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="exp" id="experience">
+    <div class="wrap">
+      <div class="label">Experience</div>
+      <div class="item"><div class="yr">2022 — Present</div><div><h3>Flutter / Mobile Developer — Digital Unicorn</h3><p>Lead developer of the DUOCT “Octopus” super-app (Flutter + Next.js + Supabase). Sole or lead developer on 25+ production apps; authored the company's shared Flutter base adopted by 20+ apps.</p></div></div>
+      <div class="item"><div class="yr">2020 — 2022</div><div><h3>Flutter Developer — Freelance / Independent</h3><p>Built mobile apps as independent projects — including a medical / clinic management app — and a range of Flutter prototypes, establishing the MVVM base architecture later reused at scale.</p></div></div>
+      <div class="item"><div class="yr">2015 — 2019</div><div><h3>Software Engineering — Da Nang</h3><p>Software engineering degree; started building Flutter apps and the MVVM patterns that shaped my career.</p></div></div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div class="label">Contact</div>
+      <p class="big">Want to work together? <em>Let's talk.</em></p>
+      <div class="links">
+        <a href="mailto:nguyenvantuan4034@gmail.com">nguyenvantuan4034@gmail.com</a>
+        <a href="https://github.com/Bow-T" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/maengseojin/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="resume" target="_blank" rel="noopener">Résumé ↗</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Tuan Nguyen — Da Nang, Vietnam</span>
+    <span>Minimal layout · <a href="index.html" style="color:inherit">switch to vivid ✦</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){var r=document.documentElement,tb=document.getElementById('tt');
+    var t=localStorage.getItem('mtheme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    function set(x){r.dataset.theme=x;tb.textContent=x==='dark'?'◑':'◐';localStorage.setItem('mtheme',x);}
+    set(t);tb.addEventListener('click',function(){set(r.dataset.theme==='dark'?'light':'dark');});})();
+</script>
+</body>
+</html>
