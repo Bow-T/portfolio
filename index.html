@@ -90,7 +90,8 @@
   .eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
     margin-bottom:12px;}
   .eyebrow.gtext{display:inline-block;}
-  h2.sec{font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+  h2.sec{font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:10px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;}
   .sec-sub{color:var(--muted);margin-bottom:34px;max-width:640px;}
 
   /* hero */
@@ -113,7 +114,6 @@
     color:var(--text);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.15s;z-index:2;}
   #herofx-hand:hover{border-color:var(--g2);transform:scale(1.08);}
   #herofx-hand.on{background:var(--grad);color:#0a2009;border-color:transparent;}
-  #herofx-hint{position:absolute;left:0;right:0;bottom:-22px;text-align:center;font-size:11px;color:var(--soft);}
   @media(max-width:1200px){#herofx-wrap{display:none;}}
   #hfxcam{position:fixed;right:20px;bottom:20px;z-index:96;width:230px;border-radius:13px;overflow:hidden;background:#0c0f0c;border:1px solid var(--cardb);box-shadow:0 18px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;}
   #hfxcam .hc-h{display:flex;align-items:center;gap:7px;padding:7px 10px;font-size:11px;color:#fff;cursor:grab;touch-action:none;background:rgba(255,255,255,.05);}
@@ -628,7 +628,7 @@
 <canvas id="vincent" aria-hidden="true"></canvas>
 <nav>
   <div class="wrap">
-    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#bef264"/><stop offset=".55" stop-color="#4ade80"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
+    <a href="#top" class="brand" aria-label="Bow"><svg class="wm" viewBox="0 0 150 56" width="92" height="34" fill="none" aria-hidden="true"><defs><linearGradient id="wmg" x1="10" y1="28" x2="144" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:var(--g1)"/><stop offset=".55" style="stop-color:var(--g2)"/><stop offset="1" style="stop-color:var(--g4)"/></linearGradient></defs><g stroke="url(#wmg)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10 V46"/><path d="M15 10 H27 a10 9 0 0 1 0 18 H15"/><path d="M15 28 H28 a10 9 0 0 1 0 18 H15"/><path d="M66 11 C 44 18, 44 38, 66 45"/><path d="M66 11 V45"/><path d="M66 28 H99"/><path d="M92 21 L99 28 L92 35"/><path d="M108 10 L116 46 L124 26 L132 46 L140 10"/></g></svg></a>
     <div class="navlinks">
       <a class="lnk" href="#about" data-i18n="nav.about">About</a>
       <a class="lnk" href="#play" data-i18n="nav.play">Play</a>
@@ -647,7 +647,6 @@
       <button class="iconbtn" id="starry" aria-label="Starry Night dream mode" title="Van Gogh ‘Starry Night’ dream mode">🌌</button>
       <span class="ctrl"><button class="iconbtn" id="palbtn" aria-haspopup="true" aria-label="Accent colour" title="Accent colour">🎨</button>
         <div class="pop acc accent" id="accent" aria-label="Accent colour">
-          <button data-ac="lime" style="--d:#4ade80" title="Lime" aria-label="Lime"></button>
           <button data-ac="green" style="--d:#4daf50" title="Green" aria-label="Green"></button>
           <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
           <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
@@ -686,7 +685,6 @@
   <div id="herofx-wrap" aria-hidden="true">
     <canvas id="herofx"></canvas>
     <button id="herofx-hand" type="button" title="Điều khiển bằng tay">🤚</button>
-    <div id="herofx-hint">giữ &amp; kéo để vò · 🤚 dùng tay</div>
   </div>
 </header>
 
@@ -1473,7 +1471,7 @@ setLang(localStorage.getItem('lang')||'en');
     buildIcons();   // each theme drops a different background icon
   }
   box.addEventListener('click',function(e){var b=e.target.closest('button');if(b){setAccent(b.dataset.ac);var p=b.closest('.pop');if(p)p.classList.remove('open');}});
-  var saved='lime';try{saved=localStorage.getItem('accent')||'lime';}catch(e){}
+  var saved='green';try{var _s=localStorage.getItem('accent');saved=(!_s||_s==='lime')?'green':_s;}catch(e){}
   setAccent(saved);
 
   /* click-to-show menus for language + accent */
