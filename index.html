@@ -502,17 +502,6 @@
   html[data-accent="fuchsia"]{--g1:#ff8fd8;--g2:#fa4dbe;--g3:#d62a9a;--g4:#aa1b78;--spot:rgba(250,77,190,.22);--clk:#fa4dbe;--c1:#6e0a4b;--c2:#aa1b78;--c3:#cc2191;--c4:#e342ab;--c5:#fa4dbe;}
   html[data-accent="valentine"]{--g1:#ff7a6b;--g2:#fd2a2a;--g3:#d61515;--g4:#ac0e0e;--spot:rgba(253,42,42,.22);--clk:#fd2a2a;--c1:#880c0c;--c2:#ac0e0e;--c3:#cc1515;--c4:#e61b1b;--c5:#fd2a2a;}
 
-  /* ===== style vibes: Vivid (default) · Minimal (đỡ màu mè) · Trippy (ảo giác) ===== */
-  html[data-vibe="minimal"]{--g1:#9aa39b;--g2:#838d84;--g3:#6e786f;--g4:#5a635b;--grad:linear-gradient(100deg,var(--g1),var(--g3));--spot:rgba(120,130,120,.07);}
-  html[data-theme="light"][data-vibe="minimal"]{--g1:#5b645b;--g2:#4c554d;--g3:#3f473f;--g4:#343b35;}
-  html[data-vibe="minimal"] .aurora{opacity:.06;}
-  html[data-vibe="minimal"] .blob{filter:blur(80px) saturate(.16);}
-  @keyframes vibehue{from{filter:saturate(1.55) hue-rotate(0deg);}to{filter:saturate(1.55) hue-rotate(360deg);}}
-  @keyframes vibehuetxt{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
-  html[data-vibe="trippy"] .aurora{opacity:.92;animation:vibehue 14s linear infinite;}
-  html[data-vibe="trippy"] .blob{animation-duration:10s;}
-  html[data-vibe="trippy"] .gtext,html[data-vibe="trippy"] h2.sec,html[data-vibe="trippy"] .wm{animation:vibehuetxt 12s linear infinite;}
-  @media(prefers-reduced-motion:reduce){html[data-vibe="trippy"] .aurora,html[data-vibe="trippy"] .gtext,html[data-vibe="trippy"] h2.sec,html[data-vibe="trippy"] .wm{animation:none;}}
   .accent{display:inline-flex;gap:6px;align-items:center;margin-right:2px;}
   .accent button{width:15px;height:15px;border-radius:50%;border:1.5px solid transparent;background:var(--d);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;}
   .accent button:hover{transform:scale(1.18);}
@@ -669,7 +658,7 @@
       <a class="lnk" href="#work" data-i18n="nav.work">Work</a>
       <a class="lnk" href="#experience" data-i18n="nav.experience">Experience</a>
       <a class="lnk" href="#activity" data-i18n="nav.activity">Activity</a>
-      <a class="lnk" href="minimal.html" title="Minimal editorial layout">◐&nbsp;Minimal</a>
+      <a class="lnk" href="minimal.html" title="Switch to the minimal editorial layout" style="border:1px solid var(--line);padding:5px 11px;border-radius:30px;">Minimal&nbsp;layout&nbsp;↗</a>
       <span class="ctrl"><button class="iconbtn" id="langbtn" aria-haspopup="true" title="Language">🌐&nbsp;<span id="langcur">EN</span></button>
         <div class="pop lang" id="langpop">
           <button data-l="en"><span class="fl">🇬🇧</span>English</button>
@@ -684,12 +673,6 @@
           <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
           <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
           <button data-ac="valentine" style="--d:#fd2a2a" title="Valentine" aria-label="Valentine"></button>
-        </div></span>
-      <span class="ctrl"><button class="iconbtn" id="vibebtn" aria-haspopup="true" aria-label="Style" title="Style / vibe">✨</button>
-        <div class="pop lang vibe" id="vibe" aria-label="Style">
-          <button data-vibe="vivid">🌈&nbsp;Vivid</button>
-          <button data-vibe="minimal">◐&nbsp;Minimal</button>
-          <button data-vibe="trippy">🌀&nbsp;Trippy</button>
         </div></span>
     </div>
   </div>
@@ -1676,23 +1659,13 @@ setLang(localStorage.getItem('lang')||'en');
   var saved='green';try{var _s=localStorage.getItem('accent');saved=(!_s||_s==='lime')?'green':_s;}catch(e){}
   setAccent(saved);
 
-  /* overall style vibe: vivid (default) / minimal / trippy */
-  var vbox=document.getElementById('vibe');
-  function setVibe(v){
-    if(v==='vivid')root.removeAttribute('data-vibe');else root.setAttribute('data-vibe',v);
-    try{localStorage.setItem('vibe',v);}catch(e){}
-    if(vbox)vbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.vibe===v);});
-  }
-  if(vbox)vbox.addEventListener('click',function(e){var b=e.target.closest('button');if(b){setVibe(b.dataset.vibe);var p=b.closest('.pop');if(p)p.classList.remove('open');}});
-  var sv='vivid';try{sv=localStorage.getItem('vibe')||'vivid';}catch(e){}
-  setVibe(sv);
 
   /* click-to-show menus for language + accent */
   function bindPop(btnId,popId){var btn=document.getElementById(btnId),pop=document.getElementById(popId);if(!btn)return;
     btn.addEventListener('click',function(e){e.stopPropagation();var open=pop.classList.contains('open');
       document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});
       if(!open)pop.classList.add('open');});}
-  bindPop('langbtn','langpop'); bindPop('palbtn','accent'); bindPop('vibebtn','vibe');
+  bindPop('langbtn','langpop'); bindPop('palbtn','accent');
   document.addEventListener('click',function(e){if(!e.target.closest('.ctrl'))document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});});
 
   var clock=document.getElementById('clock'), audio=document.getElementById('clkaudio');

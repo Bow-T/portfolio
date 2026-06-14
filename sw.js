@@ -1,5 +1,5 @@
 // Bow portfolio — offline cache + "no internet" game fallback
-const CACHE = 'bow-portfolio-v5';
+const CACHE = 'bow-portfolio-v6';
 const PRECACHE = ['./', './game', './resume', './secret'];
 
 self.addEventListener('install', e => {
@@ -22,7 +22,7 @@ self.addEventListener('fetch', e => {
   // Page navigations: network-first, fall back to cache, then to the game when truly offline.
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req, { cache: 'no-store' }).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r; })
+      fetch(req, { cache: 'no-store' }).then(r => { if (r.status === 200) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)).catch(() => {}); } return r; })
         .catch(() => caches.match(req).then(m => m || caches.match('./')).then(m => m || caches.match('./game')))
     );
     return;
@@ -30,7 +30,7 @@ self.addEventListener('fetch', e => {
   // Other assets: cache-first, update in background.
   e.respondWith(
     caches.match(req).then(m => m || fetch(req).then(r => {
-      if (r.ok && r.type === 'basic' && url.origin === location.origin) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); }
+      if (r.status === 200 && r.type === 'basic' && url.origin === location.origin) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)).catch(() => {}); }
       return r;
     }).catch(() => m))
   );
