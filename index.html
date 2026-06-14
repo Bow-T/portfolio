@@ -501,6 +501,18 @@
   html[data-accent="blue"]{--g1:#62d0ff;--g2:#00b1ff;--g3:#0090d8;--g4:#0076aa;--spot:rgba(0,177,255,.22);--clk:#22b8ff;--c1:#00354d;--c2:#00557b;--c3:#0076aa;--c4:#008fce;--c5:#00b1ff;}
   html[data-accent="fuchsia"]{--g1:#ff8fd8;--g2:#fa4dbe;--g3:#d62a9a;--g4:#aa1b78;--spot:rgba(250,77,190,.22);--clk:#fa4dbe;--c1:#6e0a4b;--c2:#aa1b78;--c3:#cc2191;--c4:#e342ab;--c5:#fa4dbe;}
   html[data-accent="valentine"]{--g1:#ff7a6b;--g2:#fd2a2a;--g3:#d61515;--g4:#ac0e0e;--spot:rgba(253,42,42,.22);--clk:#fd2a2a;--c1:#880c0c;--c2:#ac0e0e;--c3:#cc1515;--c4:#e61b1b;--c5:#fd2a2a;}
+
+  /* ===== style vibes: Vivid (default) · Minimal (đỡ màu mè) · Trippy (ảo giác) ===== */
+  html[data-vibe="minimal"]{--g1:#9aa39b;--g2:#838d84;--g3:#6e786f;--g4:#5a635b;--grad:linear-gradient(100deg,var(--g1),var(--g3));--spot:rgba(120,130,120,.07);}
+  html[data-theme="light"][data-vibe="minimal"]{--g1:#5b645b;--g2:#4c554d;--g3:#3f473f;--g4:#343b35;}
+  html[data-vibe="minimal"] .aurora{opacity:.06;}
+  html[data-vibe="minimal"] .blob{filter:blur(80px) saturate(.16);}
+  @keyframes vibehue{from{filter:saturate(1.55) hue-rotate(0deg);}to{filter:saturate(1.55) hue-rotate(360deg);}}
+  @keyframes vibehuetxt{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
+  html[data-vibe="trippy"] .aurora{opacity:.92;animation:vibehue 14s linear infinite;}
+  html[data-vibe="trippy"] .blob{animation-duration:10s;}
+  html[data-vibe="trippy"] .gtext,html[data-vibe="trippy"] h2.sec,html[data-vibe="trippy"] .wm{animation:vibehuetxt 12s linear infinite;}
+  @media(prefers-reduced-motion:reduce){html[data-vibe="trippy"] .aurora,html[data-vibe="trippy"] .gtext,html[data-vibe="trippy"] h2.sec,html[data-vibe="trippy"] .wm{animation:none;}}
   .accent{display:inline-flex;gap:6px;align-items:center;margin-right:2px;}
   .accent button{width:15px;height:15px;border-radius:50%;border:1.5px solid transparent;background:var(--d);cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s;}
   .accent button:hover{transform:scale(1.18);}
@@ -671,6 +683,12 @@
           <button data-ac="blue" style="--d:#00b1ff" title="Blue" aria-label="Blue"></button>
           <button data-ac="fuchsia" style="--d:#fa4dbe" title="Fuchsia" aria-label="Fuchsia"></button>
           <button data-ac="valentine" style="--d:#fd2a2a" title="Valentine" aria-label="Valentine"></button>
+        </div></span>
+      <span class="ctrl"><button class="iconbtn" id="vibebtn" aria-haspopup="true" aria-label="Style" title="Style / vibe">✨</button>
+        <div class="pop lang vibe" id="vibe" aria-label="Style">
+          <button data-vibe="vivid">🌈&nbsp;Vivid</button>
+          <button data-vibe="minimal">◐&nbsp;Minimal</button>
+          <button data-vibe="trippy">🌀&nbsp;Trippy</button>
         </div></span>
     </div>
   </div>
@@ -1308,9 +1326,22 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
   (function(){
     var LIB='https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
     var active=false,libLoaded=false,hands=null,video=null,pip=null,pcv=null,pctx=null,cur=null,raf=0,stream=null,sending=false;
-    var sx=null,sy=null,pinch=false,statusEl=null,lastEl=null;
-    var grabY=0,grabScroll=0,grabMoved=false,grabTarget=null;
-    var GAIN=2.4,MARGIN=0.16,LERP=0.5;   // sensitivity: central camera box → full screen, snappier follow
+    var sx=null,sy=null,gx=null,gy=null,pinch=false,statusEl=null,lastEl=null;
+    var grabY=0,grabScroll=0,grabMoved=false,grabTarget=null,vScroll=0,momentum=0;
+    // GAIN: central camera box → full-screen sensitivity.
+    var GAIN=2.4,MARGIN=0.16;
+    // One-Euro filter (Casiez et al. 2012) — adaptive low-pass: heavy smoothing
+    // when the hand is still (kills webcam jitter), light when moving fast (kills
+    // lag). Far better feel than a fixed lerp for noisy hand tracking.
+    function oneEuro(minCut,beta,dCut){var xp=null,dxp=0,tp=null;
+      function a(c,dt){var r=2*Math.PI*c*dt;return r/(r+1);}
+      return function(x,t){if(tp==null){tp=t;xp=x;return x;}
+        var dt=t-tp;if(dt<=0)dt=1/60;tp=t;
+        var dx=(x-xp)/dt,ad=a(dCut,dt);dxp=dxp+ad*(dx-dxp);
+        var ac=a(minCut+beta*Math.abs(dxp),dt);xp=xp+ac*(x-xp);return xp;};}
+    // minCut↑ = snappier when still (more jitter) · beta↑ = less lag when moving · PRED = look-ahead seconds
+    var fltX=oneEuro(1.5,0.03,1.0),fltY=oneEuro(1.5,0.03,1.0);
+    var hvx=0,hvy=0,lastGx=null,lastGy=null,lastGt=0,PRED=0.035;
     function loadScript(src){return new Promise(function(res,rej){var s=document.createElement('script');s.src=src;s.crossOrigin='anonymous';s.onload=res;s.onerror=function(){rej(new Error('load'));};document.head.appendChild(s);});}
     function setStatus(m){if(statusEl)statusEl.textContent=m;}
     function build(){
@@ -1336,16 +1367,47 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
     function onResults(res){
       if(!pctx)return;
       pctx.save();pctx.clearRect(0,0,pcv.width,pcv.height);pctx.translate(pcv.width,0);pctx.scale(-1,1);
-      if(res.image){try{pctx.drawImage(res.image,0,0,pcv.width,pcv.height);}catch(e){}}
+      var W=pcv.width,H=pcv.height;
+      if(res.image){try{pctx.drawImage(res.image,0,0,W,H);}catch(e){}}
       var lm=res.multiHandLandmarks&&res.multiHandLandmarks[0];
-      if(lm){pctx.fillStyle='#bef264';for(var i=0;i<lm.length;i++){pctx.beginPath();pctx.arc(lm[i].x*pcv.width,lm[i].y*pcv.height,2.4,0,7);pctx.fill();}}
+      if(lm){
+        // "dark body, bright hand": dim the whole frame with a spotlight hole
+        // punched over the hand so only the hand + gesture read.
+        var minx=1,miny=1,maxx=0,maxy=0;
+        for(var k=0;k<lm.length;k++){var lx=lm[k].x,ly=lm[k].y;if(lx<minx)minx=lx;if(ly<miny)miny=ly;if(lx>maxx)maxx=lx;if(ly>maxy)maxy=ly;}
+        var cx=(minx+maxx)/2*W,cy=(miny+maxy)/2*H,rad=Math.hypot((maxx-minx)*W,(maxy-miny)*H)*0.5+16;
+        // veil transparent only over the hand; beyond r1 a radial gradient keeps
+        // the last stop colour, so the rest of the frame fills solid dark.
+        var g=pctx.createRadialGradient(cx,cy,rad*0.35,cx,cy,rad);
+        g.addColorStop(0,'rgba(6,9,5,0)');g.addColorStop(0.72,'rgba(6,9,5,0.55)');g.addColorStop(1,'rgba(6,9,5,0.92)');
+        pctx.fillStyle=g;pctx.fillRect(0,0,W,H);
+        // glowing skeleton + joints so the gesture itself is the hero
+        pctx.lineCap='round';pctx.lineJoin='round';
+        pctx.shadowColor='rgba(190,242,100,.9)';pctx.shadowBlur=12;
+        pctx.strokeStyle='rgba(190,242,100,.95)';pctx.lineWidth=2.2;
+        var CON=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+        for(var c=0;c<CON.length;c++){var pa=lm[CON[c][0]],pb=lm[CON[c][1]];pctx.beginPath();pctx.moveTo(pa.x*W,pa.y*H);pctx.lineTo(pb.x*W,pb.y*H);pctx.stroke();}
+        pctx.fillStyle='#eaf9c6';
+        for(var i=0;i<lm.length;i++){pctx.beginPath();pctx.arc(lm[i].x*W,lm[i].y*H,2.6,0,7);pctx.fill();}
+        pctx.shadowBlur=0;
+      }else{
+        // no hand yet — clearly dim so the dark reads, but light enough to frame
+        pctx.fillStyle='rgba(6,9,5,0.6)';pctx.fillRect(0,0,W,H);
+      }
       pctx.restore();
       if(!lm){setStatus('show your hand ✋');if(cur)cur.style.opacity='.25';return;}
       // index fingertip → screen, with a central-box gain so small moves reach the edges
       var tip=lm[8],tx=(1-remap(tip.x))*innerWidth,ty=remap(tip.y)*innerHeight;
+      // Publish the hand target; the 60fps pump loop glides the visible cursor
+      // toward it, so motion stays fluid even though inference is slower.
+      gx=tx;gy=ty;
+      // hand velocity (px/s) from sample-to-sample — fed forward in pump to
+      // predict slightly ahead and hide inference latency.
+      var _t=((window.performance&&performance.now())||Date.now())/1000;
+      if(lastGx!=null){var _dt=Math.max(_t-lastGt,1/120);hvx=(gx-lastGx)/_dt;hvy=(gy-lastGy)/_dt;}
+      lastGx=gx;lastGy=gy;lastGt=_t;
       if(sx==null){sx=tx;sy=ty;}
-      sx+=(tx-sx)*LERP;sy+=(ty-sy)*LERP;
-      cur.style.transform='translate('+sx+'px,'+sy+'px) translate(-50%,-50%)';cur.style.opacity='1';
+      if(cur)cur.style.opacity='1';
       // share hand state; when the sculpt canvas is open, the hand shapes the image instead of clicking the page
       var pdd=Math.hypot(lm[4].x-lm[8].x,lm[4].y-lm[8].y),pnow=pdd<0.065;
       var ow=lm[0],om=lm[9],osc=Math.hypot(ow.x-om.x,ow.y-om.y)||0.1,osum=0,oti=[8,12,16,20];
@@ -1360,12 +1422,31 @@ const ACT={"data":{"2026-06-09":32,"2026-06-08":19,"2026-06-05":25,"2026-06-04":
       cur.classList.toggle('hot',!!(el&&el.closest&&el.closest('a,button,input,textarea,select,.pcard,.iconbtn,.mpill,.li,.filt,#scenebar button,.scchip,.chip,.musicbtn,#theme,#starry,.btn')));
       // pinch = grab: a quick pinch taps (click); a pinch held + moved drags the page (scroll)
       var dd=Math.hypot(lm[4].x-lm[8].x,lm[4].y-lm[8].y),now=dd<0.065;
-      if(now&&!pinch){pinch=true;cur.classList.add('pinch');grabY=sy;grabScroll=window.scrollY||window.pageYOffset||0;grabMoved=false;grabTarget=el;}
-      else if(now&&pinch){var off=sy-grabY;if(Math.abs(off)>9)grabMoved=true;if(grabMoved){window.scrollTo(0,Math.max(0,grabScroll-off*GAIN));setStatus('scrolling ✊');}}
-      else if(!now&&pinch){pinch=false;cur.classList.remove('pinch');if(!grabMoved){clickAt();setStatus('click 🤏');}else setStatus('tracking ✋');}
+      if(now&&!pinch){pinch=true;cur.classList.add('pinch');grabY=sy;grabScroll=window.scrollY||window.pageYOffset||0;grabMoved=false;grabTarget=el;vScroll=0;momentum=0;}
+      else if(now&&pinch){var off=sy-grabY;if(Math.abs(off)>9)grabMoved=true;if(grabMoved){
+        var ns=Math.max(0,grabScroll-off*GAIN);
+        // low-pass the per-step scroll delta → this becomes the fling velocity
+        vScroll=vScroll*0.6+(ns-(window.scrollY||window.pageYOffset||0))*0.4;
+        window.scrollTo(0,ns);setStatus('scrolling ✊');}}
+      else if(!now&&pinch){pinch=false;cur.classList.remove('pinch');
+        if(!grabMoved){clickAt();setStatus('click 🤏');}
+        else{momentum=Math.max(-70,Math.min(70,vScroll));setStatus('tracking ✋');}}
       else setStatus('tracking ✋');
     }
     function pump(){if(!active)return;
+      // 60fps cursor glide — smooth the visible cursor toward the hand target
+      // every frame (decoupled from the slower inference rate) so it tracks
+      // like a trackpad pointer instead of stepping at the webcam framerate.
+      if(gx!=null){
+        var nt=((window.performance&&performance.now())||Date.now())/1000;
+        // predict a touch ahead (velocity × look-ahead) to mask latency, then run
+        // it through the One-Euro filter → jitter-free yet low-lag, like a trackpad.
+        sx=fltX(gx+hvx*PRED,nt);sy=fltY(gy+hvy*PRED,nt);
+        if(cur)cur.style.transform='translate('+sx+'px,'+sy+'px) translate(-50%,-50%)';
+      }
+      // trackpad-style inertia: keep gliding the scroll after a pinch-drag release
+      if(momentum){window.scrollBy(0,momentum);momentum*=0.93;if(Math.abs(momentum)<0.4)momentum=0;}
+      // hand inference is throttled to one in-flight request
       if(!sending&&video&&video.readyState>=2&&hands){sending=true;hands.send({image:video}).then(function(){sending=false;}).catch(function(){sending=false;});}
       raf=requestAnimationFrame(pump);}
     function enable(){
@@ -1594,12 +1675,23 @@ setLang(localStorage.getItem('lang')||'en');
   var saved='green';try{var _s=localStorage.getItem('accent');saved=(!_s||_s==='lime')?'green':_s;}catch(e){}
   setAccent(saved);
 
+  /* overall style vibe: vivid (default) / minimal / trippy */
+  var vbox=document.getElementById('vibe');
+  function setVibe(v){
+    if(v==='vivid')root.removeAttribute('data-vibe');else root.setAttribute('data-vibe',v);
+    try{localStorage.setItem('vibe',v);}catch(e){}
+    if(vbox)vbox.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.vibe===v);});
+  }
+  if(vbox)vbox.addEventListener('click',function(e){var b=e.target.closest('button');if(b){setVibe(b.dataset.vibe);var p=b.closest('.pop');if(p)p.classList.remove('open');}});
+  var sv='vivid';try{sv=localStorage.getItem('vibe')||'vivid';}catch(e){}
+  setVibe(sv);
+
   /* click-to-show menus for language + accent */
   function bindPop(btnId,popId){var btn=document.getElementById(btnId),pop=document.getElementById(popId);if(!btn)return;
     btn.addEventListener('click',function(e){e.stopPropagation();var open=pop.classList.contains('open');
       document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});
       if(!open)pop.classList.add('open');});}
-  bindPop('langbtn','langpop'); bindPop('palbtn','accent');
+  bindPop('langbtn','langpop'); bindPop('palbtn','accent'); bindPop('vibebtn','vibe');
   document.addEventListener('click',function(e){if(!e.target.closest('.ctrl'))document.querySelectorAll('.pop.open').forEach(function(p){p.classList.remove('open');});});
 
   var clock=document.getElementById('clock'), audio=document.getElementById('clkaudio');
