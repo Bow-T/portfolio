@@ -1567,33 +1567,49 @@ setLang(localStorage.getItem('lang')||'en');
   var wrap=document.getElementById('herofx-wrap'),cv=document.getElementById('herofx'),btn=document.getElementById('herofx-hand');
   if(!wrap||!cv)return;
   var ctx=cv.getContext('2d');
-  var img=new Image();img.crossOrigin='anonymous';var COLS=6,ROWS=6,N=COLS*ROWS,ready=false,frames=[],LARGEST=1;
+  var ready=false,frames=[],N=0,CW=0,CH=0;
   var curT=0,targetT=0,mhold=false,handOpenRaw=1,handOpen=1,handT=0,handOn=false;
+  var hint=document.getElementById('herofx-hint');
   function now(){return (window.performance&&performance.now())||0;}
-  img.onload=function(){
-    var cw=img.width/COLS,ch=img.height/ROWS,tmp=document.createElement('canvas');tmp.width=cw;tmp.height=ch;var tc=tmp.getContext('2d');
-    for(var k=0;k<N;k++){var col=k%COLS,row=(k/COLS)|0;
-      tc.clearRect(0,0,cw,ch);tc.drawImage(img,col*cw,row*ch,cw,ch,0,0,cw,ch);
-      var id=tc.getImageData(0,0,cw,ch),d=id.data;
-      var Lm=(cw*0.05)|0,Rm=Math.ceil(cw*0.95),Tm=(ch*0.12)|0,Bm=Math.ceil(ch*0.97);   /* scan centre only → ignore grid line, bleed AND the 01-36 frame number top-left */
-      var minx=cw,miny=ch,maxx=0,maxy=0,found=false;
-      for(var y=0;y<ch;y++)for(var x=0;x<cw;x++){var i=(y*cw+x)*4,lum=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-        d[i+3]=lum<=8?0:(lum>=22?255:((lum-8)/14*255)|0);                                 /* key near-black bg → transparent */
-        if(d[i+3]>60&&x>=Lm&&x<Rm&&y>=Tm&&y<Bm){found=true;if(x<minx)minx=x;if(x>maxx)maxx=x;if(y<miny)miny=y;if(y>maxy)maxy=y;}}
-      tc.putImageData(id,0,0);
-      if(!found){minx=0;miny=0;maxx=cw;maxy=ch;}
-      var pd=(cw*0.015)|0;minx=Math.max(0,minx-pd);miny=Math.max(0,miny-pd);maxx=Math.min(cw,maxx+pd);maxy=Math.min(ch,maxy+pd);
-      var bw=maxx-minx,bh=maxy-miny,hc=document.createElement('canvas');hc.width=bw;hc.height=bh;
-      hc.getContext('2d').drawImage(tmp,minx,miny,bw,bh,0,0,bw,bh);
-      frames.push({c:hc,w:bw,h:bh});if(Math.max(bw,bh)>LARGEST)LARGEST=Math.max(bw,bh);}
-    ready=true;size();
-  };
-  img.src='assets/origami/crumple-sheet.jpg';
   function size(){var dpr=Math.min(devicePixelRatio||1,2),s=Math.round((cv.clientWidth||320)*dpr);cv.width=s;cv.height=s;}
   addEventListener('resize',size);size();
   cv.addEventListener('pointerdown',function(){mhold=true;});addEventListener('pointerup',function(){mhold=false;});
-  function blit(k,alpha,W,H){var f=frames[k],s=(Math.min(W,H)*0.9)/LARGEST,dw=f.w*s,dh=f.h*s;
-    ctx.globalAlpha=alpha;ctx.drawImage(f.c,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;}
+  /* pre-extract the crumple clip into a frame cache once (key the black bg, crop to a fixed box so frames stay aligned) */
+  var vsrc=document.createElement('video');vsrc.muted=true;vsrc.setAttribute('playsinline','');vsrc.setAttribute('crossorigin','anonymous');vsrc.preload='auto';
+  vsrc.style.cssText='position:fixed;left:-99999px;top:0;width:8px;height:8px;opacity:0;pointer-events:none';document.body.appendChild(vsrc);
+  function keyBg(octx,w,h){var id=octx.getImageData(0,0,w,h),d=id.data;
+    for(var p=0;p<d.length;p+=4){var lum=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];
+      d[p+3]=lum<=10?0:(lum>=30?d[p+3]:(((lum-10)/20)*d[p+3])|0);}
+    octx.putImageData(id,0,0);}
+  function seekTo(t){return new Promise(function(res){var f=function(){vsrc.removeEventListener('seeked',f);res();};vsrc.addEventListener('seeked',f);try{vsrc.currentTime=t;}catch(e){res();}});}
+  function extract(){
+    var dur=vsrc.duration;if(!dur||!isFinite(dur))dur=4;
+    N=Math.max(24,Math.min(44,Math.round(dur*12)));
+    var vw=vsrc.videoWidth||1024,vh=vsrc.videoHeight||1024,sc=Math.min(1,500/Math.max(vw,vh)),fw=Math.round(vw*sc),fh=Math.round(vh*sc);
+    var oc=document.createElement('canvas');oc.width=fw;oc.height=fh;var octx=oc.getContext('2d'),raw=[],i=0;
+    (function step(){
+      if(i>=N){crop(raw,fw,fh);return;}
+      seekTo((i/(N-1))*dur*0.997).then(function(){
+        octx.clearRect(0,0,fw,fh);octx.drawImage(vsrc,0,0,fw,fh);keyBg(octx,fw,fh);
+        var c=document.createElement('canvas');c.width=fw;c.height=fh;c.getContext('2d').drawImage(oc,0,0);raw.push(c);
+        i++;if(hint)hint.textContent='dựng khung… '+Math.round(i/N*100)+'%';step();
+      },function(){i++;step();});
+    })();
+  }
+  function crop(raw,fw,fh){
+    var r0=raw[0].getContext('2d').getImageData(0,0,fw,fh).data,minx=fw,miny=fh,maxx=0,maxy=0,found=false;
+    for(var y=0;y<fh;y+=2)for(var x=0;x<fw;x+=2){if(r0[(y*fw+x)*4+3]>40){found=true;if(x<minx)minx=x;if(x>maxx)maxx=x;if(y<miny)miny=y;if(y>maxy)maxy=y;}}
+    if(!found){minx=0;miny=0;maxx=fw;maxy=fh;}
+    var pd=Math.round(fw*0.04);minx=Math.max(0,minx-pd);miny=Math.max(0,miny-pd);maxx=Math.min(fw,maxx+pd);maxy=Math.min(fh,maxy+pd);
+    CW=maxx-minx;CH=maxy-miny;
+    for(var k=0;k<raw.length;k++){var c=document.createElement('canvas');c.width=CW;c.height=CH;c.getContext('2d').drawImage(raw[k],minx,miny,CW,CH,0,0,CW,CH);frames.push(c);}
+    ready=true;if(hint)hint.textContent='giữ & kéo để vò · 🤚 dùng tay';
+  }
+  vsrc.addEventListener('loadedmetadata',function(){size();extract();});
+  vsrc.addEventListener('error',function(){if(hint)hint.textContent='thiếu video crumple';});
+  vsrc.src='assets/origami/crumple.mp4';try{vsrc.load();}catch(e){}
+  function blit(k,alpha,W,H){var f=frames[k],s=Math.min(W/CW,H/CH)*0.95,dw=CW*s,dh=CH*s;
+    ctx.globalAlpha=alpha;ctx.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;}
   function loop(){requestAnimationFrame(loop);
     if(!ready)return;
     handOpen+=(handOpenRaw-handOpen)*0.2;                      /* low-pass the hand so it stops jittering at half-open */
